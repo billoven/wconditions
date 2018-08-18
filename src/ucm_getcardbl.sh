@@ -153,27 +153,66 @@ fi
 #
 # ------------------------------ Start main -----------------------------
 #
-#-------------------------------------------------
-# Get the data from weather underground
-WURL="https://www.wunderground.com/weatherstation/WXDailyHistory.asp?ID=ILEDEFRA131&day=1&month=7&year=2018&dayend=31&monthend=7&yea
-rend=2018&graphspan=custom&format=1" 
+cleartool catcs > $TMP
+ret=`egrep -s "end ucm" $TMP`
+if [ $? = 0 ]
+then
+	res=`cleartool lsstream -long -cview | grep "$card_comp"`
+else
+	res=`grep "# -- baseline baseline:" $TMP | grep "$CARD_COMP"`
+fi
 
-# Get data and suppress <br> html tag and blank lines
-# save in text temporary file
-curl  $WURL | sed "/<br>/d" | grep -v '^$' >$TMP
-
-
-# Transform the data in the good format for the future update of DB
-
-# Check the integrity of data and conformity
-
-# Check the access to the Database
-
-# update the DB
+baseline=`expr "$res" : ".*\(B.*${CARD_COMP}V[0-9A-F][0-9A-F]D[0-9A-F]\.[0-9A-F]_E[0-9A-F][0-9A-F]\.[0-9A-F][\.0-9]*\).*"`
+if [ "$baseline" = "" ]
+then
+	err "Cannot extract a correct baseline for $card_comp component from [$res] !"
+fi
+version=`expr "$baseline" : "B.*${CARD_COMP}\(V[0-9A-F][0-9A-F]D[0-9A-F]\.[0-9A-F]\)_E[0-9A-F][0-9A-F]\.[0-9A-F][\.0-9]*"`
+edition=`expr "$baseline" : "B.*${CARD_COMP}V[0-9A-F][0-9A-F]D[0-9A-F]\.[0-9A-F]_\(E[0-9A-F][0-9A-F]\.[0-9A-F]\)[\.0-9]*"`
+version_name=`echo $version | sed "s/\.//g" | sed "s/V//"`
 edition_name=`echo $edition | sed "s/\.//g" | sed "s/E//"`
 version_mark=${version_name}`expr "$edition_name" : "[0-9A-F][0-9A-F]\([0-9A-F]\)"`
 edition_mark=`expr "$edition_name" : "\([0-9A-F][0-9A-F]\)[0-9A-F]"`
 
+if [ $versionout = "true" ]
+then
+	echo $version
+fi
+if [ $editionout = "true" ]
+then
+	echo $edition
+fi
+if [ $markverout = "true" ]
+then
+	echo $version_mark
+fi
+if [ $markedout = "true" ]
+then
+	echo $edition_mark
+fi
+if [ $nameverout = "true" ]
+then
+	echo $version_name
+fi
+if [ $namedout = "true" ]
+then
+	echo $edition_name
+fi
+if [ $baselineout = "true" ]
+then
+	echo $baseline
+fi
+
+if [ $allout = "true" ]
+then
+	echo "baseline=[$baseline]"
+	echo "version=[$version]"
+	echo "edition=[$edition]"
+	echo "version_name=[$version_name]"
+	echo "edition_name=[$edition_name]"
+	echo "version_mark=[$version_mark]"
+	echo "edition_mark=[$edition_mark]"
+fi
 
 #
 # ------------------------------ End main -----------------------------
