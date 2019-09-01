@@ -5,15 +5,47 @@ import pandas as pd
 from dateutil.parser import *
 import datetime
 
+
 # Python program to get average of a list
 # Using mean()
 # importing mean()
 from statistics import mean
 
+import sys, getopt
+
+
+inputfile = ''
+outputfile = ''
+
+# ------------------------------------------------------------------------------
+# initializing the titles and rows list
+# ------------------------------------------------------------------------------
+def main(argv):
+
+   try:
+      opts, args = getopt.getopt(argv,"hi:o:",["ifile=","ofile="])
+   except getopt.GetoptError:
+      print ('MV_DailyStat.py -i <inputfile> -o <outputfile>')
+      sys.exit(2)
+   for opt, arg in opts:
+      if opt == '-h':
+         print ('MV_DailyStat.py -i <inputfile> -o <outputfile>')
+         sys.exit()
+      elif opt in ("-i", "--ifile"):
+         inputfile = arg
+      elif opt in ("-o", "--ofile"):
+         outputfile = arg
+
+         print ('Input file is ', inputfile)
+         print ('Output file is ', outputfile)
+
 def Average(lst):
     return mean(lst)
 
 # Transform <date> <time> or <time> <date> in format DD/MM/YYYY
+# ------------------------------------------------------------------------------
+# initializing the titles and rows list
+# ------------------------------------------------------------------------------
 def DateDDMMYY(Date):
 
 
@@ -22,6 +54,9 @@ def DateDDMMYY(Date):
 
     return(NewDate)
 
+# ------------------------------------------------------------------------------
+# initializing the titles and rows list
+# ------------------------------------------------------------------------------
 def DayStat(Data):
 
     DataList=[]
@@ -74,6 +109,9 @@ def DayStat(Data):
 
     return DataList
 
+# ------------------------------------------------------------------------------
+# initializing the titles and rows list
+# ------------------------------------------------------------------------------
 def ConvertList(list):
 
     rowtobewritten=''
@@ -93,6 +131,15 @@ def ConvertList(list):
 # ------------------------------------------------------------------------------
 fields = []
 rows = []
+
+
+if __name__ == "__main__":
+   main(sys.argv[1:])
+
+print ('Input file is ', inputfile)
+print ('Output file is ', outputfile)
+
+exit()
 
 #Non., temps, température ambiante, humidité intérieure, température extérieure,
 #humidité extérieure, moyenne du vent, rafales de vent, Point de rosée,
