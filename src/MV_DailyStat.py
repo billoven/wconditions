@@ -15,29 +15,33 @@ import sys, getopt
 
 
 inputfile = ''
-outputfile = ''
+outputfile = '/tmp/Dailystat'
 
 # ------------------------------------------------------------------------------
 # initializing the titles and rows list
 # ------------------------------------------------------------------------------
 def main(argv):
 
-   try:
-      opts, args = getopt.getopt(argv,"hi:o:",["ifile=","ofile="])
-   except getopt.GetoptError:
-      print ('MV_DailyStat.py -i <inputfile> -o <outputfile>')
-      sys.exit(2)
-   for opt, arg in opts:
-      if opt == '-h':
-         print ('MV_DailyStat.py -i <inputfile> -o <outputfile>')
-         sys.exit()
-      elif opt in ("-i", "--ifile"):
-         inputfile = arg
-      elif opt in ("-o", "--ofile"):
-         outputfile = arg
+    global inputfile
+    global outputfile
 
-         print ('Input file is ', inputfile)
-         print ('Output file is ', outputfile)
+    try:
+        opts, args = getopt.getopt(argv,"hi:o:",["ifile=","ofile="])
+    except getopt.GetoptError:
+        print ('MV_DailyStat.py -i <inputfile> -o <outputfile>')
+        sys.exit(2)
+
+    for opt, arg in opts:
+        if opt == '-h':
+            print ('MV_DailyStat.py -i <inputfile> -o <outputfile>')
+            sys.exit()
+        elif opt in ("-i", "--ifile"):
+            inputfile = arg
+        elif opt in ("-o", "--ofile"):
+            outputfile = arg
+
+    print ('Input file is ', inputfile)
+    print ('Output file is ', outputfile)
 
 def Average(lst):
     return mean(lst)
