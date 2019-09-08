@@ -1,0 +1,6 @@
+0001 : Creating a Makefile in order to generate a "binary" in "bin" directory
+0002 : Start the testing of the MV_DailyStat.py program
+0003 : MV_UpdateDB.py update, the goal is to get daily ( by default ) meteovillebon
+        weather data and update the mysql Database installed on 192.168.17.10 server
+        Some options will provide the ability to get a more extended range of DayStat
+        and be able to update the mysql DB.
