@@ -170,93 +170,26 @@ outputfile=args.outfile.name
 if inputfile == '<stdin>':
     inputfile=sys.stdin
 
-
-
+# ------------------------------------------------------------------------------
+# In French
 #Non., temps, température ambiante, humidité intérieure, température extérieure,
 #humidité extérieure, moyenne du vent, rafales de vent, Point de rosée,
 #refroidissement éolien, direction du vent, pression absolue, pression relative,
 #intensité de précipitation, pluies journalières, pluies semaine ,
 #pluies mensuelles, pluies année, solaire, indice de chaleur, UVI
-
+# ------------------------------------------------------------------------------
+# In English
 #"No."   "Time"  "Indoor Temperature (°C)"       "Indoor Humidity (%)"   "Outdoor Temperature (°C)"
 # "Outdoor Humidity (%)"  "Wind (km/h)"   "Gust (km/h)"   "Dew Point (°C)"
 #"Wind Chill (°C)"       "Wind Direction (°)"    "ABS Barometer (hpa)"   "REL Barometer (hpa)"
 #"Rain Rate (mm/h)"      "Daily Rain (mm)"       "Weekly Rain (mm)"
 #"Monthly Rain (mm)"     "Yearly Rain (mm)"      "Solar Rad. (w/㎡)"     "Heat index (°C)"       "UV (uW/c㎡)"   "UVI"
-
-# 0 [         1]      ==> Non.
-# 1 [2019-08-23 00:00] ==> temps.
-# 2 [      23.4] ==> température ambiante
-# 3 [        46] ==> humidité intérieure.
-# 4 [      18.1] ==> température extérieure.
-# 5 [        66] ==> humidité extérieure.
-# 6 [       0.0] ==> moyenne du vent.
-# 7 [       0.0] ==> rafales de vent.
-# 8 [      11.7] ==> Point de rosée.
-# 9 [      18.1] ==> refroidissement éolien.
-# 10 [       128] ==> direction du vent.
-# 11 [    1017.8] ==> pression absolue.
-# 12 [    1024.2] ==> pression relative.
-# 13 [       0.0] ==> intensité de précipitation.
-# 14 [       0.0] ==> pluies journalières.
-# 15 [       1.8] ==> luies semaine.
-# 16 [      57.0] ==> pluies mensuelles.
-# 17 [     408.9] ==> pluies année.
-# 18 [       0.0] ==> solaire.
-# 19 [        --] ==> indice de chaleur.
-# 20 [         0] ==> UVI.
-# 21 [          ] ==> Non.
-
-#with open('Meteo2019.csv', newline='', encoding='iso-8859-15') as f:
-#with open('Meteo20190823-20190831.csv', 'r', encoding='iso-8859-15') as csvfile:
-#if inputfile == '<stdin>':
-#    csvfile=sys.stdin
-#    csvreader = csv.reader(csvfile, delimiter='\t', quotechar='"', lineterminator="\r\n")
 #
-#        # extracting field names through first row
-#    fields = next(csvreader)
-#
-#    for row in csvreader:
-#        ##        # extracting each data row one by one
-#        rows.append(row)
-#
-#    # get total number of rows
-#    print(" STDIN Total no. of rows: %d"%(csvreader.line_num))
-#else:
-#    with open(inputfile, 'r', encoding='utf-16') as csvfile:
-#
-##    # creating a csv reader object
-#    #1  2019-08-23 00:00    23.4    46  18.1    66  0.0 0.0 11.7    18.1    128
-#    #   1017.8  1024.2  0.0 0.0 1.8 57.0    408.9   0.0 --  0   ^M
-#        csvreader = csv.reader(csvfile, delimiter='\t', quotechar='"', lineterminator="\r\n")
+#No.	Time	Indoor temperature	Indoor humidity	Outdoor temperature	Outdoor humidity	Average speed	Gust speed	Dewpoint	Wind chill	Wind direction	Absolute Pressure	Relative pressure	Rainfall intensity	Daily rainfall	Weekly rainfallMonthly rainfall	Yearly rainfall	Solar	Heat Index	UVI
+#1	2019-09-01 00:00	25.9	48	19.5	71	0.0	0.0	14.1	19.5	158	1006.5	1012.9	0.0	0.0	0.0	0.0	408.9	0.0	--	0
+#2	2019-09-01 00:04	25.9	48	19.5	71	0.0	0.0	14.1	19.5	159	1006.6	1013.0	0.0	0.0	0.0	0.0	408.9	0.0	--	0
+# ------------------------------------------------------------------------------
 
-#    # extracting field names through first row
-#        fields = next(csvreader)
-
-    # extracting each data row one by one
-#        for row in csvreader:
-#            rows.append(row)
-
-    # get total number of rows
-#        print("Total no. of rows: %d"%(csvreader.line_num))
-
-
-
-# printing the field names
-#print('Field names are:' + ', '.join(field for field in fields))
-
-
-#  printing first 5 rows
-#print('\nFirst 5 rows are:\n')
-#for row in rows[:5]:
-    # parsing each column of a row
-#    for col in row:
-#        print("[%10s]"%col),
-#    print('\n')
-#    print (rows[0])
-#    print (rows[3114])
-
-#    print (len(rows))
 
 # initializing the titles and rows list
 i=0
@@ -281,10 +214,8 @@ WeatherDataDay =    { 'Time' : [],
 colnames = ['No','Time','IndoorTemperature','IndoorHumidity','OutdoorTemperature','OutdoorHumidity','Wind','Gust','DewPoint','WindChill','WindDirection','ABSBarometer','RELBarometer','RainRate','DailyRain','WeeklyRain','MonthlyRain','YearlyRain',	'Solar, Rad','Heatindex','UV','UVI']
 
 # Read Transformed Meteo csv file
-# from Ambient weather software export the meteo csv file :
-#  - has its field separator changed from '<tab>' to ','
-#  - has all its double quote removed
-#data = pd.read_csv(sys.stdin, names=colnames, encoding='utf-16',sep='\t',skiprows=1)
+# from Ambient weather software export the meteo csv file is exported through
+# the History menu for a given period
 data = pd.read_csv(inputfile, names=colnames, encoding='utf-16',sep='\t',skiprows=1)
 
 print("--------------------------------")
