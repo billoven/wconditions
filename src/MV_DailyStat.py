@@ -11,37 +11,42 @@ import datetime
 # importing mean()
 from statistics import mean
 
-import sys, getopt
+import sys
+import argparse
 
 
 inputfile = ''
-outputfile = '/tmp/Dailystat'
+outputfile = ''
 
 # ------------------------------------------------------------------------------
-# initializing the titles and rows list
+# Arguments management
 # ------------------------------------------------------------------------------
-def main(argv):
+def getArgs(argv=None):
 
-    global inputfile
-    global outputfile
 
-    try:
-        opts, args = getopt.getopt(argv,"hi:o:",["ifile=","ofile="])
-    except getopt.GetoptError:
-        print ('MV_DailyStat.py -i <inputfile> -o <outputfile>')
-        sys.exit(2)
+    parser = argparse.ArgumentParser(formatter_class=argparse.RawDescriptionHelpFormatter,
+    description='''\
+        Transform csv file exported from EasyWeatherIP Software
+        for WS-1001-WiFi Weather Station for PC-Win
+        (Ambient Weather Company)
+        --------------------------------------------------------
+             The csv file is exported manualy from the application.
+             Then stored in a dedicated directory.
 
-    for opt, arg in opts:
-        if opt == '-h':
-            print ('MV_DailyStat.py -i <inputfile> -o <outputfile>')
-            sys.exit()
-        elif opt in ("-i", "--ifile"):
-            inputfile = arg
-        elif opt in ("-o", "--ofile"):
-            outputfile = arg
+         ''',
+    epilog='''
+    --------------------------------------------------------------''')
 
-    print ('Input file is ', inputfile)
-    print ('Output file is ', outputfile)
+    group = parser.add_mutually_exclusive_group()
+    group.add_argument("-v", "--verbose", action="store_true")
+    group.add_argument("-q", "--quiet", action="store_true")
+    parser.add_argument('--infile', "-i", nargs='?', type=argparse.FileType('r'),
+        default=sys.stdin, help="csv file pathname to tranform")
+    parser.add_argument('--outfile', "-o", nargs='?', type=argparse.FileType('w'),
+        default=sys.stdout, help="transformed csv file pathname")
+    parser.add_argument('--version', action='version', version='[%(prog)20s] 2.0')
+
+    return parser.parse_args(argv)
 
 def Average(lst):
     return mean(lst)
@@ -53,7 +58,7 @@ def Average(lst):
 def DateDDMMYY(Date):
 
 
-    d=parse(Date, dayfirst=True)
+    d=parse(Date, yearfirst=True)
     NewDate=d.strftime("%d/%m/%Y")
 
     return(NewDate)
@@ -136,14 +141,36 @@ def ConvertList(list):
 fields = []
 rows = []
 
-
 if __name__ == "__main__":
-   main(sys.argv[1:])
 
-print ('Input file is ', inputfile)
-print ('Output file is ', outputfile)
+    argvals = None             # init argv in case not testing
 
-exit()
+    # example of passing test params to parser
+    # argvals = '6 2 -v'.split()
+
+    args = getArgs(argvals)
+
+    #answer = args.x**args.y
+
+    # if args.quiet:
+    #    print (answer)
+    # elif args.verbose:
+    #    print ("{} to the power {} equals {}".format(args.x, args.y, answer))
+    # else:
+    #    print ("{}^{} == {}".format(args.x, args.y, answer))
+
+
+print ('Input file is ', args.infile.name)
+print ('Output file is ', args.outfile.name)
+
+
+inputfile=args.infile.name
+outputfile=args.outfile.name
+
+if inputfile == '<stdin>':
+    inputfile=sys.stdin
+
+
 
 #Non., temps, température ambiante, humidité intérieure, température extérieure,
 #humidité extérieure, moyenne du vent, rafales de vent, Point de rosée,
@@ -182,37 +209,54 @@ exit()
 
 #with open('Meteo2019.csv', newline='', encoding='iso-8859-15') as f:
 #with open('Meteo20190823-20190831.csv', 'r', encoding='iso-8859-15') as csvfile:
-with open('Meteo20190823-20190831.csv', 'r', encoding='utf-16') as csvfile:
+#if inputfile == '<stdin>':
+#    csvfile=sys.stdin
+#    csvreader = csv.reader(csvfile, delimiter='\t', quotechar='"', lineterminator="\r\n")
+#
+#        # extracting field names through first row
+#    fields = next(csvreader)
+#
+#    for row in csvreader:
+#        ##        # extracting each data row one by one
+#        rows.append(row)
+#
+#    # get total number of rows
+#    print(" STDIN Total no. of rows: %d"%(csvreader.line_num))
+#else:
+#    with open(inputfile, 'r', encoding='utf-16') as csvfile:
+#
+##    # creating a csv reader object
+#    #1  2019-08-23 00:00    23.4    46  18.1    66  0.0 0.0 11.7    18.1    128
+#    #   1017.8  1024.2  0.0 0.0 1.8 57.0    408.9   0.0 --  0   ^M
+#        csvreader = csv.reader(csvfile, delimiter='\t', quotechar='"', lineterminator="\r\n")
 
-    # creating a csv reader object
-    #1  2019-08-23 00:00    23.4    46  18.1    66  0.0 0.0 11.7    18.1    128
-    #   1017.8  1024.2  0.0 0.0 1.8 57.0    408.9   0.0 --  0   ^M
-    csvreader = csv.reader(csvfile, delimiter='\t', quotechar='"', lineterminator="\r\n")
-
-    # extracting field names through first row
-    fields = next(csvreader)
+#    # extracting field names through first row
+#        fields = next(csvreader)
 
     # extracting each data row one by one
-    for row in csvreader:
-        rows.append(row)
+#        for row in csvreader:
+#            rows.append(row)
 
     # get total number of rows
-    print("Total no. of rows: %d"%(csvreader.line_num))
+#        print("Total no. of rows: %d"%(csvreader.line_num))
+
+
 
 # printing the field names
-print('Field names are:' + ', '.join(field for field in fields))
-#exit()
+#print('Field names are:' + ', '.join(field for field in fields))
+
 
 #  printing first 5 rows
 #print('\nFirst 5 rows are:\n')
-for row in rows[:5]:
+#for row in rows[:5]:
     # parsing each column of a row
-    for col in row:
-        print("[%10s]"%col),
-    print('\n')
-    print (rows[0])
-    print (rows[3114])
-    print (len(rows))
+#    for col in row:
+#        print("[%10s]"%col),
+#    print('\n')
+#    print (rows[0])
+#    print (rows[3114])
+
+#    print (len(rows))
 
 # initializing the titles and rows list
 i=0
@@ -240,7 +284,8 @@ colnames = ['No','Time','IndoorTemperature','IndoorHumidity','OutdoorTemperature
 # from Ambient weather software export the meteo csv file :
 #  - has its field separator changed from '<tab>' to ','
 #  - has all its double quote removed
-data = pd.read_csv('Meteo20190823-20190831.csv', names=colnames, encoding='utf-16',sep='\t',skiprows=1)
+#data = pd.read_csv(sys.stdin, names=colnames, encoding='utf-16',sep='\t',skiprows=1)
+data = pd.read_csv(inputfile, names=colnames, encoding='utf-16',sep='\t',skiprows=1)
 
 print("--------------------------------")
 print (data.Time)
@@ -248,11 +293,12 @@ print (data.Time)
 
 
 # open a file for writing
-weather_data = open('/tmp/NewMeteo2019.csv', 'w')
+if outputfile != '<stdout>':
+    weather_data = open(outputfile, 'w')
+else:
+    weather_data = sys.stdout
 
-# create the csv writer object
 csvwriter = csv.writer(weather_data)
-
 
 # Create lists, one per type of weather data
 Dates = data.Time.tolist()
