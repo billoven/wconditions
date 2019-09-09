@@ -20,7 +20,7 @@ import pymysql.cursors
 # Connect to the database
 connection = pymysql.connect(host='192.168.17.10',
                              user='admin',
-                             password='ZouZou1!',
+                             password='Z--Z--1-',
                              db='meteovillebon',
                              charset='utf8mb4',
                              cursorclass=pymysql.cursors.DictCursor)
