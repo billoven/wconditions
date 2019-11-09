@@ -253,6 +253,7 @@ for DateTime in Dates:
     DayDate=DateDDMMYY(DateTime)
 
     if DayDate != PreviousDate :
+        #print  (WeatherDataDay)
         ListOfDailyStat=DayStat(WeatherDataDay)
 
         row=ConvertList(ListOfDailyStat)
@@ -268,14 +269,20 @@ for DateTime in Dates:
         WeatherDataDay['DailyRain'].clear()
 
     WeatherDataDay['Time'].append(DayDate)
-    WeatherDataDay['OutdoorTemperature'].append(OutdoorTemps[i])
-    WeatherDataDay['OutdoorHumidity'].append(OutdoorHums[i])
-    WeatherDataDay['Wind'].append(Winds[i])
-    WeatherDataDay['Gust'].append(Gusts[i])
-    WeatherDataDay['DewPoint'].append(DewPoints[i])
+    if OutdoorTemps[i] != "--.-" and OutdoorTemps[i] != "--":
+        WeatherDataDay['OutdoorTemperature'].append(float(OutdoorTemps[i]))
+    if OutdoorHums[i] != "--.-" and OutdoorHums[i] != "--":
+        WeatherDataDay['OutdoorHumidity'].append(float(OutdoorHums[i]))
+    if Winds[i] != "--.-" and Winds[i] != "--":
+        WeatherDataDay['Wind'].append(float(Winds[i]))
+    if Gusts[i] != "--.-" and Gusts[i] != "--":
+        WeatherDataDay['Gust'].append(Gusts[i])
+    if DewPoints[i] != "--.-" and DewPoints[i] != "--":
+        WeatherDataDay['DewPoint'].append(float(DewPoints[i]))
     if RELBarometers[i] != "--.-" and RELBarometers[i] != "--":
                 WeatherDataDay['Pressure'].append(float(RELBarometers[i]))
-    WeatherDataDay['DailyRain'].append(DailyRains[i])
+    if DailyRains[i] != "--.-" and DailyRains[i] != "--":
+        WeatherDataDay['DailyRain'].append(DailyRains[i])
 
     PreviousDate = DayDate
 
