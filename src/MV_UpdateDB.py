@@ -1,10 +1,19 @@
-
 #!/usr/bin/env python
 from __future__ import print_function
 
 # -*- coding: utf-8 -*-
 
 print ('Mon premier pas en python')
+
+import urllib.request
+
+fp = urllib.request.urlopen("https://api.weather.com/v2/pws/history/daily?stationId=ILEDEFRA131&format=json&units=m&date=20191101&apiKey=43de0fca7f6f49a79e0fca7f6f29a708&numericPrecision=decimal")
+mybytes = fp.read()
+
+mystr = mybytes.decode("utf8")
+fp.close()
+
+print(mystr)
 
 # Get date of the day
 
