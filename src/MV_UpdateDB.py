@@ -1,19 +1,48 @@
 #!/usr/bin/env python
 from __future__ import print_function
-
-# -*- coding: utf-8 -*-
-
-print ('Mon premier pas en python')
-
+import json
+# https://pypi.org/project/easydict/ Access easily to Dictionnary values
+from easydict import EasyDict as edict
 import urllib.request
+import pymysql.cursors
 
+
+
+# Get current date , put it at format YYYYMMDD
+
+# Build URL to access to current daily observations of ILEDEFRA131
+
+
+# Execute the HTTPS request to get JSON Result
 fp = urllib.request.urlopen("https://api.weather.com/v2/pws/history/daily?stationId=ILEDEFRA131&format=json&units=m&date=20191101&apiKey=43de0fca7f6f49a79e0fca7f6f29a708&numericPrecision=decimal")
 mybytes = fp.read()
 
+# -*- decoding: utf-8 -*-
 mystr = mybytes.decode("utf8")
 fp.close()
 
-print(mystr)
+# used edict ==> Very useful when exploiting parsed JSON content !
+mystr_dict = edict(json.loads(mystr))
+
+
+#>>> d = edict(loads(j))
+#>>> d.Buffer
+
+#>>> d.List1[0].coordinates[1]
+
+# Output: {'name': 'Bob', 'languages': ['English', 'Fench']}
+#print( mystr_dict)
+# Output: ['English', 'French']
+print(mystr_dict)
+print("-----------------")
+print(mystr_dict['observations'][0].metric.tempAvg)
+
+
+#print(mystr)
+
+# Load Json into a Python object
+
+
 
 # Get date of the day
 
@@ -25,11 +54,10 @@ print(mystr)
 # Result are put in a JSON stucture
 # Then the MYSQL Data is updated
 
-# Get csv format result of URL
+
 
 # Connect to mysql
 # import MySQLdb
-import pymysql.cursors
 
 # Connect to the database
 connection = pymysql.connect(host='192.168.17.10',

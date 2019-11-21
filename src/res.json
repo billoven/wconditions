@@ -1,0 +1,47 @@
+{
+  'observations':
+  [
+    {
+      'stationID':
+      'ILEDEFRA131',
+      'tz': 'Europe/Paris',
+      'obsTimeUtc': '2019-11-01T22:59:47Z',
+      'obsTimeLocal': '2019-11-01 23:59:47',
+      'epoch': 1572649187,
+      'lat': 48.7001915,
+      'lon': 2.23301554,
+      'solarRadiationHigh': 145.8,
+      'uvHigh': 15.0,
+      'winddirAvg': 215,
+      'humidityHigh': 99.0,
+      'humidityLow': 92.0,
+      'humidityAvg': 97.4,
+      'qcStatus': 0,
+      'metric': {
+        'tempHigh': 18.1,
+        'tempLow': 12.5,
+        'tempAvg': 15.3,
+        'windspeedHigh': 23.0,
+        'windspeedLow': 0.0,
+        'windspeedAvg': 1.2,
+        'windgustHigh': 31.7,
+        'windgustLow': 0.0,
+        'windgustAvg': 3.0,
+        'dewptHigh': 18.0,
+        'dewptLow': 12.1,
+        'dewptAvg': 14.9,
+        'windchillHigh': 18.1,
+        'windchillLow': 12.5,
+        'windchillAvg': 15.3,
+        'heatindexHigh': 18.1,
+        'heatindexLow': 12.5,
+        'heatindexAvg': 15.3,
+        'pressureMax': 1014.9,
+        'pressureMin': 995.6,
+        'pressureTrend': -0.8,
+        'precipRate': 7.11,
+        'precipTotal': 13.21
+        }
+      }
+  ]
+}
