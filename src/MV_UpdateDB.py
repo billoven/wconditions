@@ -1,20 +1,42 @@
 #!/usr/bin/env python
 from __future__ import print_function
 import json
+
 # https://pypi.org/project/easydict/ Access easily to Dictionnary values
 from easydict import EasyDict as edict
+
 import urllib.request
 import pymysql.cursors
+from datetime import date
 
+# Transform <date> <time> or <time> <date> in format DD/MM/YYYY
+# ------------------------------------------------------------------------------
+# initializing the titles and rows list
+# ------------------------------------------------------------------------------
+def DateYYYYMMDD(Date):
+
+    if Date == '' :
+        Date = Date.today()
+
+    NewDate=Date.strftime("%Y/%m/%d")
+
+    print("Today's date:", NewDate)
+
+    return(NewDate)
 
 
 # Get current date , put it at format YYYYMMDD
+today = date.today()
+DateYYYYMMDD = today.strftime("%Y%m%d")
 
 # Build URL to access to current daily observations of ILEDEFRA131
+key = '43de0fca7f6f49a79e0fca7f6f29a708'
+BASE_URL = 'https://api.weather.com/v2/pws/history/daily?stationId=ILEDEFRA131&format=json&units=m'
+FEATURE_URL = BASE_URL + f"&date={DateYYYYMMDD}&apiKey={key}&numericPrecision=decimal"
 
-
+print (FEATURE_URL)
 # Execute the HTTPS request to get JSON Result
-fp = urllib.request.urlopen("https://api.weather.com/v2/pws/history/daily?stationId=ILEDEFRA131&format=json&units=m&date=20191101&apiKey=43de0fca7f6f49a79e0fca7f6f29a708&numericPrecision=decimal")
+fp = urllib.request.urlopen(FEATURE_URL)
 mybytes = fp.read()
 
 # -*- decoding: utf-8 -*-
@@ -25,14 +47,6 @@ fp.close()
 mystr_dict = edict(json.loads(mystr))
 
 
-#>>> d = edict(loads(j))
-#>>> d.Buffer
-
-#>>> d.List1[0].coordinates[1]
-
-# Output: {'name': 'Bob', 'languages': ['English', 'Fench']}
-#print( mystr_dict)
-# Output: ['English', 'French']
 print(mystr_dict)
 print("-----------------")
 print(mystr_dict['observations'][0].metric.tempAvg)
@@ -44,7 +58,10 @@ print(mystr_dict['observations'][0].metric.tempAvg)
 
 
 
+
+
 # Get date of the day
+
 
 # Example of Wunderground URL : 'https://www.wunderground.com/weatherstation/WXDailyHistory.asp?ID=ILEDEFRA131&day=2&month=12&year=2017&dayend=1&monthend=1&yearend=2018&graphspan=custom&format=1
 # Compose the Wunderground URL https://api.weather.com/v2/pws/observations/current?stationId=ILEDEFRA131&format=json&numericPrecision=decimal&units=m&apiKey=43de0fca7f6f49a79e0fca7f6f29a708
@@ -55,7 +72,7 @@ print(mystr_dict['observations'][0].metric.tempAvg)
 # Then the MYSQL Data is updated
 
 
-
+exit(0)
 # Connect to mysql
 # import MySQLdb
 
