@@ -7,7 +7,7 @@ from easydict import EasyDict as edict
 
 import urllib.request
 import pymysql.cursors
-from datetime import date
+from datetime import date, timedelta
 
 # Transform <date> <time> or <time> <date> in format DD/MM/YYYY
 # ------------------------------------------------------------------------------
@@ -16,18 +16,20 @@ from datetime import date
 def DateYYYYMMDD(Date):
 
     if Date == '' :
-        Date = Date.today()
+        Date = Date.today()-datetime.timedelta(1)
 
     NewDate=Date.strftime("%Y/%m/%d")
 
-    print("Today's date:", NewDate)
+    print("Yesterday's date:", NewDate)
+
 
     return(NewDate)
 
 
 # Get current date , put it at format YYYYMMDD
-today = date.today()
-DateYYYYMMDD = today.strftime("%Y%m%d")
+yesterday = date.today()-timedelta(1)
+DateYYYYMMDD = yesterday.strftime("%Y%m%d")
+print("Yesterday's date:", DateYYYYMMDD)
 
 # Build URL to access to current daily observations of ILEDEFRA131
 key = '43de0fca7f6f49a79e0fca7f6f29a708'
@@ -49,7 +51,10 @@ mystr_dict = edict(json.loads(mystr))
 
 print(mystr_dict)
 print("-----------------")
-print(mystr_dict['observations'][0].metric.tempAvg)
+print("Température Moyenne:",mystr_dict['observations'][0].metric.tempAvg,"°")
+print("Température Maxi   :",mystr_dict['observations'][0].metric.tempHigh,"°")
+print("Température Mini   :",mystr_dict['observations'][0].metric.tempLow,"°")
+
 
 
 #print(mystr)
@@ -75,14 +80,31 @@ print(mystr_dict['observations'][0].metric.tempAvg)
 exit(0)
 # Connect to mysql
 # import MySQLdb
+# Date 	                date 		 Oui 	NULL
+# TemperatureHighC 	    decimal(3,1) Oui 	NULL
+# TemperatureAvgC   	decimal(3,1) Oui 	NULL
+# TemperatureLowC 	    decimal(3,1) Oui 	NULL
+# DewpointHighC 	    decimal(4,1) Oui 	NULL
+# DewpointAvgC 	        decimal(4,1) Oui 	NULL
+# DewpointLowC 	        decimal(4,1) Oui 	NULL
+# HumidityHigh 	        int(3) 		 Oui 	NULL
+# HumidityAvg 	        int(2) 		 Oui 	NULL
+# HumidityLow 	        int(2) 		 Oui 	NULL
+# PressureMaxhPa 	    int(4) 		 Oui 	NULL
+# PressureMinhPa 	    int(4) 		 Oui 	NULL
+# WindSpeedMaxKMH 	    int(3) 		 Oui 	NULL
+# WindSpeedAvgKMH 	    int(2) 		 Oui 	NULL
+# GustSpeedMaxKMH 	    int(3) 		 Oui 	NULL
+# PrecipitationSumCM 	decimal(3,2) Oui 	NULL
 
 # Connect to the database
 connection = pymysql.connect(host='192.168.17.10',
                              user='admin',
-                             password='Z--Z--1-',
+                             password='Z0-Z0-0-',
                              db='meteovillebon',
                              charset='utf8mb4',
-                             cursorclass=pymysql.cursors.DictCursor)
+                             cursorclass=pymysql.cursors.DictCursor,
+                             autocommit=True)
 
 
 # Create a Cursor object to execute queries.
@@ -95,11 +117,58 @@ cur.execute("SELECT * FROM RelevesMeteo")
 for row in cur:
     print (row, " ")
 
+try:
+
+    # Cursor object creation
+
+    cursorObject    = databaseConnection.cursor()
+
+
+
+    updateStatement = "UPDATE Employee set DepartmentCode = 102 where id=121"
+
+
+
+    # Execute the SQL UPDATE statement
+
+    cursorObject.execute(updateStatement)
+
+
+
+    # Select the updated row and print the updated column value
+
+    sqlSelectUpdated   = "select * from Employee where id=121"
+
+
+
+    # Execute the SQL SELECT query
+
+    cursorObject.execute(sqlSelectUpdated)
+
+
+
+    # Fetch the updated row
+
+    updatedRow = cursorObject.fetchall()
+
+
+
+    # Print the updated row...
+
+    for column in updatedRow:
+
+        print(column)
+
+
+
+except Exception as e:
+
+    print("Exeception occured:{}".format(e))
+
+
+
+finally:
+
+    databaseConnection.close()
 
 cur.close()
-
-def print_two(*args):
-    arg1, arg2 = args
-    print(f"arg1= {arg1}, arg2= {arg2}")
-
-print_two("pierre","maya")
