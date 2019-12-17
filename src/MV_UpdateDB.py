@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 from __future__ import print_function
 import json
 
@@ -30,6 +30,7 @@ def DateYYYYMMDD(Date):
 yesterday = date.today()-timedelta(1)
 DateYYYYMMDD = yesterday.strftime("%Y%m%d")
 print("Yesterday's date:", DateYYYYMMDD)
+DateDash = yesterday.strftime("%Y-%m-%d")
 
 # Build URL to access to current daily observations of ILEDEFRA131
 key = '43de0fca7f6f49a79e0fca7f6f29a708'
@@ -51,6 +52,7 @@ mystr_dict = edict(json.loads(mystr))
 
 print(mystr_dict)
 print("-----------------")
+print("Dates              :",DateDash)
 print("Température Moyenne:",mystr_dict['observations'][0].metric.tempAvg,"°")
 print("Température Maxi   :",mystr_dict['observations'][0].metric.tempHigh,"°")
 print("Température Mini   :",mystr_dict['observations'][0].metric.tempLow,"°")
@@ -88,7 +90,6 @@ print("Précipitation      :",mystr_dict['observations'][0].metric.precipTotal,"
 # Then the MYSQL Data is updated
 
 
-exit(0)
 # Connect to mysql
 # import MySQLdb
 # Date 	                date 		 Oui 	NULL
@@ -111,75 +112,42 @@ exit(0)
 # Connect to the database
 connection = pymysql.connect(host='192.168.17.10',
                              user='admin',
-                             password='Z0-Z0-0-',
+                             password='Z0uZ0u0!',
                              db='meteovillebon',
                              charset='utf8mb4',
                              cursorclass=pymysql.cursors.DictCursor,
                              autocommit=True)
 
-
-# Create a Cursor object to execute queries.
-cur = connection.cursor()
-
-# Select data from table using SQL query.
-cur.execute("SELECT * FROM RelevesMeteo")
-
-# print the first and second columns
-for row in cur:
-    print (row, " ")
-
 try:
 
-    # Cursor object creation
+    with connection.cursor() as cursor:
 
-    cursorObject    = databaseConnection.cursor()
+        # Create a new record
+        sql = "INSERT INTO `RelevesMeteo` ( `Date`,`TemperatureHighC`,`TemperatureAvgC`,`TemperatureLowC`,`DewpointHighC`,`DewpointAvgC`,`DewpointLowC`,`HumidityHigh`,`HumidityAvg`,`HumidityLow`,`PressureMaxhPa`,`PressureMinhPa`,`WindSpeedMaxKMH`,`WindSpeedAvgKMH`,`GustSpeedMaxKMH`,`PrecipitationSumCM`) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
+        #sql = "INSERT INTO `RelevesMeteo` ( `Date`, `TemperatureHighC`, `TemperatureAvgC`, `TemperatureLowC`, `DewpointHighC`, `DewpointAvgC`, `DewpointLowC`, `HumidityHigh`, `HumidityAvg`, `HumidityLow`, `PressureMaxhPa`, `PressureMinhPa`, `WindSpeedMaxKMH`, `WindSpeedAvgKMH`, `GustSpeedMaxKMH`, `PrecipitationSumCM`) VALUES ('2019-12-14', 11.7, 10.1, 8.4, 11.4, 5.9, 2.8, 99.0, 75.7, 60.0, 1002, 985, 38.1, 2.7, 71.9, 3.3)"
+        #sql = "INSERT INTO `RelevesMeteo`(`Date`, `TemperatureHighC`, `TemperatureAvgC`, `TemperatureLowC`, `DewpointHighC`, `DewpointAvgC`, `DewpointLowC`, `HumidityHigh`, `HumidityAvg`, `HumidityLow`, `PressureMaxhPa`, `PressureMinhPa`, `WindSpeedMaxKMH`, `WindSpeedAvgKMH`, `GustSpeedMaxKMH`, `PrecipitationSumCM`) VALUES ([value-1],[value-2],[value-3],[value-4],[value-5],[value-6],[value-7],[value-8],[value-9],[value-10],[value-11],[value-12],[value-13],[value-14],[value-15],[value-16])
+        #      INSERT INTO `RelevesMeteo`(`Date`, `TemperatureHighC`, `TemperatureAvgC`, `TemperatureLowC`, `DewpointHighC`, `DewpointAvgC`, `DewpointLowC`, `HumidityHigh`, `HumidityAvg`, `HumidityLow`, `PressureMaxhPa`, `PressureMinhPa`, `WindSpeedMaxKMH`, `WindSpeedAvgKMH`, `GustSpeedMaxKMH`, `PrecipitationSumCM`) VALUES ('2019-12-14', 11.7, 10.1, 8.4, 11.4, 5.9, 2.8, 99.0, 75.7, 60.0, 1002, 985, 38.1, 2.7, 71.9, 3.3)
 
+        #print(f"sql=[{sql}]",DateDash,mystr_dict['observations'][0].metric.tempHigh,mystr_dict['observations'][0].metric.tempAvg,mystr_dict['observations'][0].metric.tempLow,mystr_dict['observations'][0].metric.dewptHigh,mystr_dict['observations'][0].metric.dewptAvg,mystr_dict['observations'][0].metric.dewptLow,mystr_dict['observations'][0].humidityHigh,mystr_dict['observations'][0].humidityAvg,mystr_dict['observations'][0].humidityLow,mystr_dict['observations'][0].metric.pressureMax,mystr_dict['observations'][0].metric.pressureMin,mystr_dict['observations'][0].metric.windspeedHigh,mystr_dict['observations'][0].metric.windspeedAvg,mystr_dict['observations'][0].metric.windgustHigh,mystr_dict['observations'][0].metric.precipTotal)
+        cursor.execute(sql,(DateDash,mystr_dict['observations'][0].metric.tempHigh,mystr_dict['observations'][0].metric.tempAvg,mystr_dict['observations'][0].metric.tempLow,mystr_dict['observations'][0].metric.dewptHigh,mystr_dict['observations'][0].metric.dewptAvg,mystr_dict['observations'][0].metric.dewptLow,mystr_dict['observations'][0].humidityHigh,mystr_dict['observations'][0].humidityAvg,mystr_dict['observations'][0].humidityLow,mystr_dict['observations'][0].metric.pressureMax,mystr_dict['observations'][0].metric.pressureMin,mystr_dict['observations'][0].metric.windspeedHigh,mystr_dict['observations'][0].metric.windspeedAvg,mystr_dict['observations'][0].metric.windgustHigh,mystr_dict['observations'][0].metric.precipTotal))
+        #cursor.execute(sql)
 
+    # connection is not autocommit by default. So you must commit to save
+    # your changes.
+    connection.commit()
 
-    updateStatement = "UPDATE Employee set DepartmentCode = 102 where id=121"
+    with connection.cursor() as cursor:
 
+        # Read a single record
+        sql = "SELECT * FROM `RelevesMeteo` WHERE `Date`=%s"
+        cursor.execute(sql, (DateDash))
+        result = cursor.fetchone()
+        print(result)
 
+#except Exception as e:
 
-    # Execute the SQL UPDATE statement
-
-    cursorObject.execute(updateStatement)
-
-
-
-    # Select the updated row and print the updated column value
-
-    sqlSelectUpdated   = "select * from Employee where id=121"
-
-
-
-    # Execute the SQL SELECT query
-
-    cursorObject.execute(sqlSelectUpdated)
-
-
-
-    # Fetch the updated row
-
-    updatedRow = cursorObject.fetchall()
-
-
-
-    # Print the updated row...
-
-    for column in updatedRow:
-
-        print(column)
-
-
-
-except Exception as e:
-
-    print("Exeception occured:{}".format(e))
-
-
+#    print("Exeception occured:{}".format(e))
 
 finally:
 
-    databaseConnection.close()
-
-cur.close()
+    connection.close()
