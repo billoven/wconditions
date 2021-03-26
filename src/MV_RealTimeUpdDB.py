@@ -213,46 +213,25 @@ def getArgs(argv=None):
     epilog='''
     --------------------------------------------------------------''')
 
-    parser.add_argument('-d', '--display',
+    parser.add_argument('-d', '--display', action = "store_true",
                         help='Only Display Current Conditions')
     parser.add_argument('-p', '--password',
                         dest='dbpassword',
                         default=None,
                         required=True,
                         help='Mysql admin user password')
-    parser.add_argument('-f', '--foo', help='old foo help')
+    
 
 
     parser.add_argument('--version', action='version', version='[%(prog)20s] 2.0')
    
     return parser.parse_args(argv)
 
-
-
-# ------------------------------------------------------------------------------
-# initializing the titles and rows list
-# ------------------------------------------------------------------------------
-fields = []
-rows = []
-
 if __name__ == "__main__":
 
     argvals = None             # init argv in case not testing
 
-    # example of passing test params to parser
-    # argvals = '6 2 -v'.split()
-
     args = getArgs(argvals)
-
-    #answer = args.x**args.y
-
-    # if args.quiet:
-    #    print (answer)
-    # elif args.verbose:
-    #    print ("{} to the power {} equals {}".format(args.x, args.y, answer))
-    # else:
-    #    print ("{}^{} == {}".format(args.x, args.y, answer))
-    #sys.exit(0)
 
     print ('display is ',args.display)
     print ('dbpassword is ',args.dbpassword)
@@ -261,7 +240,7 @@ if __name__ == "__main__":
     # ----------------------------------------------------------------------
     wc=WeatherConditions('ILEDEFRA131', '192.168.17.10', 'VillebonWeatherReport','admin',args.dbpassword)
     wcIDFRA=wc.GetWeatherConditions()
-    if args.display == 'yes':
+    if args.display:
         wc.DisplayWeatherConditions(wcIDFRA)
     else:
         wc.InsertDBWeatherCondtions('admin',args.dbpassword,wcIDFRA)
