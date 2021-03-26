@@ -15,7 +15,39 @@ import argparse
 # Class WeatherConditions
 class WeatherConditions:
     """This class is describing the WeatherConditions in WeatherUnderground
-        ILDEFRA131 wheather station located in Villebon-sur-YVette """
+        ILDEFRA131 wheather station located in Villebon-sur-YVette 
+        https://docs.google.com/document/d/1KGb8bTVYRsNgljnNH67AMhckY8AQT2FVwZ9urj8SWBs/edit#heading=h.n5xouxl8sojv  
+        {"observations":
+            [{  "stationID":"ILEDEFRA131",
+                "obsTimeUtc":"2021-03-20T18:05:32Z",
+                "obsTimeLocal":"2021-03-20 19:05:32",
+                "neighborhood":"Villebon sur Yvette - Moulin de la Planche",
+                "softwareType":"WS-1002 V2.4.6",
+                "country":"FR",
+                "solarRadiation":0.0,
+                "lon":2.233016,
+                "realtimeFrequency":null,
+                "epoch":1616263532,
+                "lat":48.700191,
+                "uv":0.0,
+                "winddir":186,
+                "humidity":56.0,
+                "qcStatus":1,
+                "metric":{
+                    "temp":7.9,
+                    "heatIndex":7.9,
+                    "dewpt":-0.3,
+                    "windChill":7.9,
+                    "windSpeed":0.0,
+                    "windGust":0.0,
+                    "pressure":1027.09,
+                    "precipRate":0.00,
+                    "precipTotal":0.00,
+                    "elev":54.9
+                }
+            }]
+        }
+        """
  
     def __init__(self, stationID, mysqlHost, mysqlDBname,user,dbpassword):
         self.stationID = stationID
@@ -29,43 +61,12 @@ class WeatherConditions:
         # Build URL to access to current daily observations of ILEDEFRA131
         mystr_dict = {}
         mystr = ""
-    # https://docs.google.com/document/d/1KGb8bTVYRsNgljnNH67AMhckY8AQT2FVwZ9urj8SWBs/edit#heading=h.n5xouxl8sojv  
-    # {"observations":
-    #   [{  "stationID":"ILEDEFRA131",
-    #       "obsTimeUtc":"2021-03-20T18:05:32Z",
-    #       "obsTimeLocal":"2021-03-20 19:05:32",
-    #       "neighborhood":"Villebon sur Yvette - Moulin de la Planche",
-    #       "softwareType":"WS-1002 V2.4.6",
-    #       "country":"FR",
-    #       "solarRadiation":0.0,
-    #       "lon":2.233016,
-    #       "realtimeFrequency":null,
-    #       "epoch":1616263532,
-    #       "lat":48.700191,
-    #       "uv":0.0,
-    #       "winddir":186,
-    #       "humidity":56.0,
-    #       "qcStatus":1,
-    #       "metric":{
-    #           "temp":7.9,
-    #           "heatIndex":7.9,
-    #           "dewpt":-0.3,
-    #           "windChill":7.9,
-    #           "windSpeed":0.0,
-    #           "windGust":0.0,
-    #           "pressure":1027.09,
-    #           "precipRate":0.00,
-    #           "precipTotal":0.00,
-    #           "elev":54.9
-    #           }
-    #       }]
-    # }
 
-    # Expires: Sat, 14 Aug 2021 17:48:33 GMT.
-    # https://www.wunderground.com/member/api-keys
-    # key = 'e1641bfe316344f8a41bfe3163e4f8ae'
-    # RealTimeURL : https://api.weather.com/v2/pws/observations/current?stationId=ILEDEFRA131
-    # &format=json&units=m&numericPrecision=decimal&apiKey=93f1717ea6714de3b1717ea671ade338
+        # Wunderground API Key Expires: Sat, 14 Aug 2021 17:48:33 GMT.
+        # https://www.wunderground.com/member/api-keys
+        # key = '93f1717ea6714de3b1717ea671ade338'
+        # RealTimeURL : https://api.weather.com/v2/pws/observations/current?stationId=ILEDEFRA131
+        # &format=json&units=m&numericPrecision=decimal&apiKey=93f1717ea6714de3b1717ea671ade338
         key = '93f1717ea6714de3b1717ea671ade338'
         BASE_URL = 'https://api.weather.com/v2/pws/observations/current'
         FEATURE_URL = BASE_URL + f"?stationId={self.stationID}&format=json&units=m&numericPrecision=decimal&apiKey={key}"
