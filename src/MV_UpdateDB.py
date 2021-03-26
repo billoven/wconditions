@@ -60,10 +60,11 @@ def getArgs(argv=None):
     return parser.parse_args(argv)
 
 def UpdateDB(DateDash,WeatherRecord,dbpassword):
+    # API Key available until Aug. 14, e1641bfe316344f8a41bfe3163e4f8ae
     # Example of Wunderground URL : 'https://www.wunderground.com/weatherstation/WXDailyHistory.asp?ID=ILEDEFRA131&day=2&month=12&year=2017&dayend=1&monthend=1&yearend=2018&graphspan=custom&format=1
-    # Compose the Wunderground URL https://api.weather.com/v2/pws/observations/current?stationId=ILEDEFRA131&format=json&numericPrecision=decimal&units=m&apiKey=43de0fca7f6f49a79e0fca7f6f29a708
+    # Compose the Wunderground URL https://api.weather.com/v2/pws/observations/current?stationId=ILEDEFRA131&format=json&numericPrecision=decimal&units=m&apiKey=e1641bfe316344f8a41bfe3163e4f8ae
     # API WU : https://docs.google.com/document/d/1eKCnKXI9xnoMGRRzOL1xPCBihNV2rOet08qpE_gArAY/edit
-    # https://api.weather.com/v2/pws/history/daily?stationId=ILEDEFRA131&format=json&units=m&date=20191101&apiKey=43de0fca7f6f49a79e0fca7f6f29a708&numericPrecision=decimal
+    # https://api.weather.com/v2/pws/history/daily?stationId=ILEDEFRA131&format=json&units=m&date=20191101&apiKey=e1641bfe316344f8a41bfe3163e4f8ae&numericPrecision=decimal
     # Once a day a query to get the daily forecast summary via a cron
     # Result are put in a JSON stucture
     # Then the MYSQL Data is updated
@@ -97,27 +98,117 @@ def UpdateDB(DateDash,WeatherRecord,dbpassword):
 
     try:
 
-        #with connection.cursor() as cursor:
-
-            # Create a new record
-            #sql = "INSERT INTO `RelevesMeteo` ( `Date`,`TemperatureHighC`,`TemperatureAvgC`,`TemperatureLowC`,`DewpointHighC`,`DewpointAvgC`,`DewpointLowC`,`HumidityHigh`,`HumidityAvg`,`HumidityLow`,`PressureMaxhPa`,`PressureMinhPa`,`WindSpeedMaxKMH`,`WindSpeedAvgKMH`,`GustSpeedMaxKMH`,`PrecipitationSumCM`) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
-
-            #cursor.execute(sql,(DateDash,WeatherRecord['observations'][0].metric.tempHigh,WeatherRecord['observations'][0].metric.tempAvg,WeatherRecord['observations'][0].metric.tempLow,WeatherRecord['observations'][0].metric.dewptHigh,WeatherRecord['observations'][0].metric.dewptAvg,WeatherRecord['observations'][0].metric.dewptLow,WeatherRecord['observations'][0].humidityHigh,WeatherRecord['observations'][0].humidityAvg,WeatherRecord['observations'][0].humidityLow,WeatherRecord['observations'][0].metric.pressureMax,WeatherRecord['observations'][0].metric.pressureMin,WeatherRecord['observations'][0].metric.windspeedHigh,WeatherRecord['observations'][0].metric.windspeedAvg,WeatherRecord['observations'][0].metric.windgustHigh,WeatherRecord['observations'][0].metric.precipTotal))
-
-            # connection is not autocommit by default. So you must commit to save
-            # your changes.
-            #connection.commit()
-
         with connection.cursor() as cursor:
 
-            # Read a single record
+        # Read a single record
             sql = "SELECT * FROM `RelevesMeteo` WHERE `Date`=%s"
             cursor.execute(sql, (DateDash))
             result = cursor.fetchone()
-            print(result)
 
-    #except Exception as e:
-    #    print("Exeception occured:{}".format(e))
+            if result is not None:
+                # Update existing record
+                sql = """UPDATE RelevesMeteo SET 
+                Date = %s,
+                TemperatureHighC = %s,
+                TemperatureAvgC = %s,
+                TemperatureLowC = %s,
+                DewpointHighC = %s,
+                DewpointAvgC = %s,
+                DewpointLowC = %s,
+                HumidityHigh = %s,
+                HumidityAvg = %s,
+                HumidityLow = %s,
+                PressureMaxhPa = %s,
+                PressureMinhPa = %s,
+                WindSpeedMaxKMH = %s,
+                WindSpeedAvgKMH = %s,
+                GustSpeedMaxKMH = %s,
+                PrecipitationSumCM = %s
+                WHERE Date = %s"""
+
+                cursor.execute(sql,
+                (DateDash,
+                WeatherRecord['observations'][0].metric.tempHigh,
+                WeatherRecord['observations'][0].metric.tempAvg,
+                WeatherRecord['observations'][0].metric.tempLow,
+                WeatherRecord['observations'][0].metric.dewptHigh,
+                WeatherRecord['observations'][0].metric.dewptAvg,
+                WeatherRecord['observations'][0].metric.dewptLow,
+                WeatherRecord['observations'][0].humidityHigh,
+                WeatherRecord['observations'][0].humidityAvg,
+                WeatherRecord['observations'][0].humidityLow,
+                WeatherRecord['observations'][0].metric.pressureMax,
+                WeatherRecord['observations'][0].metric.pressureMin,
+                WeatherRecord['observations'][0].metric.windspeedHigh,
+                WeatherRecord['observations'][0].metric.windspeedAvg,
+                WeatherRecord['observations'][0].metric.windgustHigh,
+                WeatherRecord['observations'][0].metric.precipTotal,
+                DateDash ))
+
+            else:
+                # Insert a new record
+                sql = """INSERT INTO RelevesMeteo (Date,
+                    TemperatureHighC, 
+                    TemperatureAvgC,
+                    TemperatureLowC,
+                    DewpointHighC,
+                    DewpointAvgC,
+                    DewpointLowC,
+                    HumidityHigh,
+                    HumidityAvg,
+                    HumidityLow,
+                    PressureMaxhPa,
+                    PressureMinhPa,
+                    WindSpeedMaxKMH,
+                    WindSpeedAvgKMH,
+                    GustSpeedMaxKMH,
+                    PrecipitationSumCM) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"""
+                print (sql,(DateDash,
+                    WeatherRecord['observations'][0].metric.tempHigh,
+                    WeatherRecord['observations'][0].metric.tempAvg,
+                    WeatherRecord['observations'][0].metric.tempLow,
+                    WeatherRecord['observations'][0].metric.dewptHigh,
+                    WeatherRecord['observations'][0].metric.dewptAvg,
+                    WeatherRecord['observations'][0].metric.dewptLow,
+                    WeatherRecord['observations'][0].humidityHigh,
+                    WeatherRecord['observations'][0].humidityAvg,
+                    WeatherRecord['observations'][0].humidityLow,
+                    WeatherRecord['observations'][0].metric.pressureMax,
+                    WeatherRecord['observations'][0].metric.pressureMin,
+                    WeatherRecord['observations'][0].metric.windspeedHigh,
+                    WeatherRecord['observations'][0].metric.windspeedAvg,
+                    WeatherRecord['observations'][0].metric.windgustHigh,
+                    WeatherRecord['observations'][0].metric.precipTotal))
+                cursor.execute(sql,
+                    (DateDash,
+                    WeatherRecord['observations'][0].metric.tempHigh,
+                    WeatherRecord['observations'][0].metric.tempAvg,
+                    WeatherRecord['observations'][0].metric.tempLow,
+                    WeatherRecord['observations'][0].metric.dewptHigh,
+                    WeatherRecord['observations'][0].metric.dewptAvg,
+                    WeatherRecord['observations'][0].metric.dewptLow,
+                    WeatherRecord['observations'][0].humidityHigh,
+                    WeatherRecord['observations'][0].humidityAvg,
+                    WeatherRecord['observations'][0].humidityLow,
+                    WeatherRecord['observations'][0].metric.pressureMax,
+                    WeatherRecord['observations'][0].metric.pressureMin,
+                    WeatherRecord['observations'][0].metric.windspeedHigh,
+                    WeatherRecord['observations'][0].metric.windspeedAvg,
+                    WeatherRecord['observations'][0].metric.windgustHigh,
+                    WeatherRecord['observations'][0].metric.precipTotal))
+
+                # sql = "UPDATE customers SET address = 'Canyon 123' WHERE address = 'Valley 345'"
+                # prepare query and data
+                # query = """ UPDATE books
+                # SET title = %s
+                # WHERE id = %s """
+
+            
+        # connection is not autocommit by default. So you must commit to save
+        # your changes.
+            connection.commit()
+            print(cursor.rowcount, "record(s) affected") 
+
 
     finally:
 
@@ -159,7 +250,10 @@ def GetWeatherData(DateYYYYMMDD):
     mystr_dict = {}
     mystr = ""
 
-    key = '43de0fca7f6f49a79e0fca7f6f29a708'
+    # Expires: Sat, 14 Aug 2021 17:48:33 GMT.
+    # https://www.wunderground.com/member/api-keys
+    # key = 'e1641bfe316344f8a41bfe3163e4f8ae'
+    key = '93f1717ea6714de3b1717ea671ade338'
     BASE_URL = 'https://api.weather.com/v2/pws/history/daily?stationId=ILEDEFRA131&format=json&units=m'
     FEATURE_URL = BASE_URL + f"&date={DateYYYYMMDD}&apiKey={key}&numericPrecision=decimal"
 
@@ -221,72 +315,54 @@ if __name__ == "__main__":
     #    print ("{} to the power {} equals {}".format(args.x, args.y, answer))
     # else:
     #    print ("{}^{} == {}".format(args.x, args.y, answer))
+    #sys.exit(0)
+
+    print ('display is ',args.display)
+    print ('display is ',dbpassword)
 
 
-startdate = args.startdate
-enddate = args.enddate
-today = datetime.today()
-dbpassword=args.dbpassword
+    # Get current date , put it at format YYYYMMDD
+    yesterday = date.today()-timedelta(1)
+    DateYYYYMMDD = yesterday.strftime("%Y%m%d")
+    print("Yesterday's date:", DateYYYYMMDD)
+    DateDash = yesterday.strftime("%Y-%m-%d")
 
-print ('today is ', today)
+    #start_date = date(2021, 1, 1)
+    #end_date = date(2021, 1, 1)
+    start_date = startdate
+    end_date = enddate
+    delta = timedelta(days=1)
 
-if startdate > enddate:
-    print ("The end date [", enddate, "] must be greater or equal to the start date [", startdate, "] !", sep="")
-    sys.exit(1)
-if enddate >= today:
-    print ("The end date [", enddate, "] must not be greater than yesterday !")
-    sys.exit(1)
+    while start_date <= end_date:
 
-print ('Args=',args)
-print ('startdate is ', startdate)
-print ('enddate is ', enddate)
-print ('update is ',args.update)
-print ('insert is ',args.update)
-print ('display is ',args.display)
-print ('display is ',dbpassword)
+        WeatherDict = {}
 
+        DateDash=start_date.strftime("%Y-%m-%d")
+        DateYYYYMMDD=start_date.strftime("%Y%m%d")
 
+        Weather_Dict=GetWeatherData(DateYYYYMMDD)
+        if Weather_Dict:
+            print("-----------------------------")
+            print("Date               :",DateDash)
+            print("Température Moyenne: ",Weather_Dict['observations'][0].metric.tempAvg,"°",sep="")
+            print("Température Maxi   : ",Weather_Dict['observations'][0].metric.tempHigh,"°",sep="")
+            print("Température Mini   : ",Weather_Dict['observations'][0].metric.tempLow,"°",sep="")
+            print("DewPoint High      : ",Weather_Dict['observations'][0].metric.dewptHigh,"°",sep="")
+            print("Dewpoint Moy       : ",Weather_Dict['observations'][0].metric.dewptLow,"°",sep="")
+            print("Dewpoint Mini      : ",Weather_Dict['observations'][0].metric.dewptAvg,"°",sep="")
+            print("Humidité Maxi      : ",Weather_Dict['observations'][0].humidityHigh,"%",sep="")
+            print("Humidité Moy.      : ",Weather_Dict['observations'][0].humidityAvg,"%",sep="")
+            print("Humidité Mini      : ",Weather_Dict['observations'][0].humidityLow,"%",sep="")
+            print("Pression Max       : ",Weather_Dict['observations'][0].metric.pressureMax,"Hpa",sep="")
+            print("Pression Mini      : ",Weather_Dict['observations'][0].metric.pressureMin,"Hpa",sep="")
+            print("Vent Max           : ",Weather_Dict['observations'][0].metric.windspeedHigh,"Km/h",sep="")
+            print("Vent Moyen         : ",Weather_Dict['observations'][0].metric.windspeedAvg,"Km/h",sep="")
+            print("Rafale VentMax     : ",Weather_Dict['observations'][0].metric.windgustHigh,"Km/h",sep="")
+            print("Précipitation      : ",Weather_Dict['observations'][0].metric.precipTotal,"mm",sep="")
 
-sys.exit(0)
+        UpdateDB(DateDash,Weather_Dict,dbpassword)
+        print ('enddate is ', enddate)
+        print ('update is ',args.update)
+        print ('insert is ',args.update)
 
-
-# Get current date , put it at format YYYYMMDD
-yesterday = date.today()-timedelta(1)
-DateYYYYMMDD = yesterday.strftime("%Y%m%d")
-print("Yesterday's date:", DateYYYYMMDD)
-DateDash = yesterday.strftime("%Y-%m-%d")
-
-start_date = date(2015, 7, 1)
-end_date = date(2019, 12, 19)
-delta = timedelta(days=1)
-
-while start_date <= end_date:
-
-    WeatherDict = {}
-
-    DateDash=start_date.strftime("%Y-%m-%d")
-    DateYYYYMMDD=start_date.strftime("%Y%m%d")
-
-    Weather_Dict=GetWeatherData(DateYYYYMMDD)
-    if Weather_Dict:
-        print("-----------------------------")
-        print("Date               :",DateDash)
-        print("Température Moyenne: ",Weather_Dict['observations'][0].metric.tempAvg,"°",sep="")
-        print("Température Maxi   : ",Weather_Dict['observations'][0].metric.tempHigh,"°",sep="")
-        print("Température Mini   : ",Weather_Dict['observations'][0].metric.tempLow,"°",sep="")
-        print("DewPoint High      : ",Weather_Dict['observations'][0].metric.dewptHigh,"°",sep="")
-        print("Dewpoint Moy       : ",Weather_Dict['observations'][0].metric.dewptLow,"°",sep="")
-        print("Dewpoint Mini      : ",Weather_Dict['observations'][0].metric.dewptAvg,"°",sep="")
-        print("Humidité Maxi      : ",Weather_Dict['observations'][0].humidityHigh,"%",sep="")
-        print("Humidité Moy.      : ",Weather_Dict['observations'][0].humidityAvg,"%",sep="")
-        print("Humidité Mini      : ",Weather_Dict['observations'][0].humidityLow,"%",sep="")
-        print("Pression Max       : ",Weather_Dict['observations'][0].metric.pressureMax,"Hpa",sep="")
-        print("Pression Mini      : ",Weather_Dict['observations'][0].metric.pressureMin,"Hpa",sep="")
-        print("Vent Max           : ",Weather_Dict['observations'][0].metric.windspeedHigh,"Km/h",sep="")
-        print("Vent Moyen         : ",Weather_Dict['observations'][0].metric.windspeedAvg,"Km/h",sep="")
-        print("Rafale VentMax     : ",Weather_Dict['observations'][0].metric.windgustHigh,"Km/h",sep="")
-        print("Précipitation      : ",Weather_Dict['observations'][0].metric.precipTotal,"mm",sep="")
-
-    #    UpdateDB(DateDash,Weather_Dict,dbpassword)
-
-    start_date += delta
+        start_date += delta
