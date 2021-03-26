@@ -14,7 +14,7 @@ import argparse
 
 # Class WeatherConditions
 class WeatherConditions:
-    """This class is descibing the WeatherConditions in WeatherUnderground
+    """This class is describing the WeatherConditions in WeatherUnderground
         ILDEFRA131 wheather station located in Villebon-sur-YVette """
  
     def __init__(self, stationID, mysqlHost, mysqlDBname,user,dbpassword):
@@ -170,7 +170,7 @@ class WeatherConditions:
         return
 
     def DisplayWeatherConditions(self,wc):    
-        print("-----------------------------")
+        print("-----------------------------------------")
         print("Date/Heure          :",wc['observations'][0].obsTimeLocal)
         print("ID Station météo   : ",wc['observations'][0].stationID)
         print("Date/Heure UTC     : ",wc['observations'][0].obsTimeUtc)
@@ -195,7 +195,7 @@ class WeatherConditions:
         print("Taux de précipit.  : ",wc['observations'][0].metric.precipRate," mm/h",sep="")
         print("Précipiation jour  : ",wc['observations'][0].metric.precipTotal," mm",sep="")
         print("Altitude Station   : ",wc['observations'][0].metric.elev," m",sep="")
-        
+        print("-----------------------------------------")
         return
 
 # ------------------------------------------------------------------------------
