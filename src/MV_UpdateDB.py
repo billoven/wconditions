@@ -297,6 +297,7 @@ fields = []
 rows = []
 startdate = ""
 enddate = ""
+dbpassword = ""
 
 if __name__ == "__main__":
 
@@ -318,8 +319,9 @@ if __name__ == "__main__":
     #sys.exit(0)
 
     print ('display is ',args.display)
-    print ('display is ',dbpassword)
-
+    print ('dbpassword is ',args.dbpassword)
+    print ('Start Date is ',args.startdate)
+    print ('End Date is ',args.enddate)
 
     # Get current date , put it at format YYYYMMDD
     yesterday = date.today()-timedelta(1)
@@ -329,14 +331,16 @@ if __name__ == "__main__":
 
     #start_date = date(2021, 1, 1)
     #end_date = date(2021, 1, 1)
-    start_date = startdate
-    end_date = enddate
+    start_date = args.startdate
+    end_date = args.enddate
+    dbpassword = args.dbpassword
     delta = timedelta(days=1)
+    
 
     while start_date <= end_date:
 
         WeatherDict = {}
-
+    
         DateDash=start_date.strftime("%Y-%m-%d")
         DateYYYYMMDD=start_date.strftime("%Y%m%d")
 
