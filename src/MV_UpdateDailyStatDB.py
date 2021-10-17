@@ -164,15 +164,52 @@ class DayWeatherConditions:
                             wc['WC_GustSpeedMax'],
                             wc['WC_PrecipitationSum'])
                         )
+                else:
+
+                    # Update existing record
+                    sql = """UPDATE DayWeatherConditions SET 
+                            WC_Date = %s,
+                            WC_TempAvg = %s, 
+                            WC_TempHigh = %s, 
+                            WC_TempLow = %s,
+                            WC_DewPointAvg = %s,
+                            WC_DewPointHigh = %s,
+                            WC_DewPointLow = %s,
+                            WC_HumidityAvg = %s,
+                            WC_HumidityHigh = %s,
+                            WC_HumidityLow = %s,
+                            WC_PressureAvg = %s,
+                            WC_PressureHigh = %s,
+                            WC_PressureLow = %s,
+                            WC_WindSpeedMax = %s,
+                            WC_GustSpeedMax = %s,
+                            WC_PrecipitationSum = %s
+                            WHERE WC_Date = %s"""
+
+                    cursor.execute(sql,
+                        (date,
+                        wc['WC_TempAvg'],
+                        wc['WC_TempHigh'],
+                        wc['WC_TempLow'],
+                        wc['WC_DewPointAvg'],
+                        wc['WC_DewPointHigh'],
+                        wc['WC_DewPointLow'],
+                        wc['WC_HumidityAvg'],
+                        wc['WC_HumidityHigh'],
+                        wc['WC_HumidityLow'],
+                        wc['WC_PressureAvg'],
+                        wc['WC_PressureHigh'],
+                        wc['WC_PressureLow'],
+                        wc['WC_WindSpeedMax'],
+                        wc['WC_GustSpeedMax'],
+                        wc['WC_PrecipitationSum'],
+                        date))
             
                     # connection is not autocommit by default. So you must commit to save
                     # your changes.
                     connection.commit()
                     print(cursor.rowcount, "record(s) affected") 
-
-
         finally:
-
             connection.close()
 
         return
@@ -252,11 +289,10 @@ def getArgs(argv=None):
     parser.add_argument('-d', '--display', action = "store_true",
                         help='Only Display Current Conditions')
 
-    
-    parser.add_argument('-Y', '--yesterday',
-                        action = "store_true",
-                        required=False,
-                        help='Process Yesterday Data')
+    group = parser.add_mutually_exclusive_group(required=True)
+    group.add_argument("-Y", "--yesterday", action="store_true", required=False, help="Process Yesterday's data")
+    group.add_argument("-T", "--today", action="store_true", required=False, help="Process Today's data")
+
 
     parser.add_argument('--version', action='version', version='[%(prog)20s] 2.0')
    
@@ -274,7 +310,8 @@ if __name__ == "__main__":
     print ('End Date is ',args.enddate)
 
     # Get current date, then yesterday, put it at format YYYY-MM-DD
-    Hier = date.today()-timedelta(1)
+    Aujourdhui = date.today()
+    Hier = Aujourdhui-timedelta(1)
     #dashyesterday = Hier.strftime("%Y-%m-%d")
     print("Yesterday's date:", Hier)
     
@@ -287,6 +324,10 @@ if __name__ == "__main__":
     if args.yesterday:
         start_date = Hier
         end_date = Hier
+
+    if args.today:
+        start_date = Aujourdhui
+        end_date = Aujourdhui
        
 
     # Create new WeatherConditions instance for ILEDEFRA131 weather station
@@ -299,12 +340,12 @@ if __name__ == "__main__":
 
         wc=DayWeatherConditions('ILEDEFRA131', '192.168.17.10', 'VillebonWeatherReport','admin',args.dbpassword)
         wcIDFRA=wc.GetDayWCFromDB('admin',args.dbpassword,DateDash)
-        if args.display:
-            wc.DisplayWeatherConditions(wcIDFRA,DateDash)
-        else:
-            wc.InsertDayWeatherCondtions('admin',args.dbpassword,DateDash,wcIDFRA)
+        if wcIDFRA is not None:
+            if args.display:
+                wc.DisplayWeatherConditions(wcIDFRA,DateDash)
+            else:
+                wc.InsertDayWeatherCondtions('admin',args.dbpassword,DateDash,wcIDFRA)
         
         print (wcIDFRA)
         start_date += delta
-        print (start_date)
 
