@@ -93,10 +93,9 @@ class DayWeatherConditions:
                 ROUND(MIN(WC_pressure),1) as WC_PressureLow,
                 MAX(WC_windSpeed) as WC_WindSpeedMax,
                 MAX(WC_windGust) as WC_GustSpeedMax,
-                MAX(WC_precipTotal) as WC_PrecipitationSum
+                ROUND(MAX(WC_precipTotal),1) as WC_PrecipitationSum
                 FROM `WeatherConditions` WHERE DATE(WC_Datetime) = %s"""
-                #sql = "SELECT ROUND(AVG(WC_temp),1) as WC_TempAvg, MAX(WC_temp) as WC_TempHigh, MIN(WC_Temp) as WC_TempLow FROM `WeatherConditions` WHERE DATE(WC_Datetime) = '2021-10-15'" 
-                print (sql)
+                
                 cursor.execute(sql, Date)
                 #cursor.execute(sql)
                 result = cursor.fetchone()
@@ -183,43 +182,25 @@ class DayWeatherConditions:
         print (wc)
         print("StationID           : ",self.stationID)
         print("Date                :",date)
-        print("Température Moyenne : ",wc['WC_TempAvg'])
-        print("Température Maxi    : ",wc['WC_TempHigh'])
-        print("Température Mini    : ",wc['WC_TempLow'])
-        print("Point de rosée Moyen: ",wc['WC_DewPointAvg'])
-        print("Point de rosée Maxi : ",wc['WC_DewPointHigh'])
-        print("Point de rosée Mini : ",wc['WC_DewPointLow'])
+        print("Température Moyenne : ",wc['WC_TempAvg'],"°C",sep="")
+        print("Température Maxi    : ",wc['WC_TempHigh'],"°C",sep="")
+        print("Température Mini    : ",wc['WC_TempLow'],"°C",sep="")
+        print("Point de rosée Moyen: ",wc['WC_DewPointAvg'],"°C",sep="")
+        print("Point de rosée Maxi : ",wc['WC_DewPointHigh'],"°C",sep="")
+        print("Point de rosée Mini : ",wc['WC_DewPointLow'],"°C",sep="")
         print("Taux d'humidité Moy.: ",wc['WC_HumidityAvg'],"%",sep="")
-        print("Taux d'humidité Maxi: ",wc['WC_HumidityHigh'])
-        print("Taux d'humidité Mini: ",wc['WC_HumidityLow'])
+        print("Taux d'humidité Maxi: ",wc['WC_HumidityHigh'],"%",sep="")
+        print("Taux d'humidité Mini: ",wc['WC_HumidityLow'],"%",sep="")
         print("Pression Atmos. Moy : ",wc['WC_PressureAvg']," hpa",sep="")
         print("Pression Atmos. Maxi: ",wc['WC_PressureHigh']," hpa",sep="")
         print("Pression Atmos. Mini: ",wc['WC_PressureLow']," hpa",sep="")
         print("Vitesse du Vent Maxi: ",wc['WC_WindSpeedMax']," Km/h",sep="")
         print("Vitesse Rafale Maxi : ",wc['WC_GustSpeedMax']," Km/h",sep="")
         print("Précipiation jour   : ",wc['WC_PrecipitationSum']," mm",sep="")
-        #print("Software Station   : ",wc['observations'][0].softwareType)
-        #print("Pays               : ",wc['observations'][0].country)
-        #print("Radiations Solaire : ",wc['observations'][0].solarRadiation)
-        #print("Longitude Station  : ",wc['observations'][0].lon)
-        #print("Latitude Station   : ",wc['observations'][0].lat)
-        #print("Realtime Frequency : ",wc['observations'][0].realtimeFrequency)
-        #print("Epoch              : ",wc['observations'][0].epoch)
-        #print("Direction Vent     : ",wc['observations'][0].winddir)
-        #print("Taux d'humidité    : ",wc['observations'][0].humidity,"%",sep="")
-        #print("qcStatus           : ",wc['observations'][0].qcStatus)
-        #print("Température        : ",wc['observations'][0].metric.temp,"°",sep="")
-        #print("Indice de Chaleur  : ",wc['observations'][0].metric.heatIndex,"°",sep="")
-        #print("Point de rosée     : ",wc['observations'][0].metric.dewpt,"°",sep="")
-        #print("Refroidissement    : ",wc['observations'][0].metric.windChill,"°",sep="")
-        #print("Vitesse du Vent    : ",wc['observations'][0].metric.windSpeed," Km/h",sep="")
-        #print("Vitesse en Rafale  : ",wc['observations'][0].metric.windGust," Km/h",sep="")
-        #print("Pression Atmos.    : ",wc['observations'][0].metric.pressure," hpa",sep="")
-        #print("Taux de précipit.  : ",wc['observations'][0].metric.precipRate," mm/h",sep="")
-        #print("Précipiation jour  : ",wc['observations'][0].metric.precipTotal," mm",sep="")
-        #print("Altitude Station   : ",wc['observations'][0].metric.elev," m",sep="")
         print("-----------------------------------------")
+ 
         return
+
 # ------------------------------------------------------------
 # https://gist.github.com/monkut/e60eea811ef085a6540f
 # Check if the format of the date given in Arguments is valid
@@ -229,7 +210,7 @@ def valid_date_type(arg_date_str):
     try:
         return datetime.strptime(arg_date_str, "%Y-%m-%d")
     except ValueError:
-        msg = "Given Date ({0}) not valid! Expected format, YYYYMMDD !".format(arg_date_str)
+        msg = "Given Date ({0}) not valid! Expected format, YYYY-MM-DD !".format(arg_date_str)
         raise argparse.ArgumentTypeError(msg)
 
 # ------------------------------------------------------------------------------
@@ -240,22 +221,20 @@ def getArgs(argv=None):
 
     parser = argparse.ArgumentParser(formatter_class=argparse.RawDescriptionHelpFormatter,
     description='''\
-        Update MYSQL DB with Current conditions
-        of WS-1001-WiFi Weather Station exported to WeatherUnderground site.
+        Update MYSQL DB DayWeatherConditions table with Current conditions
+        extracted from WeatherConditions table.
             --------------------------------------------------------
              ''',
     epilog='''
     --------------------------------------------------------------''')
 
     # Use here to check the date a type function
-    #parser.add_argument("-SD", "--startdate", required='-ed' in sys.argv, dest="startdate", nargs='?', type=valid_date, help="Start date YYYYMMDD for the Weather Data selection")
     parser.add_argument('-SD', '--startdate',
                         dest='startdate',
                         type=valid_date_type,
                         default=None,
                         required=True,
                         help='start date in format "YYYY-MM-DD"')
-    #parser.add_argument("-ed", "--enddate", required='-sd' in sys.argv, dest="enddate", nargs='?', type=valid_date, help="End date YYYYMMDD for the Weather Data selection")
     parser.add_argument('-ED', '--enddate',
                         dest='enddate',
                         type=valid_date_type,
@@ -274,11 +253,10 @@ def getArgs(argv=None):
                         help='Only Display Current Conditions')
 
     
-    #parser.add_argument('-D', '--day',
-    #                   dest='date',
-    #                    default=None,
-    #                    required=False,
-    #                    help='Day of Weather Conditions to Get')
+    parser.add_argument('-Y', '--yesterday',
+                        action = "store_true",
+                        required=False,
+                        help='Process Yesterday Data')
 
     parser.add_argument('--version', action='version', version='[%(prog)20s] 2.0')
    
@@ -295,25 +273,29 @@ if __name__ == "__main__":
     print ('Start Date is ',args.startdate)
     print ('End Date is ',args.enddate)
 
-    # Get current date , put it at format YYYYMMDD
-    yesterday = date.today()-timedelta(1)
-    DateYYYYMMDD = yesterday.strftime("%Y%m%d")
-    print("Yesterday's date:", DateYYYYMMDD)
-    DateDash = yesterday.strftime("%Y-%m-%d")
-
+    # Get current date, then yesterday, put it at format YYYY-MM-DD
+    Hier = date.today()-timedelta(1)
+    #dashyesterday = Hier.strftime("%Y-%m-%d")
+    print("Yesterday's date:", Hier)
+    
     start_date = args.startdate
     end_date = args.enddate
     dbpassword = args.dbpassword
     delta = timedelta(days=1)
 
+    # if -Y process only Yesterday: Start and end date are equal to yesterday
+    if args.yesterday:
+        start_date = Hier
+        end_date = Hier
+       
+
     # Create new WeatherConditions instance for ILEDEFRA131 weather station
     # ----------------------------------------------------------------------
     while start_date <= end_date:
-
-        WeatherDict = {}
-    
+  
         DateDash=start_date.strftime("%Y-%m-%d")
-        DateYYYYMMDD=start_date.strftime("%Y%m%d")
+
+        print ("== Process with :",DateDash)
 
         wc=DayWeatherConditions('ILEDEFRA131', '192.168.17.10', 'VillebonWeatherReport','admin',args.dbpassword)
         wcIDFRA=wc.GetDayWCFromDB('admin',args.dbpassword,DateDash)
@@ -324,4 +306,5 @@ if __name__ == "__main__":
         
         print (wcIDFRA)
         start_date += delta
+        print (start_date)
 
