@@ -62,12 +62,12 @@ class WeatherConditions:
         mystr_dict = {}
         mystr = ""
 
-        # Wunderground API Key Expires: Sat, 14 Aug 2021 17:48:33 GMT.
-        # https://www.wunderground.com/member/api-keys
-        # key = '93f1717ea6714de3b1717ea671ade338'
+        # Wunderground API Key Expires: Sun, 01 May 2022 09:48:44 GMT
+        # https://www.wunderground.covgm/member/api-keys
+        # key = '04cf8ca2c4454bb68f8ca2c445dbb644'
         # RealTimeURL : https://api.weather.com/v2/pws/observations/current?stationId=ILEDEFRA131
-        # &format=json&units=m&numericPrecision=decimal&apiKey=93f1717ea6714de3b1717ea671ade338
-        key = '93f1717ea6714de3b1717ea671ade338'
+        # &format=json&units=m&numericPrecision=decimal&apiKey=04cf8ca2c4454bb68f8ca2c445dbb644
+        key = '04cf8ca2c4454bb68f8ca2c445dbb644'
         BASE_URL = 'https://api.weather.com/v2/pws/observations/current'
         FEATURE_URL = BASE_URL + f"?stationId={self.stationID}&format=json&units=m&numericPrecision=decimal&apiKey={key}"
 
