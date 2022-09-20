@@ -338,7 +338,8 @@ if __name__ == "__main__":
 
         print ("== Process with :",DateDash)
 
-        wc=DayWeatherConditions('ILEDEFRA131', '192.168.17.10', 'VillebonWeatherReport','admin',args.dbpassword)
+        wc=DayWeatherConditions('ILEDEFRA131', '192.168.17.10', '
+        ','admin',args.dbpassword)
         wcIDFRA=wc.GetDayWCFromDB('admin',args.dbpassword,DateDash)
         if wcIDFRA is not None:
             if args.display:
