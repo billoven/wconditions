@@ -63,12 +63,12 @@ class WeatherConditions:
         mystr = ""
 
         # Wunderground API Key Expires: Sun, 04 Dec 2022 15:00:52 GMT
-        # https://www.wunderground.covgm/member/api-keys
+        # https://www.wunderground.covgm/member/api-keyscd 
         # Previous key = '6bee8fd8e2ed4e53ae8fd8e2ed7e53c7'
         # RealTimeURL : https://api.weather.com/v2/pws/observations/current?stationId=ILEDEFRA131
         # &format=json&units=m&numericPrecision=decimal&apiKey=04cf8ca2c4454bb68f8ca2c445dbb644
-        key = '8f6fcd9de58d4b1fafcd9de58d0b1f8f'
-        BASE_URL = 'https://api.weather.com/v2/pws/observations/current'
+        key = '54d2afc2f620431892afc2f620831846'
+        BASE_URL = 'https://api.weather.com/v2/git pushpws/observations/current'
         FEATURE_URL = BASE_URL + f"?stationId={self.stationID}&format=json&units=m&numericPrecision=decimal&apiKey={key}"
 
         print (FEATURE_URL) 
