@@ -292,6 +292,8 @@ def getArgs(argv=None):
     group = parser.add_mutually_exclusive_group(required=True)
     group.add_argument("-Y", "--yesterday", action="store_true", required=False, help="Process Yesterday's data")
     group.add_argument("-T", "--today", action="store_true", required=False, help="Process Today's data")
+    group.add_argument("-D", "--delta", action="store_true", required=False, help="Process range of dates")
+    
 
 
     parser.add_argument('--version', action='version', version='[%(prog)20s] 2.0')
@@ -328,6 +330,8 @@ if __name__ == "__main__":
     if args.today:
         start_date = Aujourdhui
         end_date = Aujourdhui
+    
+
        
 
     # Create new WeatherConditions instance for ILEDEFRA131 weather station
