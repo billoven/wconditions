@@ -68,7 +68,7 @@ class WeatherConditions:
         # RealTimeURL : https://api.weather.com/v2/pws/observations/current?stationId=ILEDEFRA131
         # &format=json&units=m&numericPrecision=decimal&apiKey=04cf8ca2c4454bb68f8ca2c445dbb644
         key = '54d2afc2f620431892afc2f620831846'
-        BASE_URL = 'https://api.weather.com/v2/git pushpws/observations/current'
+        BASE_URL = 'https://api.weather.com/v2/pws/observations/current'
         FEATURE_URL = BASE_URL + f"?stationId={self.stationID}&format=json&units=m&numericPrecision=decimal&apiKey={key}"
 
         print (FEATURE_URL) 
