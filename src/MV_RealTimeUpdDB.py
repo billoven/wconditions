@@ -149,8 +149,8 @@ class WeatherConditions:
                             wc['observations'][0].metric.precipTotal,
                             wc['observations'][0].metric.pressure,
                             wc['observations'][0].metric.heatIndex,
-                            wc['observations'][0].metric.windSpeed,
-                            wc['observations'][0].metric.windGust,
+                            wc['observations'][0].metric.windSpeed*1.5,
+                            wc['observations'][0].metric.windGust*1.5,
                             wc['observations'][0].metric.windChill,
                             wc['observations'][0].winddir,
                             wc['observations'][0].metric.dewpt,
@@ -190,8 +190,8 @@ class WeatherConditions:
         print("Indice de Chaleur  : ",wc['observations'][0].metric.heatIndex,"°",sep="")
         print("Point de rosée     : ",wc['observations'][0].metric.dewpt,"°",sep="")
         print("Refroidissement    : ",wc['observations'][0].metric.windChill,"°",sep="")
-        print("Vitesse du Vent    : ",wc['observations'][0].metric.windSpeed," Km/h",sep="")
-        print("Vitesse en Rafale  : ",wc['observations'][0].metric.windGust," Km/h",sep="")
+        print("Vitesse du Vent    : ",wc['observations'][0].metric.windSpeed*1.5," Km/h",sep="")
+        print("Vitesse en Rafale  : ",wc['observations'][0].metric.windGust*1.5," Km/h",sep="")
         print("Pression Atmos.    : ",wc['observations'][0].metric.pressure," hpa",sep="")
         print("Taux de précipit.  : ",wc['observations'][0].metric.precipRate," mm/h",sep="")
         print("Précipiation jour  : ",wc['observations'][0].metric.precipTotal," mm",sep="")
