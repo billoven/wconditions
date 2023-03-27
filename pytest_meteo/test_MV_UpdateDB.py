@@ -12,3 +12,9 @@ def test_valid_date_type_exception():
     """test that exception is raised for invalid date type"""
     with pytest.raises(Exception):
         assert valid_date_type('22210xxx')
+
+@pytest.mark.parametrize("option", ("-h", "--help"))
+def test_getArgs(capsys,option):
+
+    output = capsys.readouterr().out
+    assert "" in output
