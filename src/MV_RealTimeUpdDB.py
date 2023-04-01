@@ -216,13 +216,16 @@ def getArgs(argv=None):
 
     parser.add_argument('-d', '--display', action = "store_true",
                         help='Only Display Current Conditions')
+    
     parser.add_argument('-p', '--password',
                         dest='dbpassword',
                         default=None,
                         required=True,
-                        help='Mysql admin user password')
-    
+                        help='Mysql admin user password')   
 
+    group = parser.add_mutually_exclusive_group(required=True)
+    group.add_argument("-B", "--Bethune", action="store_true", required=False, help="Bethune WeatherUnderground station")
+    group.add_argument("-V", "--Villebon", action="store_true", required=False, help="Villebon WeatherUnderground station")
 
     parser.add_argument('--version', action='version', version='[%(prog)20s] 2.0')
    
@@ -235,16 +238,26 @@ if __name__ == "__main__":
     args = getArgs(argvals)
 
     print ('display is ',args.display)
+    print ('Bethune is ',args.Bethune)
+    print ('Villebon is ',args.Villebon)
     print ('dbpassword is ',args.dbpassword)
 
-    # Create new WeatherConditions instance for ILEDEFRA131 weather station
-    # ----------------------------------------------------------------------
-    wc=WeatherConditions('IVILLE402', '192.168.17.10', 'VillebonWeatherReport','admin',args.dbpassword)
-    wcIDFRA=wc.GetWeatherConditions()
-    if args.display:
-        wc.DisplayWeatherConditions(wcIDFRA)
-    else:
-        wc.InsertDBWeatherCondtions('admin',args.dbpassword,wcIDFRA)
+    # Create new WeatherConditions instance for WU weather station given in parameter
+    # --------------------------------------------------------------------------------
+    if args.Bethune:
+        wc=WeatherConditions('IBTHUN1', '192.168.17.10', 'BethuneWeatherReport','admin',args.dbpassword)
+    if args.Villebon:
+        wc=WeatherConditions('IVILLE402', '192.168.17.10', 'VillebonWeatherReport','admin',args.dbpassword)
+    
+    # Get cuurent conditions from Weather Underground site
+    wcID=wc.GetWeatherConditions()
 
-    print (wcIDFRA)
+    # if -d parameter set Display only
+    if args.display:
+        wc.DisplayWeatherConditions(wcID)
+    # else Insert in Database
+    else:
+        wc.InsertDBWeatherCondtions('admin',args.dbpassword,wcID)
+
+    print (wcID)
 
