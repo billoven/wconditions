@@ -294,6 +294,9 @@ def getArgs(argv=None):
     group.add_argument("-T", "--today", action="store_true", required=False, help="Process Today's data")
     group.add_argument("-D", "--delta", action="store_true", required=False, help="Process range of dates")
     
+    group = parser.add_mutually_exclusive_group(required=True)
+    group.add_argument("-B", "--Bethune", action="store_true", required=False, help="Bethune WeatherUnderground station")
+    group.add_argument("-V", "--Villebon", action="store_true", required=False, help="Villebon WeatherUnderground station")
 
 
     parser.add_argument('--version', action='version', version='[%(prog)20s] 2.0')
@@ -330,9 +333,7 @@ if __name__ == "__main__":
     if args.today:
         start_date = Aujourdhui
         end_date = Aujourdhui
-    
-
-       
+          
 
     # Create new WeatherConditions instance for ILEDEFRA131 weather station
     # ----------------------------------------------------------------------
@@ -342,14 +343,18 @@ if __name__ == "__main__":
 
         print ("== Process with :",DateDash)
 
-        wc=DayWeatherConditions('ILEDEFRA131', '192.168.17.10', 'VillebonWeatherReport','admin',args.dbpassword)
-        wcIDFRA=wc.GetDayWCFromDB('admin',args.dbpassword,DateDash)
-        if wcIDFRA is not None:
+        if args.Bethune:
+            wc=DayWeatherConditions('IBTHUN1', '192.168.17.10', 'BethuneWeatherReport','admin',args.dbpassword)
+        if args.Villebon:
+            wc=DayWeatherConditions('IVILLE402', '192.168.17.10', 'VillebonWeatherReport','admin',args.dbpassword)
+
+        wcID=wc.GetDayWCFromDB('admin',args.dbpassword,DateDash)
+        if wcID is not None:
             if args.display:
-                wc.DisplayWeatherConditions(wcIDFRA,DateDash)
+                wc.DisplayWeatherConditions(wcID,DateDash)
             else:
-                wc.InsertDayWeatherCondtions('admin',args.dbpassword,DateDash,wcIDFRA)
-        
-        print (wcIDFRA)
+                wc.InsertDayWeatherCondtions('admin',args.dbpassword,DateDash,wcID)         
+
+        print (wcID)
         start_date += delta
 
