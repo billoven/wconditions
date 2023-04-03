@@ -1,4 +1,0 @@
-usage: MV_GenStats.py [-h] [-SD STARTDATE] -ED ENDDATE -p DBPASSWORD
-                      [-TD {Tmax,Tmin,Tavg,Hmax,Hmin,Havg,Pavg,Wg,Ws,Rain}]
-                      [-C] [-d] (-y | -t) [--version]
-MV_GenStats.py: error: one of the arguments -y/--yesterday -t/--today is required
