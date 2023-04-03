@@ -85,7 +85,7 @@ def getArgs(argv=None):
 
 # Class WC_DataMetrics
 class WC_DataMetrics:
-    """This class is manipulating a set of Day WeatherData for Metrics
+    """This class is handling a set of Day WeatherData for Metrics
         Weather Underground wheather station located in Villebon-sur-YVette 
     """
  
