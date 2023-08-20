@@ -25,14 +25,14 @@ class TestTemperatureData(unittest.TestCase):
                      (datetime.date(2023, 7, 7), Decimal('12.7'), Decimal('30.3'), Decimal('22.5'))]
         self.mock_cursor.fetchall.return_value = test_data
 
-        temp_data = TemperatureData({'user': 'admin', 'password': 'Z0uZ0u0!', 'host': '192.168.17.10', 'database': 'TestVillebonWeatherReport'})
+        temp_data = TemperatureData({'user': 'admin', 'password': 'xxxx', 'host': '192.168.17.10', 'database': 'TestVillebonWeatherReport'})
         result = temp_data.get_data()
 
         self.assertEqual(result, test_data)
         self.mock_cursor.execute.assert_called_once_with("SELECT WC_Date, WC_TempLow, WC_TempHigh, WC_TempAvg FROM DayWeatherConditions")
 
     def test_close(self):
-        temp_data = TemperatureData({'user': 'admin', 'password': 'Z0uZ0u0!', 'host': '192.168.17.10', 'database': 'TestVillebonWeatherReport'})
+        temp_data = TemperatureData({'user': 'admin', 'password': 'xxxxxx', 'host': '192.168.17.10', 'database': 'TestVillebonWeatherReport'})
         temp_data.close()
         self.mock_cursor.close.assert_called_once()
         self.mock_db.close.assert_called_once()
@@ -73,7 +73,7 @@ class TestFlaskApp(unittest.TestCase):
 
         # Assert the expected behavior
         self.assertEqual(response.status_code, 200)
-        mock_temp_data.assert_called_once_with({'user': 'admin', 'password': 'Z0uZ0u0!', 'host': '192.168.17.10', 'database': 'TestVillebonWeatherReport'})
+        mock_temp_data.assert_called_once_with({'user': 'admin', 'password': 'xxxxx', 'host': '192.168.17.10', 'database': 'TestVillebonWeatherReport'})
         mock_temp_data_instance.get_data.assert_called_once()
         mock_temp_data_instance.close.assert_called_once()
         mock_json_dumps.assert_called_once_with([{'name': 'Min Temps'}, {'name': 'Max Temps'}, {'name': 'Avg Temps'}], cls=MagicMock)
