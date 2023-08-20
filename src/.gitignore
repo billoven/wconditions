@@ -1,3 +1,5 @@
 bin/
+src/etc
+poc/
 .pytest_cache/
 __pycache__/

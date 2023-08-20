@@ -1,0 +1,15 @@
+[html]
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Temperature Graph</title>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+  </head>
+  <body>
+    <div id="graph"></div>
+    <script>
+      var graphs = {{graphJSON | safe}};
+      Plotly.newPlot('graph', graphs);
+    </script>
+  </body>
+</html>

@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Custom Alert Message Window</title>
+    <style>
+        /* Styling for the custom alert window */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f9f9f9;
+        }
+
+        #customAlert {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 9999;
+            background-color: #fff;
+            border: 1px solid #ccc;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            display: none;
+            animation: fadeIn 0.2s ease-out;
+        }
+
+        #customAlert p {
+            margin: 0 0 15px 0;
+        }
+
+        #okButton {
+            display: block;
+            margin-top: 20px;
+            padding: 10px 25px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            transition: background-color 0.2s;
+        }
+
+        #okButton:hover {
+            background-color: #0056b3;
+        }
+
+        @keyframes fadeIn {
+            0% {
+                opacity: 0;
+            }
+            100% {
+                opacity: 1;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1>Custom Alert Message Window Example</h1>
+    <button onclick="showCustomAlert()">Show Custom Alert</button>
+
+    <!-- Custom Alert Message Window -->
+    <div id="customAlert">
+        <p id="messageContent">This is a configurable information message.</p>
+        <button id="okButton" onclick="closeCustomAlert()">OK</button>
+    </div>
+
+    <script>
+        // Function to show the custom alert window with a configurable message
+        function showCustomAlert() {
+            var message = "This is a configurable information message.";
+            document.getElementById("messageContent").textContent = message;
+
+            // Display the custom alert window
+            document.getElementById("customAlert").style.display = "block";
+        }
+
+        // Function to close the custom alert window
+        function closeCustomAlert() {
+            // Hide the custom alert window
+            document.getElementById("customAlert").style.display = "none";
+        }
+    </script>
+</body>
+</html>
+
+
+SUM(WC_PrecipitationSum) AS YearTotalPrecipit,
+            MAX(WC_PrecipitationSum) AS DayMaxPrecipit,
+            SUM(CASE WHEN WC_PrecipitationSum >= 20 THEN 1 ELSE 0 END) AS DaysPrecipitGreaterOrEqual20,
+            SUM(CASE WHEN WC_PrecipitationSum > 0 AND < 1 THEN 1 ELSE 0 END) AS DaysPrecipitLess1,
+            SUM(CASE WHEN WC_PrecipitationSum >= 1 AND WC_PrecipitationSum < 5 THEN 1 ELSE 0 END) AS DaysPrecipitGreaterOrEqual1AndLess5,
+            SUM(CASE WHEN WC_PrecipitationSum >= 5 AND WC_PrecipitationSum < 10 THEN 1 ELSE 0 END) AS DaysPrecipitGreaterOrEqual5AndLess10,
+            SUM(CASE WHEN WC_PrecipitationSum >= 10 THEN 1 ELSE 0 END) AS DaysPrecipitGreaterOrEqual10,
+
+
