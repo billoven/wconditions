@@ -29,7 +29,7 @@ error_reporting(E_ALL);
 
 // Database configuration
 require_once('/etc/weathermetrics/db_config.php'); // Adjust the path accordingly
-$selectedDb = 'db1'; // Change this to the database you want to connect to
+$selectedDb = 'dbdev'; // Change this to the database you want to connect to
 
 if (isset($dbConfigs[$selectedDb])) {
     $dbConfig = $dbConfigs[$selectedDb];
@@ -59,7 +59,7 @@ if (isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] === 'GET' &&
 
     // Database configuration
     require_once('/etc/weathermetrics/db_config.php'); // Adjust the path accordingly
-    $selectedDb = 'db1'; // Change this to the database you want to connect to
+    $selectedDb = 'dbdev'; // Change this to the database you want to connect to
 
     if (isset($dbConfigs[$selectedDb])) {
         $dbConfig = $dbConfigs[$selectedDb];
@@ -74,8 +74,8 @@ if (isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] === 'GET' &&
             AVG(WC_TempAvg) AS AvgTemp,
             MAX(WC_TempAvg) AS MaxAvgTemp,
             MIN(WC_TempAvg) AS MinAvgTemp,
-            (SELECT WC_Date FROM DayWeatherConditions WHERE YEAR(WC_Date) = '$year' ORDER BY WC_TempAvg ASC LIMIT 1) AS DateMinAvgTemp,
-            (SELECT WC_Date FROM DayWeatherConditions WHERE YEAR(WC_Date) = '$year' ORDER BY WC_TempAvg DESC LIMIT 1) AS DateMaxAvgTemp,
+            (SELECT DATE_FORMAT(WC_Date, '%d/%m') FROM DayWeatherConditions WHERE YEAR(WC_Date) = '$year' ORDER BY WC_TempAvg ASC LIMIT 1) AS DateMinAvgTemp,
+            (SELECT DATE_FORMAT(WC_Date, '%d/%m') FROM DayWeatherConditions WHERE YEAR(WC_Date) = '$year' ORDER BY WC_TempAvg DESC LIMIT 1) AS DateMaxAvgTemp,
             SUM(CASE WHEN WC_TempAvg <= 0 THEN 1 ELSE 0 END) AS DaysLessThanEqualTo0,
             SUM(CASE WHEN WC_TempAvg >= 25 THEN 1 ELSE 0 END) AS DaysGreaterThanOrEqualTo25,
             SUM(CASE WHEN WC_TempAvg <= 0 THEN 1 ELSE 0 END) AS DaysLessThanOrEqualTo0,
@@ -88,8 +88,8 @@ if (isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] === 'GET' &&
             AVG(WC_TempLow) AS AvgLowTemp,
             MAX(WC_TempLow) AS MaxLowTemp,
             MIN(WC_TempLow) AS MinLowTemp,
-            (SELECT WC_Date FROM DayWeatherConditions WHERE YEAR(WC_Date) = '$year' ORDER BY WC_TempLow ASC LIMIT 1) AS DateMinLowTemp,
-            (SELECT WC_Date FROM DayWeatherConditions WHERE YEAR(WC_Date) = '$year' ORDER BY WC_TempLow DESC LIMIT 1) AS DateMaxLowTemp,
+            (SELECT DATE_FORMAT(WC_Date, '%d/%m') FROM DayWeatherConditions WHERE YEAR(WC_Date) = '$year' ORDER BY WC_TempLow ASC LIMIT 1) AS DateMinLowTemp,
+            (SELECT DATE_FORMAT(WC_Date, '%d/%m') FROM DayWeatherConditions WHERE YEAR(WC_Date) = '$year' ORDER BY WC_TempLow DESC LIMIT 1) AS DateMaxLowTemp,
             SUM(CASE WHEN WC_TempLow <= -5 THEN 1 ELSE 0 END) AS DaysLowLessThanEqualToMinus5,
             SUM(CASE WHEN WC_TempLow >= 20 THEN 1 ELSE 0 END) AS DaysLowGreaterThanOrEqualTo20,
             SUM(CASE WHEN WC_TempLow <= 0 THEN 1 ELSE 0 END) AS DaysLowLessThanOrEqualTo0,
@@ -102,8 +102,8 @@ if (isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] === 'GET' &&
             AVG(WC_TempHigh) AS AvgHighTemp,
             MAX(WC_TempHigh) AS MaxHighTemp,
             MIN(WC_TempHigh) AS MinHighTemp,
-            (SELECT WC_Date FROM DayWeatherConditions WHERE YEAR(WC_Date) = '$year' ORDER BY WC_TempHigh ASC LIMIT 1) AS DateMinHighTemp,
-            (SELECT WC_Date FROM DayWeatherConditions WHERE YEAR(WC_Date) = '$year' ORDER BY WC_TempHigh DESC LIMIT 1) AS DateMaxHighTemp,
+            (SELECT DATE_FORMAT(WC_Date, '%d/%m') FROM DayWeatherConditions WHERE YEAR(WC_Date) = '$year' ORDER BY WC_TempHigh ASC LIMIT 1) AS DateMinHighTemp,
+            (SELECT DATE_FORMAT(WC_Date, '%d/%m') FROM DayWeatherConditions WHERE YEAR(WC_Date) = '$year' ORDER BY WC_TempHigh DESC LIMIT 1) AS DateMaxHighTemp,
             SUM(CASE WHEN WC_TempHigh <= 0 THEN 1 ELSE 0 END) AS DaysHighLessThanEqual0,
             SUM(CASE WHEN WC_TempHigh >= 30 THEN 1 ELSE 0 END) AS DaysHighGreaterThanOrEqualTo30,
             SUM(CASE WHEN WC_TempHigh <= 0 THEN 1 ELSE 0 END) AS DaysHighLessThanOrEqualTo0,
