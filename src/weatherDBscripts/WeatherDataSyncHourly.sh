@@ -9,7 +9,7 @@
 
 # Add library to trace execution steps
 # Functions available : "display_step_state", "execute_step", "display_duration"
-source trace_execution.sh
+source ../../lib/trace_execution.sh
 
 # Database configurations
 source_server="192.168.17.10"
