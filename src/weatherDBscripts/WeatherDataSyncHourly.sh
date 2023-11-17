@@ -61,13 +61,16 @@ dump_databases() {
     done
 
     transfer_dump() {
+        total_databases=${#databases[@]}
+        current_database=0
+        
         for db in "${databases[@]}"; do
             current_database=$((current_database + 1))
-            scp_result=$(scp $source_server:$backup_source_path/$backup_file $backup_dest_path/)
+            scp_result=$(scp $source_server:$backup_source_path/$backup_file $backup_dest_path)
             scp_status=$?
 
             if [ $scp_status -eq 0 ]; then
-                echo -e "SCP command for $db dump source_server:$backup_source_path/$backup_file $backup_dest_path executed successfully."
+                echo -e "SCP command for $db dump $source_server:$backup_source_path/$backup_file $backup_dest_path executed successfully."
             else
                 echo -e "\nError: SCP command for $db failed with error code $scp_status"
                 exit 1
@@ -77,6 +80,9 @@ dump_databases() {
 
 
     restore_databases() {
+        total_databases=${#databases[@]}
+        current_database=0
+        
         for db in "${databases[@]}"; do
             current_database=$((current_database + 1))
             mysql_result=$(mysql -h $dest_server $db < $backup_dest_path/$backup_file)
