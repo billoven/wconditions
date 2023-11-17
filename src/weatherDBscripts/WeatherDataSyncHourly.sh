@@ -17,13 +17,13 @@ dest_server="192.168.17.20"
 backup_source_path="/home/pierre/backup/wconditions"
 backup_dest_path="/home/pierre/backup/wconditions"
 databases=("VillebonWeatherReport" "BethuneWeatherReport")
+dumpfiles=()
 
 check_databases_access() {
     total_databases=${#databases[@]}
     current_database=0
 
     for db in "${databases[@]}"; do
-        current_database=$((current_database + 1))
         
         if ! mysql -h "$source_server" -e "use $db"; then
             echo -e "\nError: Unable to access [$db] on source server: [$source_server]. Exiting."
@@ -34,6 +34,7 @@ check_databases_access() {
             echo -e "\nError: Unable to access [$db] on destination server [$dest_server]. Exiting."
             exit 1
         fi
+        current_database=$((current_database + 1))
     done
 
     echo -e "\nDatabase access check completed."
@@ -44,10 +45,10 @@ dump_databases() {
     current_database=0
 
     for db in "${databases[@]}"; do
-        current_database=$((current_database + 1))
 
         current_time=$(date +"%Y%m%d%H%M%S")
         backup_file="$db-$current_time.sql"
+        dumpfiles[$current_database]=$backup_file
 
         ssh_result=$(ssh $source_server "mysqldump --single-transaction --flush-logs --databases $db > $backup_source_path/$backup_file")
         ssh_status=$?
@@ -58,6 +59,8 @@ dump_databases() {
             echo -e "\nError: SSH command for $db failed with error code $ssh_status"
             exit 1
         fi
+
+        current_database=$((current_database + 1))
     done
 }
 
@@ -65,9 +68,8 @@ transfer_dump() {
     total_databases=${#databases[@]}
     current_database=0
     
-    for db in "${databases[@]}"; do
-        current_database=$((current_database + 1))
-        echo " ============ On s'occupe de : $db qui se trouve dans $source_server:$backup_source_path/$backup_file"
+    for db in "${databases[@]}"; do    
+        backup_file=${dumpfiles[$current_database]}
         scp_result=$(scp $source_server:$backup_source_path/$backup_file $backup_dest_path)
         scp_status=$?
 
@@ -77,6 +79,7 @@ transfer_dump() {
             echo -e "\nError: SCP command for $db failed with error code $scp_status"
             exit 1
         fi
+        current_database=$((current_database + 1))
     done
 }
 
@@ -85,7 +88,8 @@ restore_databases() {
     current_database=0
     
     for db in "${databases[@]}"; do
-        current_database=$((current_database + 1))
+        backup_file=${dumpfiles[$current_database]}
+        
         mysql_result=$(mysql -h $dest_server $db < $backup_dest_path/$backup_file)
         mysql_status=$?
 
@@ -95,6 +99,7 @@ restore_databases() {
             echo -e "\nError: MySQL restore for $db failed with error code $mysql_status"
             exit 1
         fi
+        current_database=$((current_database + 1))
     done
 }
 
