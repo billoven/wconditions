@@ -97,9 +97,6 @@ restore_databases() {
     done
 }
 
-
-}
-
 # Example usage in a script
 main() {
     local script_start_time
