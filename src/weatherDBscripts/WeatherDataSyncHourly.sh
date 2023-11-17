@@ -67,7 +67,7 @@ dump_databases() {
             scp_status=$?
 
             if [ $scp_status -eq 0 ]; then
-                echo -e "SCP command for $db executed successfully."
+                echo -e "SCP command for $db dump source_server:$backup_source_path/$backup_file $backup_dest_path executed successfully."
             else
                 echo -e "\nError: SCP command for $db failed with error code $scp_status"
                 exit 1
@@ -104,7 +104,7 @@ main() {
     execute_step "Check databases access" "check_databases_access"
     execute_step "Dump Mysql databases content" "dump_databases"
     execute_step "Transfer databases dumps on new mysql server" "transfer_dump"
-    execute_step "Restore databases on new mysql server" "transfer_dump"
+    execute_step "Restore databases on new mysql server" "restore_databases"
     echo ""
     display_step_state  "$script_name" "Completed."
     display_duration "$script_start_time" "$script_name:$ip_address"
