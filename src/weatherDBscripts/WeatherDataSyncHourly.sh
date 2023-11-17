@@ -103,6 +103,20 @@ restore_databases() {
     done
 }
 
+remove_dump_files() {
+    for db in "${databases[@]}"; do
+        # Remove dump files from destination path
+        dest_dump_file="$backup_dest_path/$db-*"
+        rm -f $dest_dump_file
+        echo "Removed dump file(s) for $db from $backup_dest_path"
+
+        # Remove dump files from source path via ssh
+        ssh $source_server "rm -f $backup_source_path/$db-*"
+        echo "Removed dump file(s) for $db from $source_server:$backup_source_path"
+    done
+}
+
+
 # Example usage in a script
 main() {
     local script_start_time
@@ -114,6 +128,7 @@ main() {
     execute_step "Dump Mysql databases content" "dump_databases"
     execute_step "Transfer databases dumps on new mysql server" "transfer_dump"
     execute_step "Restore databases on new mysql server" "restore_databases"
+    execute_step "Remove SQL dump files" "remove_dump_files"
     echo ""
     display_step_state  "$script_name" "Completed."
     display_duration "$script_start_time" "$script_name:$ip_address"
