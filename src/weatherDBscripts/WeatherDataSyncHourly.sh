@@ -18,7 +18,7 @@ backup_source_path="/home/pierre/backup/wconditions"
 backup_dest_path="/home/pierre/backup/wconditions"
 databases=("VillebonWeatherReport" "BethuneWeatherReport")
 
-check_database_access() {
+check_databases_access() {
     total_databases=${#databases[@]}
     current_database=0
 
