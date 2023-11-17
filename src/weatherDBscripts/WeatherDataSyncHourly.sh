@@ -67,6 +67,7 @@ transfer_dump() {
     
     for db in "${databases[@]}"; do
         current_database=$((current_database + 1))
+        echo " ============ On s'occupe de : $db qui se trouve dans $source_server:$backup_source_path/$backup_file"
         scp_result=$(scp $source_server:$backup_source_path/$backup_file $backup_dest_path)
         scp_status=$?
 
