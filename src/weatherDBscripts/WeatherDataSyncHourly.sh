@@ -59,43 +59,43 @@ dump_databases() {
             exit 1
         fi
     done
+}
 
-    transfer_dump() {
-        total_databases=${#databases[@]}
-        current_database=0
-        
-        for db in "${databases[@]}"; do
-            current_database=$((current_database + 1))
-            scp_result=$(scp $source_server:$backup_source_path/$backup_file $backup_dest_path)
-            scp_status=$?
+transfer_dump() {
+    total_databases=${#databases[@]}
+    current_database=0
+    
+    for db in "${databases[@]}"; do
+        current_database=$((current_database + 1))
+        scp_result=$(scp $source_server:$backup_source_path/$backup_file $backup_dest_path)
+        scp_status=$?
 
-            if [ $scp_status -eq 0 ]; then
-                echo -e "SCP command for $db dump $source_server:$backup_source_path/$backup_file $backup_dest_path executed successfully."
-            else
-                echo -e "\nError: SCP command for $db failed with error code $scp_status"
-                exit 1
-            fi
-        done
-    }
+        if [ $scp_status -eq 0 ]; then
+            echo -e "SCP command for $db dump $source_server:$backup_source_path/$backup_file $backup_dest_path executed successfully."
+        else
+            echo -e "\nError: SCP command for $db failed with error code $scp_status"
+            exit 1
+        fi
+    done
+}
 
+restore_databases() {
+    total_databases=${#databases[@]}
+    current_database=0
+    
+    for db in "${databases[@]}"; do
+        current_database=$((current_database + 1))
+        mysql_result=$(mysql -h $dest_server $db < $backup_dest_path/$backup_file)
+        mysql_status=$?
 
-    restore_databases() {
-        total_databases=${#databases[@]}
-        current_database=0
-        
-        for db in "${databases[@]}"; do
-            current_database=$((current_database + 1))
-            mysql_result=$(mysql -h $dest_server $db < $backup_dest_path/$backup_file)
-            mysql_status=$?
-
-            if [ $mysql_status -eq 0 ]; then
-                echo -e "MySQL restore for $db executed successfully."
-            else
-                echo -e "\nError: MySQL restore for $db failed with error code $mysql_status"
-                exit 1
-            fi
-        done
-    }
+        if [ $mysql_status -eq 0 ]; then
+            echo -e "MySQL restore for $db executed successfully."
+        else
+            echo -e "\nError: MySQL restore for $db failed with error code $mysql_status"
+            exit 1
+        fi
+    done
+}
 
 
 }
