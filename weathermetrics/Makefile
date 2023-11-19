@@ -1,4 +1,5 @@
 # Makefile
+.PHONY: all build install clean
 
 # Define variables
 REPO_URL = https://github.com/billoven/wconditions.git
@@ -8,7 +9,7 @@ REPO_URL = https://github.com/billoven/wconditions.git
 # Set SOURCE_DIR to the current working directory
 CURRENT_DIR := $(shell pwd)
 PROJECT = weathermetrics
-BIN_DIR = $(CURRENT_DIR)/bin/$(PROJECT)
+BIN_DIR = $(CURRENT_DIR)/bin
 SOURCE_DIR = $(BIN_DIR)/$(PROJECT)/src
 DEST_DIR = /var/www/html/$(PROJECT)
 DEST_USER = pierre
@@ -20,8 +21,11 @@ TAGS := $(shell git ls-remote --tags $(REPO_URL) | awk -F/ '{print $$3}' | grep 
 # Get the latest tag starting with 'wconditions'
 LATEST_TAG := $(lastword $(TAGS))
 
+all: build install clean
+
 # Build target
 build:
+	@echo "Building..."
 	# Create the bin directory if it doesn't exist
 	mkdir -p $(BIN_DIR)
 
@@ -36,11 +40,12 @@ build:
 
 
 install:
+	@echo "Installing ..."
 	# Deploy the project to the destination server using scp
 	scp -r $(SOURCE_DIR)/* ${DEST_USER}@${DEST_IP}:$(DEST_DIR)
 
 clean:
+	@echo "Cleaning ..."
 	# Remove the bin directory
 	rm -rf $(BIN_DIR)
 
-.PHONY: build install clean
