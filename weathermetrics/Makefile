@@ -8,8 +8,8 @@ REPO_URL = https://github.com/billoven/wconditions.git
 # Set SOURCE_DIR to the current working directory
 CURRENT_DIR := $(shell pwd)
 PROJECT = weathermetrics
-BIN_DIR = $(CURRENT_DIR)/../../bin/$(PROJECT)
-SOURCE_DIR = $(BIN_DIR)/src/$(PROJECT)
+BIN_DIR = $(CURRENT_DIR)/bin/$(PROJECT)
+SOURCE_DIR = $(BIN_DIR)/$(PROJECT)/src
 DEST_DIR = /var/www/html/$(PROJECT)
 DEST_USER = pierre
 DEST_IP = 192.168.17.10
