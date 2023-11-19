@@ -1,5 +1,5 @@
 bin/
-/src/etc
+/etc
 /poc
 .pytest_cache/
 __pycache__/
@@ -7,4 +7,6 @@ __pycache__/
 */__pycache__/
 */__init__.py
 */__init__.pyc
+*/bin
 */.gitignore
+/.gitignore
