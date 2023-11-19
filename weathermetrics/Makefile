@@ -15,7 +15,7 @@ DEST_USER = pierre
 DEST_IP = 192.168.17.10
 
 # Fetch the latest tags
-TAGS := $(shell git ls-remote --tags $(REPO_URL) | awk -F/ '{print $$3}' | grep '^wconditions' | sort -V)
+TAGS := $(shell git ls-remote --tags $(REPO_URL) | awk -F/ '{print $$3}' | grep -E 'wconditions_[0-9.]+$$' | sort -V)
 
 # Get the latest tag starting with 'wconditions'
 LATEST_TAG := $(lastword $(TAGS))
