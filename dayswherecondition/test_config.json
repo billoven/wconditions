@@ -1,0 +1,7 @@
+{
+  "database_host": "test_host",
+  "database_user": "test_user",
+  "database_password": "test_password",
+  "database_name": "test_db",
+  "table_name": "test_table"
+}

@@ -1,0 +1,91 @@
+/* Draggable alert styles */
+.alert {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    padding: 15px;
+    margin-bottom: 20px;
+    border: 1px solid transparent;
+    border-radius: 4px;
+    z-index: 9999;
+    background-color: #fff;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3); /* Add shadow */
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    user-select: none;
+}
+
+.alert-title {
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.alert-message {
+    margin-bottom: 0;
+}
+
+/* Styles for different types of alert boxes */
+.error {
+    background-color: #dc3545;
+    color: #fff;
+}
+.success {
+    background-color: #28a745;
+    color: #fff;
+}
+
+.warning {
+    background-color: #ffc107;
+    color: #333;
+}
+
+.info {
+    background-color: #007bff;
+    color: #fff;
+}
+
+/* Icon for alert boxes */
+.alert i {
+    margin-right: 10px;
+    font-size: 20px;
+}
+
+.alert i, .alert-title, .alert-message {
+    display: inline-block;
+    vertical-align: middle;
+}
+
+/* Icon colors for different types of alert boxes */
+.error i {
+    color: #fff;
+}
+
+.success i {
+    color: #fff;
+}
+
+.warning i {
+    color: #333;
+}
+
+.info i {
+    color: #fff;
+}
+
+/* Close button for the alert box */
+.close-btn {
+    position: absolute;
+    top: 2px;
+    right: 4px;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+/* Close button hover effect */
+.close-btn:hover {
+    color: rgb(10, 0, 0);
+}
+
