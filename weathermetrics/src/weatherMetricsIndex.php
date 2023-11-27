@@ -25,8 +25,8 @@
                 require_once('/etc/weathermetrics/db_config.php');
                 
                 // Dynamically generate options based on the configurations
-                foreach ($dbConfigs as $dbName => $dbConfig) {
-                    echo "<option value=\"$dbName\">{$dbConfig['database']}</option>";
+                foreach ($dbConfigs as $index => $dbConfig) {
+                    echo "<option value=\"$index\">{$dbConfig['database']}</option>";
                 }
                 ?>
             </select>
