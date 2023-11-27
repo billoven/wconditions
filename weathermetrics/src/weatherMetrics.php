@@ -1,4 +1,4 @@
-<?php
+<button class="nav-link btn btn-light fs-5 text-dark href="weatherMetricsByYear.php" type="button">Climatologic</button><?php
     // Common Header for all the weatherMetrics files
     include "weatherMetricsHeader.php";
 
@@ -503,4 +503,3 @@
     
 </body>
 </html>
-
