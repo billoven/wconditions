@@ -1,27 +1,10 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>WEATHER METRICS FROM BRESSER LOCAL STATIONS</title>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-gradient-colors"></script>
-    <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
-    <script src="scripts/weatherMetrics.js"></script>
+<?php
+    // Common Header for all the weatherMetrics files
+    include "weatherMetricsHeader.php";
 
-    <link rel="stylesheet" href="styles/styles.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
-
-</head>
-<body>
-     <!-- Tabs Container -->
-     <div class="container" id="TabsContainer">
-        <h1>WeatherGraphs</h1>
-        <div class="tabs">
-            <button class="tab-button active" data-tab="DailyPressures">Daily Pressures</button>
-            <button class="tab-button" data-tab="DailyHumidity">Daily Humidity</button>
-            <button class="tab-button" data-tab="DailyStats">Daily Stats</button>
-            <button class="tab-button" data-tab="DailyNormals">Daily Normals</button>
-        </div>
-    </div>
+    ini_set('display_errors', 1);
+    error_reporting(E_ALL);
+?>
 
     <?php include 'alertBox.php'; ?>
      
@@ -46,20 +29,20 @@
       <div class="graph-container">
         <h2>Daily Temperatures Graph</h2>
         <div id="DailyTempGraphContainer">
-           <canvas id="DailyTempChart" width="800" height="400"></canvas>  
+           <canvas id="DailyTempChart" width="1024" height="400"></canvas>  
         </div>
       </div>
       <div class="graph-container">
         <h2>Monthly Temperatures Graph</h2>
         <div id="MonthlyTempGraphContainer">
-            <canvas id="MonthlyTempChart" width="800" height="400"></canvas> 
+            <canvas id="MonthlyTempChart" width="1024" height="400"></canvas> 
         </div>
       </div>
 
       <div class="graph-container">
         <h2>Daily rain fall and cumulative of the period</h2>
         <div id="precipitationGraphContainer">
-            <canvas id="precipitationChart" width="800" height="400"></canvas>
+            <canvas id="precipitationChart" width="1024" height="400"></canvas>
     	</div>
       </div>
     </div>  
@@ -92,7 +75,7 @@
         <div class="graph-container">
             <h2>Comparison Graph</h2>
             <div id="ComparisonGraphContainer">
-                <canvas id="comparisonChart" width="800" height="400"></canvas>
+                <canvas id="comparisonChart" width="1024" height="400"></canvas>
             </div>
         </div>  
     </div>

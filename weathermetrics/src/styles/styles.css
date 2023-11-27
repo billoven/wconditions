@@ -46,7 +46,7 @@ body {
 
 /* Container styles */
 .container {
-    max-width: 800px;
+    max-width: 1024px;
     margin: 30px auto;
     padding: 20px;
     background-color: #fff;
