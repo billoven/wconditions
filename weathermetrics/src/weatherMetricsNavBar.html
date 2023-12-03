@@ -9,21 +9,104 @@
         <div class="collapse navbar-collapse justify-content-center" id="navbarNav">
             <ul class="navbar-nav">
                 <li class="nav-item">
-                    <a href="weatherMetrics.php" class="nav-link btn btn-light fs-5 text-dark" role="button">Temperatures</a>
+                    <a href="weatherMetrics.php" class="nav-link btn btn-light fs-6 text-dark" role="button">Temperatures</a>
                 </li>
                 <li class="nav-item">
-                    <a href="#" class="nav-link btn btn-light fs-5 text-dark" role="button">Rainfall</a>
+                    <a href="#" class="nav-link btn btn-light fs-6 text-dark" role="button">Rainfall</a>
                 </li>
                 <li class="nav-item">
-                    <a href="#" class="nav-link btn btn-light fs-5 text-dark" role="button">Pressure</a>
+                    <a href="#" class="nav-link btn btn-light fs-6 text-dark" role="button">Pressure</a>
                     </li>
+                <!-- <li class="nav-item">
+                    <a href="#" class="nav-link btn btn-light fs-6 text-dark" role="button">Humidity/Dewpoint</a>
+                </li> -->
                 <li class="nav-item">
-                    <a href="#" class="nav-link btn btn-light fs-5 text-dark" role="button">Humidity/Dewpoint</a>
-                </li>
-                <li class="nav-item">
-                    <a href="weatherMetricsByYear.php" class="nav-link btn btn-light fs-5 text-dark" role="button">Climatologic</a>
+                    <a href="weatherMetricsByYear.php" class="nav-link btn btn-light fs-6 text-dark" role="button">Climatologic</a>
                 </li>
             </ul>
+            <div class="ms-auto d-flex">
+                <div class="dropdown me-3">
+                    <button class="btn btn-secondary btn-sm dropdown-toggle" type="button" id="dropdownDbButton" data-bs-toggle="dropdown" aria-expanded="false">
+                      Select DB</button>
+                    <ul class="dropdown-menu" id="db-selector" aria-labelledby="dropdownMenuButton">
+                      <li><a class="dropdown-item" href="#" onclick="changeDb('db1')">Villebon</a></li>
+                        <li><a class="dropdown-item" href="#" onclick="changeDb('db2')">Bethune</a></li>
+                    </ul>
+                </div>
+                <div class="dropdown ms-3">
+                    <button class="btn btn-secondary btn-sm dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+                    Select Theme
+                    </button>
+                    <ul class="dropdown-menu" id="theme-selector" aria-labelledby="dropdownMenuButton">
+                    <li><a class="dropdown-item" href="#" onclick="changeTheme('cerulean')">cerulean</a></li>
+                    <li><a class="dropdown-item" href="#" onclick="changeTheme('darkly')">Dark</a></li>
+                    <li><a class="dropdown-item" href="#" onclick="changeTheme('cosmo')">Cosmo</a></li>
+                    <li><a class="dropdown-item" href="#" onclick="changeTheme('cyborg')">Cyborg</a></li>
+                    <li><a class="dropdown-item" href="#" onclick="changeTheme('flatly')">Flatly</a></li>
+                    <li><a class="dropdown-item" href="#" onclick="changeTheme('journal')">Journal</a></li>
+                    <li><a class="dropdown-item" href="#" onclick="changeTheme('litera')">Litera</a></li>
+                    <li><a class="dropdown-item" href="#" onclick="changeTheme('lumen')">Lumen</a></li>
+                    <li><a class="dropdown-item" href="#" onclick="changeTheme('lux')">Lux</a></li>
+                    <li><a class="dropdown-item" href="#" onclick="changeTheme('materia')">Materia</a></li>
+                    <li><a class="dropdown-item" href="#" onclick="changeTheme('minty')">Minty</a></li>
+                    <li><a class="dropdown-item" href="#" onclick="changeTheme('morph')">Morph</a></li>
+                    <li><a class="dropdown-item" href="#" onclick="changeTheme('pulse')">Pulse</a></li>
+                    <li><a class="dropdown-item" href="#" onclick="changeTheme('quartz')">Quartz</a></li>
+                    <li><a class="dropdown-item" href="#" onclick="changeTheme('sandstone')">Sandstone</a></li>
+                    <li><a class="dropdown-item" href="#" onclick="changeTheme('simplex')">Simplex</a></li>
+                    <li><a class="dropdown-item" href="#" onclick="changeTheme('sketchy')">Sketchy</a></li>
+                    <li><a class="dropdown-item" href="#" onclick="changeTheme('slate')">Slate</a></li>
+                    <li><a class="dropdown-item" href="#" onclick="changeTheme('solar')">Solar</a></li>
+                    <li><a class="dropdown-item" href="#" onclick="changeTheme('spacelab')">Spacelab</a></li>
+                    <li><a class="dropdown-item" href="#" onclick="changeTheme('superhero')">Superhero</a></li>	
+                    <li><a class="dropdown-item" href="#" onclick="changeTheme('united')">United</a></li>	
+                    <li><a class="dropdown-item" href="#" onclick="changeTheme('spacelab')">Spacelab</a></li>	
+                    <li><a class="dropdown-item" href="#" onclick="changeTheme('vapor')">Vapor</a></li>	
+                    <li><a class="dropdown-item" href="#" onclick="changeTheme('yeti')">Yeti</a></li>		
+                    <li><a class="dropdown-item" href="#" onclick="changeTheme('zephir')">Zephir</a></li>		
+                    </ul>
+                </div>
+            </div>
         </div>
     </div>
 </nav>
+<script>
+    // Function to change the theme
+    function changeTheme(themeName) {
+         const themeLink = document.getElementById('bootstrap-theme');
+         themeLink.href = `https://cdn.jsdelivr.net/npm/bootswatch@5.3.1/dist/${themeName}/bootstrap.min.css`;
+ 
+ 
+         sessionStorage.setItem('theme', themeName);
+ 
+         const Storedtheme = sessionStorage.getItem('theme');
+         console.log("Theme stocké:",Storedtheme);
+     }
+ 
+     // Get the theme selector element
+     const themeSelector = document.getElementById('theme-selector');
+ 
+     // Add event listener to the theme selector
+     themeSelector.addEventListener('change', function() {
+         const selectedTheme = this.value;
+         changeTheme(selectedTheme);
+ 
+     });
+    // Function to change the selected database
+    function changeDb(dbName) {
+        sessionStorage.setItem('selectedDb', dbName);
+
+        const storedDb = sessionStorage.getItem('selectedDb');
+        console.log("Selected DB stored:", storedDb);
+    }
+
+    // Event listener for the database selector
+    const dbSelector = document.getElementById('db-selector');
+    dbSelector.addEventListener('click', function(event) {
+        // Check if a dropdown item is clicked
+        if (event.target.classList.contains('dropdown-item')) {
+            const selectedDb = event.target.innerText;
+            changeDb(selectedDb);
+        }
+    });
+ </script>
