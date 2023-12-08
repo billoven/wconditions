@@ -5,7 +5,7 @@
   <title>Climatologic Statistics with bootstra5.3.1</title>
   <link id="bootstrap-theme" rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootswatch@5.3.1/dist/darkly/bootstrap.min.css">
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-gradient-colors"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-gradient"></script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
   <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
   <script src="scripts/weatherMetrics.js"></script>
@@ -41,6 +41,36 @@
             themeLink.href = 'https://cdn.jsdelivr.net/npm/bootswatch@5.3.1/dist/darkly/bootstrap.min.css';
         }
     </script>
+    <?php
+        // Retrieve the theme value from the URL parameter
+        $selectedDb = $_GET['selectedDb'];
+
+        // Now you can use $theme in your PHP code
+        echo "SelectedDB received from JavaScript: " . htmlspecialchars($selectedDb);
+
+        // Database configuration
+        require_once('/etc/weathermetrics/db_config.php'); // Adjust the path accordingly
+        // $selectedDb = 'db1'; // Change this to the database you want to connect to
+
+        if (isset($dbConfigs[$selectedDb])) {
+            $dbConfig = $dbConfigs[$selectedDb];
+            $conn = new mysqli($dbConfig['host'], $dbConfig['username'], $dbConfig['password'], $dbConfig['database']);
+            if ($conn->connect_error) {
+                die("Connection failed: " . $conn->connect_error);
+            }
+
+            // Fetch available years from the database
+            $years = array();
+            $yearQuery = "SELECT DISTINCT YEAR(WC_Date) AS Year FROM DayWeatherConditions ORDER by Year DESC";
+            $yearResult = $conn->query($yearQuery);
+            while ($row = $yearResult->fetch_assoc()) {
+                $years[] = $row['Year'];
+            }
+        
+            // Close the database connection
+            $conn->close();
+        }
+    ?>
     <!-- Release Container -->
     <div class="release-container" id="releaseContainer">
         <!-- Release version will be inserted here -->

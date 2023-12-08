@@ -116,41 +116,7 @@ if (isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] === 'GET' &&
 ?>
 <div class="container mt-5">
     <h2 class="mb-4">Climatologic Statistics by Year</h2>
-    <div class="dropdown float-end">
-      <button class="btn btn-secondary btn-sm dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
-        Select Theme
-      </button>
-      <ul class="dropdown-menu" id="theme-selector" aria-labelledby="dropdownMenuButton">
-        <li><a class="dropdown-item" href="#" onclick="changeTheme('cerulean')">cerulean</a></li>
-        <li><a class="dropdown-item" href="#" onclick="changeTheme('darkly')">Dark</a></li>
-        <li><a class="dropdown-item" href="#" onclick="changeTheme('cosmo')">Cosmo</a></li>
-        <li><a class="dropdown-item" href="#" onclick="changeTheme('cyborg')">Cyborg</a></li>
-        <li><a class="dropdown-item" href="#" onclick="changeTheme('flatly')">Flatly</a></li>
-        <li><a class="dropdown-item" href="#" onclick="changeTheme('journal')">Journal</a></li>
-        <li><a class="dropdown-item" href="#" onclick="changeTheme('litera')">Litera</a></li>
-        <li><a class="dropdown-item" href="#" onclick="changeTheme('lumen')">Lumen</a></li>
-        <li><a class="dropdown-item" href="#" onclick="changeTheme('lux')">Lux</a></li>
-        <li><a class="dropdown-item" href="#" onclick="changeTheme('materia')">Materia</a></li>
-        <li><a class="dropdown-item" href="#" onclick="changeTheme('minty')">Minty</a></li>
-        <li><a class="dropdown-item" href="#" onclick="changeTheme('morph')">Morph</a></li>
-        <li><a class="dropdown-item" href="#" onclick="changeTheme('pulse')">Pulse</a></li>
-        <li><a class="dropdown-item" href="#" onclick="changeTheme('quartz')">Quartz</a></li>
-        <li><a class="dropdown-item" href="#" onclick="changeTheme('sandstone')">Sandstone</a></li>
-        <li><a class="dropdown-item" href="#" onclick="changeTheme('simplex')">Simplex</a></li>
-        <li><a class="dropdown-item" href="#" onclick="changeTheme('sketchy')">Sketchy</a></li>
-        <li><a class="dropdown-item" href="#" onclick="changeTheme('slate')">Slate</a></li>
-        <li><a class="dropdown-item" href="#" onclick="changeTheme('solar')">Solar</a></li>
-        <li><a class="dropdown-item" href="#" onclick="changeTheme('spacelab')">Spacelab</a></li>
-        <li><a class="dropdown-item" href="#" onclick="changeTheme('superhero')">Superhero</a></li>	
-        <li><a class="dropdown-item" href="#" onclick="changeTheme('united')">United</a></li>	
-        <li><a class="dropdown-item" href="#" onclick="changeTheme('spacelab')">Spacelab</a></li>	
-        <li><a class="dropdown-item" href="#" onclick="changeTheme('vapor')">Vapor</a></li>	
-        <li><a class="dropdown-item" href="#" onclick="changeTheme('yeti')">Yeti</a></li>		
-        <li><a class="dropdown-item" href="#" onclick="changeTheme('zephir')">Zephir</a></li>		
-      </ul>
-    </div>
-
-    <!-- Rest of your form and table -->
+   <!-- Rest of your form and table -->
     <form method="GET" action="#statistics" id="year-form">
         <div class="form-group">
             <label for="selected_years">Select Years:  </label>
