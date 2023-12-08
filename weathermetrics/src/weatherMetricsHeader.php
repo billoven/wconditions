@@ -8,6 +8,8 @@
   <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-gradient"></script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
   <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+
+
   <script src="scripts/weatherMetrics.js"></script>
   <link rel="stylesheet" href="styles/styles.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
@@ -42,15 +44,14 @@
         }
     </script>
     <?php
-        // Retrieve the theme value from the URL parameter
-        $selectedDb = $_GET['selectedDb'];
+        // Retrieve the DB value from the URL parameter or put db1 by default
+        $selectedDb = $_GET['selectedDb'] ?? "db1";
 
         // Now you can use $theme in your PHP code
         echo "SelectedDB received from JavaScript: " . htmlspecialchars($selectedDb);
 
         // Database configuration
         require_once('/etc/weathermetrics/db_config.php'); // Adjust the path accordingly
-        // $selectedDb = 'db1'; // Change this to the database you want to connect to
 
         if (isset($dbConfigs[$selectedDb])) {
             $dbConfig = $dbConfigs[$selectedDb];
@@ -59,6 +60,11 @@
                 die("Connection failed: " . $conn->connect_error);
             }
 
+            // Echo the host, username, and database
+            echo "Host: " . $dbConfig['host'] . "<br>";
+            echo "Username: " . $dbConfig['username'] . "<br>";
+            echo "Database: " . $dbConfig['database'] . "<br>";
+    
             // Fetch available years from the database
             $years = array();
             $yearQuery = "SELECT DISTINCT YEAR(WC_Date) AS Year FROM DayWeatherConditions ORDER by Year DESC";

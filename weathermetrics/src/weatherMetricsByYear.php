@@ -6,8 +6,11 @@
     error_reporting(E_ALL);
 
     // Database configuration
-    require_once('/etc/weathermetrics/db_config.php'); // Adjust the path accordingly
-    $selectedDb = 'db1'; // Change this to the database you want to connect to
+    //require_once('/etc/weathermetrics/db_config.php'); // Adjust the path accordingly
+    //$selectedDb = 'db1'; // Change this to the database you want to connect to
+
+    // Now you can use $theme in your PHP code
+    echo "SelectedDB received from JavaScript: " . $selectedDb;
 
 if (isset($dbConfigs[$selectedDb])) {
     $dbConfig = $dbConfigs[$selectedDb];
@@ -36,8 +39,8 @@ if (isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] === 'GET' &&
     $selected_years = $_GET['selected_years'];
 
     // Database configuration
-    require_once('/etc/weathermetrics/db_config.php'); // Adjust the path accordingly
-    $selectedDb = 'db1'; // Change this to the database you want to connect to
+    //require_once('/etc/weathermetrics/db_config.php'); // Adjust the path accordingly
+    //$selectedDb = 'db1'; // Change this to the database you want to connect to
 
     if (isset($dbConfigs[$selectedDb])) {
         $dbConfig = $dbConfigs[$selectedDb];

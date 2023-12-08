@@ -9,19 +9,6 @@
         return $num_days_period1 === $num_days_period2;
     }
 
-    // Database configuration
-    require_once('/etc/weathermetrics/db_config.php'); // Adjust the path accordingly
-    $selectedDb = 'db1'; // Change this to the database you want to connect to
-    if (isset($dbConfigs[$selectedDb])) {
-        $dbConfig = $dbConfigs[$selectedDb];
-        $conn = new mysqli($dbConfig['host'], $dbConfig['username'], $dbConfig['password'], $dbConfig['database']);
-        if ($conn->connect_error) {
-            die("Connection failed: " . $conn->connect_error);
-        }
-    } else {
-        die("Invalid database selection.");
-    }
-    
     if ($_SERVER["REQUEST_METHOD"] == "POST") {
         // Get the selected periods range
         $start_date1 = $_POST['start_date_1'];
@@ -29,6 +16,20 @@
         $start_date2 = $_POST['start_date_2'];
         $end_date2 = $_POST['end_date_2'];
         $selected_data_type = $_POST['weather_data_type'];
+        $selectedDb = $_POST['selectedDb'];
+        
+        // Database configuration
+        if (isset($dbConfigs[$selectedDb])) {
+            $dbConfig = $dbConfigs[$selectedDb];
+            $conn = new mysqli($dbConfig['host'], $dbConfig['username'], $dbConfig['password'], $dbConfig['database']);
+            if ($conn->connect_error) {
+                die("Connection failed: " . $conn->connect_error);
+            }
+        } else {
+            die("Invalid database selection.");
+        }
+    
+
 
         // Associative array to map the weather_data_type selected in the form to the real names in the database
         $weather_data_labels = [

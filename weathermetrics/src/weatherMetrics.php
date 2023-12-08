@@ -12,6 +12,8 @@
     <div class="container" id="Section1">
       <h2>Select Date Range</h2>
       <form id="form1" class="form-group" method="POST" action="weatherMetricsForm1.php">
+        <!-- Add a hidden input field to store the selectedDb value -->
+        <input type="hidden" name="selectedDb" value="<?php echo isset($_GET['selectedDb']) ? htmlspecialchars($_GET['selectedDb']) : 'db1'; ?>">
         <div class="form-row">
             <div class="form-group">
                 <label for="start_date">Start Date:</label>
@@ -52,6 +54,10 @@
       <script>console.log("Debut Script");</script>           
       <form id="form2" method="POST" action="weatherMetricsForm2.php">
                 <label for="start_date_1">Start Date (Period 1):</label>
+        
+                <!-- Add a hidden input field to store the selectedDb value -->
+                <input type="hidden" name="selectedDb" value="<?php echo isset($_GET['selectedDb']) ? htmlspecialchars($_GET['selectedDb']) : 'db1'; ?>">
+
                 <input type="date" name="start_date_1" required pattern="\d{4}-\d{2}-\d{2}" value="<?php echo isset($_POST['start_date_1']) ? $_POST['start_date_1'] : ''; ?>">
                 
                 <label for="end_date_1">End Date (Period 1):</label>

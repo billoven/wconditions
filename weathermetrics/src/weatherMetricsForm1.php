@@ -1,22 +1,22 @@
 <?php
-
-    // Database configuration
-    require_once('/etc/weathermetrics/db_config.php'); // Adjust the path accordingly
-    $selectedDb = 'db1'; // Change this to the database you want to connect to
-    if (isset($dbConfigs[$selectedDb])) {
-        $dbConfig = $dbConfigs[$selectedDb];
-        $conn = new mysqli($dbConfig['host'], $dbConfig['username'], $dbConfig['password'], $dbConfig['database']);
-        if ($conn->connect_error) {
-            die("Connection failed: " . $conn->connect_error);
-        }
-    } else {
-        die("Invalid database selection.");
-    }
-
     if ($_SERVER["REQUEST_METHOD"] == "POST") {
         // Get the selected date range
         $start_date = $_POST['start_date'];
         $end_date = $_POST['end_date'];
+        $selectedDb = $_POST['selectedDb'];
+
+        // Database configuration
+        if (isset($dbConfigs[$selectedDb])) {
+            $dbConfig = $dbConfigs[$selectedDb];
+            $conn = new mysqli($dbConfig['host'], $dbConfig['username'], $dbConfig['password'], $dbConfig['database']);
+            if ($conn->connect_error) {
+                die("Connection failed: " . $conn->connect_error);
+            }
+        } else {
+            die("Invalid database selection.");
+        }
+
+
 
         // Fetch data for the selected date range from the database
         $sql = "SELECT WC_Date, WC_TempAvg, WC_TempHigh, WC_TempLow, WC_PrecipitationSum FROM DayWeatherConditions WHERE WC_Date BETWEEN '$start_date' AND '$end_date'";
@@ -72,9 +72,6 @@
         $conn->close();
 
     }
-
-    // Close the database connection
-    $conn->close();
 
 
     /**
