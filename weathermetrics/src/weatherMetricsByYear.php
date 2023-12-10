@@ -5,42 +5,8 @@
     ini_set('display_errors', 1);
     error_reporting(E_ALL);
 
-    // Database configuration
-    //require_once('/etc/weathermetrics/db_config.php'); // Adjust the path accordingly
-    //$selectedDb = 'db1'; // Change this to the database you want to connect to
-
     // Now you can use $theme in your PHP code
     echo "SelectedDB received from JavaScript: " . $selectedDb;
-
-if (isset($dbConfigs[$selectedDb])) {
-    $dbConfig = $dbConfigs[$selectedDb];
-    $conn = new mysqli($dbConfig['host'], $dbConfig['username'], $dbConfig['password'], $dbConfig['database']);
-    if ($conn->connect_error) {
-        die("Connection failed: " . $conn->connect_error);
-    }
-
-    // Fetch available years from the database
-    $years = array();
-    $yearQuery = "SELECT DISTINCT YEAR(WC_Date) AS Year FROM DayWeatherConditions ORDER by Year DESC";
-    $yearResult = $conn->query($yearQuery);
-    while ($row = $yearResult->fetch_assoc()) {
-        $years[] = $row['Year'];
-    }
-
-    // Close the database connection
-    $conn->close();
-}
-
-// Check if the form was submitted
-$selected_years = array(); // Initialize the variable
-
-// Check if the form was submitted
-if (isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['selected_years'])) {
-    $selected_years = $_GET['selected_years'];
-
-    // Database configuration
-    //require_once('/etc/weathermetrics/db_config.php'); // Adjust the path accordingly
-    //$selectedDb = 'db1'; // Change this to the database you want to connect to
 
     if (isset($dbConfigs[$selectedDb])) {
         $dbConfig = $dbConfigs[$selectedDb];
@@ -49,77 +15,102 @@ if (isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] === 'GET' &&
             die("Connection failed: " . $conn->connect_error);
         }
 
-        foreach ($selected_years as $year) {
-            // Fetch statistics from the database
-            $sql = "SELECT
-            AVG(WC_TempAvg) AS AvgTemp,
-            MAX(WC_TempAvg) AS MaxAvgTemp,
-            MIN(WC_TempAvg) AS MinAvgTemp,
-            (SELECT DATE_FORMAT(WC_Date, '%d/%m') FROM DayWeatherConditions WHERE YEAR(WC_Date) = '$year' ORDER BY WC_TempAvg ASC LIMIT 1) AS DateMinAvgTemp,
-            (SELECT DATE_FORMAT(WC_Date, '%d/%m') FROM DayWeatherConditions WHERE YEAR(WC_Date) = '$year' ORDER BY WC_TempAvg DESC LIMIT 1) AS DateMaxAvgTemp,
-            SUM(CASE WHEN WC_TempAvg <= 0 THEN 1 ELSE 0 END) AS DaysLessThanEqualTo0,
-            SUM(CASE WHEN WC_TempAvg >= 25 THEN 1 ELSE 0 END) AS DaysGreaterThanOrEqualTo25,
-            SUM(CASE WHEN WC_TempAvg <= 0 THEN 1 ELSE 0 END) AS DaysLessThanOrEqualTo0,
-            SUM(CASE WHEN WC_TempAvg > 0 AND WC_TempAvg < 5 THEN 1 ELSE 0 END) AS DaysGreater0AndLess5,
-            SUM(CASE WHEN WC_TempAvg >= 5 AND WC_TempAvg < 10 THEN 1 ELSE 0 END) AS DaysGreaterOrEqual5AndLess10,
-            SUM(CASE WHEN WC_TempAvg >= 10 AND WC_TempAvg < 15 THEN 1 ELSE 0 END) AS DaysGreaterOrEqual10AndLess15,
-            SUM(CASE WHEN WC_TempAvg >= 15 AND WC_TempAvg < 20 THEN 1 ELSE 0 END) AS DaysGreaterOrEqual15AndLess20,
-            SUM(CASE WHEN WC_TempAvg >= 20 THEN 1 ELSE 0 END) AS DaysGreaterThanOrEqualTo20,
-            -- Add more similar cases for Minimal temperatures
-            AVG(WC_TempLow) AS AvgLowTemp,
-            MAX(WC_TempLow) AS MaxLowTemp,
-            MIN(WC_TempLow) AS MinLowTemp,
-            (SELECT DATE_FORMAT(WC_Date, '%d/%m') FROM DayWeatherConditions WHERE YEAR(WC_Date) = '$year' ORDER BY WC_TempLow ASC LIMIT 1) AS DateMinLowTemp,
-            (SELECT DATE_FORMAT(WC_Date, '%d/%m') FROM DayWeatherConditions WHERE YEAR(WC_Date) = '$year' ORDER BY WC_TempLow DESC LIMIT 1) AS DateMaxLowTemp,
-            SUM(CASE WHEN WC_TempLow <= -5 THEN 1 ELSE 0 END) AS DaysLowLessThanEqualToMinus5,
-            SUM(CASE WHEN WC_TempLow >= 20 THEN 1 ELSE 0 END) AS DaysLowGreaterThanOrEqualTo20,
-            SUM(CASE WHEN WC_TempLow <= 0 THEN 1 ELSE 0 END) AS DaysLowLessThanOrEqualTo0,
-            SUM(CASE WHEN WC_TempLow > 0 AND WC_TempLow < 5 THEN 1 ELSE 0 END) AS DaysLowGreater0AndLess5,
-            SUM(CASE WHEN WC_TempLow >= 5 AND WC_TempLow < 10 THEN 1 ELSE 0 END) AS DaysLowGreaterOrEqual5AndLess10,
-            SUM(CASE WHEN WC_TempLow >= 10 AND WC_TempLow < 15 THEN 1 ELSE 0 END) AS DaysLowGreaterOrEqual10AndLess15,
-            SUM(CASE WHEN WC_TempLow >= 15 AND WC_TempLow < 20 THEN 1 ELSE 0 END) AS DaysLowGreaterOrEqual15AndLess20,
-            SUM(CASE WHEN WC_TempLow >= 20 THEN 1 ELSE 0 END) AS DaysLowGreaterThanOrEqualTo20,
-                                        -- Add more similar cases for Minimal temperatures
-            AVG(WC_TempHigh) AS AvgHighTemp,
-            MAX(WC_TempHigh) AS MaxHighTemp,
-            MIN(WC_TempHigh) AS MinHighTemp,
-            (SELECT DATE_FORMAT(WC_Date, '%d/%m') FROM DayWeatherConditions WHERE YEAR(WC_Date) = '$year' ORDER BY WC_TempHigh ASC LIMIT 1) AS DateMinHighTemp,
-            (SELECT DATE_FORMAT(WC_Date, '%d/%m') FROM DayWeatherConditions WHERE YEAR(WC_Date) = '$year' ORDER BY WC_TempHigh DESC LIMIT 1) AS DateMaxHighTemp,
-            SUM(CASE WHEN WC_TempHigh <= 0 THEN 1 ELSE 0 END) AS DaysHighLessThanEqual0,
-            SUM(CASE WHEN WC_TempHigh >= 30 THEN 1 ELSE 0 END) AS DaysHighGreaterThanOrEqualTo30,
-            SUM(CASE WHEN WC_TempHigh <= 0 THEN 1 ELSE 0 END) AS DaysHighLessThanOrEqualTo0,
-            SUM(CASE WHEN WC_TempHigh > 0 AND WC_TempHigh < 5 THEN 1 ELSE 0 END) AS DaysHighGreater0AndLess5,
-            SUM(CASE WHEN WC_TempHigh >= 5 AND WC_TempHigh < 10 THEN 1 ELSE 0 END) AS DaysHighGreaterOrEqual5AndLess10,
-            SUM(CASE WHEN WC_TempHigh >= 10 AND WC_TempHigh < 15 THEN 1 ELSE 0 END) AS DaysHighGreaterOrEqual10AndLess15,
-            SUM(CASE WHEN WC_TempHigh >= 15 AND WC_TempHigh < 20 THEN 1 ELSE 0 END) AS DaysHighGreaterOrEqual15AndLess20,
-            SUM(CASE WHEN WC_TempHigh >= 20 THEN 1 ELSE 0 END) AS DaysHighGreaterThanOrEqualTo20,
-            SUM(WC_PrecipitationSum) AS YearTotalPrecipit,
-            MAX(WC_PrecipitationSum) AS DayMaxPrecipit,
-            SUM(CASE WHEN WC_PrecipitationSum >= 20 THEN 1 ELSE 0 END) AS DaysPrecipitGreaterOrEqual20,
-            SUM(CASE WHEN WC_PrecipitationSum > 0 AND WC_PrecipitationSum < 1 THEN 1 ELSE 0 END) AS DaysPrecipitLess1,
-            SUM(CASE WHEN WC_PrecipitationSum >= 1 AND WC_PrecipitationSum < 5 THEN 1 ELSE 0 END) AS DaysPrecipitGreaterOrEqual1AndLess5,
-            SUM(CASE WHEN WC_PrecipitationSum >= 5 AND WC_PrecipitationSum < 10 THEN 1 ELSE 0 END) AS DaysPrecipitGreaterOrEqual5AndLess10,
-            SUM(CASE WHEN WC_PrecipitationSum >= 10 THEN 1 ELSE 0 END) AS DaysPrecipitGreaterOrEqual10,
-            COUNT(*) AS TotalDays
-        FROM DayWeatherConditions
-        WHERE YEAR(WC_Date) = '$year'";
-
-            $result = $conn->query($sql);         
-
-            if ($result && $result->num_rows > 0) {
-                $row = $result->fetch_assoc();
-                $statistics[$year] = $row;
-            }
+        // Fetch available years from the database
+        $years = array();
+        $yearQuery = "SELECT DISTINCT YEAR(WC_Date) AS Year FROM DayWeatherConditions ORDER by Year DESC";
+        $yearResult = $conn->query($yearQuery);
+        while ($row = $yearResult->fetch_assoc()) {
+            $years[] = $row['Year'];
         }
 
         // Close the database connection
         $conn->close();
     }
-}
+
+    $selected_years = array(); // Initialize the variable
+
+    // Check if the form was submitted
+    if (isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['selected_years'])) {
+        $selected_years = $_GET['selected_years'];
+
+
+        if (isset($dbConfigs[$selectedDb])) {
+            $dbConfig = $dbConfigs[$selectedDb];
+            $conn = new mysqli($dbConfig['host'], $dbConfig['username'], $dbConfig['password'], $dbConfig['database']);
+            if ($conn->connect_error) {
+                die("Connection failed: " . $conn->connect_error);
+            }
+
+            foreach ($selected_years as $year) {
+                // Fetch statistics from the database
+                $sql = "SELECT
+                AVG(WC_TempAvg) AS AvgTemp,
+                MAX(WC_TempAvg) AS MaxAvgTemp,
+                MIN(WC_TempAvg) AS MinAvgTemp,
+                (SELECT DATE_FORMAT(WC_Date, '%d/%m') FROM DayWeatherConditions WHERE YEAR(WC_Date) = '$year' ORDER BY WC_TempAvg ASC LIMIT 1) AS DateMinAvgTemp,
+                (SELECT DATE_FORMAT(WC_Date, '%d/%m') FROM DayWeatherConditions WHERE YEAR(WC_Date) = '$year' ORDER BY WC_TempAvg DESC LIMIT 1) AS DateMaxAvgTemp,
+                SUM(CASE WHEN WC_TempAvg <= 0 THEN 1 ELSE 0 END) AS DaysLessThanEqualTo0,
+                SUM(CASE WHEN WC_TempAvg >= 25 THEN 1 ELSE 0 END) AS DaysGreaterThanOrEqualTo25,
+                SUM(CASE WHEN WC_TempAvg <= 0 THEN 1 ELSE 0 END) AS DaysLessThanOrEqualTo0,
+                SUM(CASE WHEN WC_TempAvg > 0 AND WC_TempAvg < 5 THEN 1 ELSE 0 END) AS DaysGreater0AndLess5,
+                SUM(CASE WHEN WC_TempAvg >= 5 AND WC_TempAvg < 10 THEN 1 ELSE 0 END) AS DaysGreaterOrEqual5AndLess10,
+                SUM(CASE WHEN WC_TempAvg >= 10 AND WC_TempAvg < 15 THEN 1 ELSE 0 END) AS DaysGreaterOrEqual10AndLess15,
+                SUM(CASE WHEN WC_TempAvg >= 15 AND WC_TempAvg < 20 THEN 1 ELSE 0 END) AS DaysGreaterOrEqual15AndLess20,
+                SUM(CASE WHEN WC_TempAvg >= 20 THEN 1 ELSE 0 END) AS DaysGreaterThanOrEqualTo20,
+                -- Add more similar cases for Minimal temperatures
+                AVG(WC_TempLow) AS AvgLowTemp,
+                MAX(WC_TempLow) AS MaxLowTemp,
+                MIN(WC_TempLow) AS MinLowTemp,
+                (SELECT DATE_FORMAT(WC_Date, '%d/%m') FROM DayWeatherConditions WHERE YEAR(WC_Date) = '$year' ORDER BY WC_TempLow ASC LIMIT 1) AS DateMinLowTemp,
+                (SELECT DATE_FORMAT(WC_Date, '%d/%m') FROM DayWeatherConditions WHERE YEAR(WC_Date) = '$year' ORDER BY WC_TempLow DESC LIMIT 1) AS DateMaxLowTemp,
+                SUM(CASE WHEN WC_TempLow <= -5 THEN 1 ELSE 0 END) AS DaysLowLessThanEqualToMinus5,
+                SUM(CASE WHEN WC_TempLow >= 20 THEN 1 ELSE 0 END) AS DaysLowGreaterThanOrEqualTo20,
+                SUM(CASE WHEN WC_TempLow <= 0 THEN 1 ELSE 0 END) AS DaysLowLessThanOrEqualTo0,
+                SUM(CASE WHEN WC_TempLow > 0 AND WC_TempLow < 5 THEN 1 ELSE 0 END) AS DaysLowGreater0AndLess5,
+                SUM(CASE WHEN WC_TempLow >= 5 AND WC_TempLow < 10 THEN 1 ELSE 0 END) AS DaysLowGreaterOrEqual5AndLess10,
+                SUM(CASE WHEN WC_TempLow >= 10 AND WC_TempLow < 15 THEN 1 ELSE 0 END) AS DaysLowGreaterOrEqual10AndLess15,
+                SUM(CASE WHEN WC_TempLow >= 15 AND WC_TempLow < 20 THEN 1 ELSE 0 END) AS DaysLowGreaterOrEqual15AndLess20,
+                SUM(CASE WHEN WC_TempLow >= 20 THEN 1 ELSE 0 END) AS DaysLowGreaterThanOrEqualTo20,
+                                            -- Add more similar cases for Minimal temperatures
+                AVG(WC_TempHigh) AS AvgHighTemp,
+                MAX(WC_TempHigh) AS MaxHighTemp,
+                MIN(WC_TempHigh) AS MinHighTemp,
+                (SELECT DATE_FORMAT(WC_Date, '%d/%m') FROM DayWeatherConditions WHERE YEAR(WC_Date) = '$year' ORDER BY WC_TempHigh ASC LIMIT 1) AS DateMinHighTemp,
+                (SELECT DATE_FORMAT(WC_Date, '%d/%m') FROM DayWeatherConditions WHERE YEAR(WC_Date) = '$year' ORDER BY WC_TempHigh DESC LIMIT 1) AS DateMaxHighTemp,
+                SUM(CASE WHEN WC_TempHigh <= 0 THEN 1 ELSE 0 END) AS DaysHighLessThanEqual0,
+                SUM(CASE WHEN WC_TempHigh >= 30 THEN 1 ELSE 0 END) AS DaysHighGreaterThanOrEqualTo30,
+                SUM(CASE WHEN WC_TempHigh <= 0 THEN 1 ELSE 0 END) AS DaysHighLessThanOrEqualTo0,
+                SUM(CASE WHEN WC_TempHigh > 0 AND WC_TempHigh < 5 THEN 1 ELSE 0 END) AS DaysHighGreater0AndLess5,
+                SUM(CASE WHEN WC_TempHigh >= 5 AND WC_TempHigh < 10 THEN 1 ELSE 0 END) AS DaysHighGreaterOrEqual5AndLess10,
+                SUM(CASE WHEN WC_TempHigh >= 10 AND WC_TempHigh < 15 THEN 1 ELSE 0 END) AS DaysHighGreaterOrEqual10AndLess15,
+                SUM(CASE WHEN WC_TempHigh >= 15 AND WC_TempHigh < 20 THEN 1 ELSE 0 END) AS DaysHighGreaterOrEqual15AndLess20,
+                SUM(CASE WHEN WC_TempHigh >= 20 THEN 1 ELSE 0 END) AS DaysHighGreaterThanOrEqualTo20,
+                SUM(WC_PrecipitationSum) AS YearTotalPrecipit,
+                MAX(WC_PrecipitationSum) AS DayMaxPrecipit,
+                SUM(CASE WHEN WC_PrecipitationSum >= 20 THEN 1 ELSE 0 END) AS DaysPrecipitGreaterOrEqual20,
+                SUM(CASE WHEN WC_PrecipitationSum > 0 AND WC_PrecipitationSum < 1 THEN 1 ELSE 0 END) AS DaysPrecipitLess1,
+                SUM(CASE WHEN WC_PrecipitationSum >= 1 AND WC_PrecipitationSum < 5 THEN 1 ELSE 0 END) AS DaysPrecipitGreaterOrEqual1AndLess5,
+                SUM(CASE WHEN WC_PrecipitationSum >= 5 AND WC_PrecipitationSum < 10 THEN 1 ELSE 0 END) AS DaysPrecipitGreaterOrEqual5AndLess10,
+                SUM(CASE WHEN WC_PrecipitationSum >= 10 THEN 1 ELSE 0 END) AS DaysPrecipitGreaterOrEqual10,
+                COUNT(*) AS TotalDays
+            FROM DayWeatherConditions
+            WHERE YEAR(WC_Date) = '$year'";
+
+                $result = $conn->query($sql);         
+
+                if ($result && $result->num_rows > 0) {
+                    $row = $result->fetch_assoc();
+                    $statistics[$year] = $row;
+                }
+            }
+
+            // Close the database connection
+            $conn->close();
+        }
+    }
 ?>
 <div class="container mt-5">
     <h2 class="mb-4">Climatologic Statistics by Year</h2>
-   <!-- Rest of your form and table -->
     <form method="GET" action="#statistics" id="year-form">
         <div class="form-group">
             <label for="selected_years">Select Years:  </label>
@@ -145,7 +136,7 @@ if (isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] === 'GET' &&
             <button class="btn btn-sm btn-primary" type="button" data-bs-toggle="collapse" data-bs-target=".multi-collapse" aria-expanded="false" aria-controls="average-collapse low-collapse high-collapse rainfall-collapse">Toggle All Tables</button>
                       
         </div>
-        </form>
+    </form>
 
     <script>
         document.addEventListener("DOMContentLoaded", function () {
@@ -331,29 +322,5 @@ if (isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] === 'GET' &&
         </div>
     </div>
 </div>
-
-<script>
-   // Function to change the theme
-   function changeTheme(themeName) {
-        const themeLink = document.getElementById('bootstrap-theme');
-        themeLink.href = `https://cdn.jsdelivr.net/npm/bootswatch@5.3.1/dist/${themeName}/bootstrap.min.css`;
-
-
-        sessionStorage.setItem('theme', themeName);
-
-        const Storedtheme = sessionStorage.getItem('theme');
-        console.log("Theme stocké:",Storedtheme);
-    }
-
-    // Get the theme selector element
-    const themeSelector = document.getElementById('theme-selector');
-
-    // Add event listener to the theme selector
-    themeSelector.addEventListener('change', function() {
-        const selectedTheme = this.value;
-        changeTheme(selectedTheme);
-
-    });
-</script>
 </body>
 </html>

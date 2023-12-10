@@ -1,5 +1,8 @@
 <?php
 
+    // Getting the current file name
+    $currentFile = __FILE__;
+
     // Function to check if two dates have the same number of days
     function isSameNumberOfDays($start_date1, $end_date1, $start_date2, $end_date2)
     {
@@ -8,8 +11,20 @@
 
         return $num_days_period1 === $num_days_period2;
     }
-
+    
     if ($_SERVER["REQUEST_METHOD"] == "POST") {
+
+        $configFilePath = '/etc/weathermetrics/db_config.php';
+
+        // Check if the file exists
+        if (file_exists($configFilePath)) {
+            // Include the file if it exists
+            require_once($configFilePath);
+        } else {
+            // Display an error message and terminate the script
+            die("File: $currentFile - Error: Configuration file '$configFilePath' not found.");
+        }
+
         // Get the selected periods range
         $start_date1 = $_POST['start_date_1'];
         $end_date1 = $_POST['end_date_1'];
@@ -17,19 +32,17 @@
         $end_date2 = $_POST['end_date_2'];
         $selected_data_type = $_POST['weather_data_type'];
         $selectedDb = $_POST['selectedDb'];
-        
+
         // Database configuration
         if (isset($dbConfigs[$selectedDb])) {
             $dbConfig = $dbConfigs[$selectedDb];
             $conn = new mysqli($dbConfig['host'], $dbConfig['username'], $dbConfig['password'], $dbConfig['database']);
             if ($conn->connect_error) {
-                die("Connection failed: " . $conn->connect_error);
+                die("File: $currentFile - Connection failed: " . $conn->connect_error);
             }
         } else {
-            die("Invalid database selection.");
+            die("File: $currentFile - Invalid database selection.");
         }
-    
-
 
         // Associative array to map the weather_data_type selected in the form to the real names in the database
         $weather_data_labels = [

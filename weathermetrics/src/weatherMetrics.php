@@ -49,9 +49,7 @@
       </div>
     </div>  
     <div class="container" id="Section2">
-      <h1>SECTION 2</h1>
-      <h2>Compare Two Periods</h2> 
-      <script>console.log("Debut Script");</script>           
+      <h2>Compare Two Periods</h2>           
       <form id="form2" method="POST" action="weatherMetricsForm2.php">
                 <label for="start_date_1">Start Date (Period 1):</label>
         

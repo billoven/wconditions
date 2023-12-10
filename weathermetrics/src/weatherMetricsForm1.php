@@ -1,5 +1,20 @@
 <?php
+    // Getting the current file name
+    $currentFile = __FILE__;
+    
     if ($_SERVER["REQUEST_METHOD"] == "POST") {
+
+        $configFilePath = '/etc/weathermetrics/db_config.php';
+
+        // Check if the file exists
+        if (file_exists($configFilePath)) {
+            // Include the file if it exists
+            require_once($configFilePath);
+        } else {
+            // Display an error message and terminate the script
+            die("File: $currentFile - Error: Configuration file '$configFilePath' not found.");
+        }
+
         // Get the selected date range
         $start_date = $_POST['start_date'];
         $end_date = $_POST['end_date'];
@@ -10,12 +25,12 @@
             $dbConfig = $dbConfigs[$selectedDb];
             $conn = new mysqli($dbConfig['host'], $dbConfig['username'], $dbConfig['password'], $dbConfig['database']);
             if ($conn->connect_error) {
-                die("Connection failed: " . $conn->connect_error);
+
+                die("File: $currentFile - Connection failed: " . $conn->connect_error);
             }
         } else {
-            die("Invalid database selection.");
+            die("File: $currentFile - Invalid database selection.");
         }
-
 
 
         // Fetch data for the selected date range from the database
