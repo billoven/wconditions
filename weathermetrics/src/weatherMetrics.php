@@ -4,6 +4,8 @@
 
     ini_set('display_errors', 1);
     error_reporting(E_ALL);
+
+    $normalsLabel= $dbConfig['LabelNormals2'] ;
 ?>
 
     <?php include 'alertBox.php'; ?>
@@ -213,7 +215,7 @@
                         fill: true
                     },
                     {
-                        label: 'Normals 2016-2022 Average Temperature',
+                        label: '<?php echo $normalsLabel; ?> Average Temperature',
                         data:  [],
                         borderColor: 'blue',
                         backgroundColor: 'rgba(0, 0, 255, 0.1)',
@@ -222,7 +224,7 @@
                         borderDash: [5, 5]
                     },
                     {
-                        label: 'Normals 2016-2022 High Temperature',
+                        label: '<?php echo $normalsLabel; ?> High Temperature',
                         data:  [],
                         borderColor: 'red',
                         backgroundColor: 'rgba(0, 0, 255, 0.1)',
@@ -231,7 +233,7 @@
                         borderDash: [5, 5]
                     },
                     {
-                        label: 'Normals 2016-2022 Low Temperature',
+                        label: '<?php echo $normalsLabel; ?> Low Temperature',
                         data:  [],
                         borderColor: 'green',
                         backgroundColor: 'rgba(0, 0, 255, 0.1)',
@@ -481,6 +483,7 @@
                             );
 
                         } catch (error) {
+                            console.log("Response Data:", response);
                             console.error("Error parsing JSON response:", error);
                         }
 

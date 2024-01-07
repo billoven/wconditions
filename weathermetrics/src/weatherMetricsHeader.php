@@ -59,7 +59,7 @@
         $selectedDb = $_GET['selectedDb'] ?? "db1";
 
         // Able to use $selectedDb in PHP code
-        echo "SelectedDB received from JavaScript: " . htmlspecialchars($selectedDb);
+        echo "SelectedDB received from JavaScript: " . htmlspecialchars($selectedDb) . "<BR>";
 
         // Database configuration
         require_once('/etc/weathermetrics/db_config.php'); // Adjust the path accordingly
@@ -75,6 +75,9 @@
             echo "Host: " . $dbConfig['host'] . "<br>";
             echo "Username: " . $dbConfig['username'] . "<br>";
             echo "Database: " . $dbConfig['database'] . "<br>";
+            echo "TableDwc: " . $dbConfig['tabledwc'] . "<br>";
+            echo "LabelNormals1: " . $dbConfig['LabelNormals1'] . "<br>";
+            echo "LabelNormals2: " . $dbConfig['LabelNormals2'] . "<br>";
     
             // Fetch available years from the database
             $years = array();

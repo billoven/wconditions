@@ -1,5 +1,6 @@
 <?php
-    // Getting the current file name
+
+   // Getting the current file name
     $currentFile = __FILE__;
     
     if ($_SERVER["REQUEST_METHOD"] == "POST") {
@@ -57,7 +58,7 @@
                     NORM.AvgTempAvg as NormAvgTempAvg, 
                     NORM.AvgTempHigh as NormAvgTempHigh, 
                     NORM.AvgTempLow as NormAvgTempLow, 
-                    ORM.AvgPrecipitationSum as NormAvgPrecipSum 
+                    NORM.AvgPrecipitationSum as NormAvgPrecipSum 
                 FROM $tabledwc DWC 
                 JOIN $tableNormals2 NORM 
                 ON DATE_FORMAT(DWC.WC_Date, '%m-%d') = NORM.DayOfYear 
@@ -108,7 +109,7 @@
                                 AVG(WC_TempHigh) AS MaxTemp,
                                 AVG(WC_TempLow) AS MinTemp
                             FROM
-                                DayWeatherConditions
+                                $tabledwc
                             WHERE
                                 WC_Date BETWEEN '$start_date' AND '$end_date'
                             GROUP BY
