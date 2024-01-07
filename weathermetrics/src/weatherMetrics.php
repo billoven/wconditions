@@ -95,13 +95,16 @@
 
         $(document).ready(function () {
             // Function to update the daily temperatures graph
-            function updateDailyTempGraph(dates, averages, maximums, minimums, movingAverages) {
+            function updateDailyTempGraph(dates, averages, maximums, minimums, AvgTempAvgs, AvgTempHighs, AvgTempLows, movingAverages) {
                 // Update the existing chart instance (temperatureChart) with new data
                 temperatureChart.data.labels = dates;
                 temperatureChart.data.datasets[0].data = averages;
                 temperatureChart.data.datasets[1].data = maximums;
                 temperatureChart.data.datasets[2].data = minimums;
-                temperatureChart.data.datasets[3].data = movingAverages;
+                temperatureChart.data.datasets[3].data = AvgTempAvgs;
+                temperatureChart.data.datasets[4].data = AvgTempHighs;
+                temperatureChart.data.datasets[5].data = AvgTempLows;
+                temperatureChart.data.datasets[6].data = movingAverages;
                 temperatureChart.update();
             }
 
@@ -208,6 +211,33 @@
                         borderColor: 'green',
                         backgroundColor: 'rgba(0, 255, 0, 0.1)',
                         fill: true
+                    },
+                    {
+                        label: 'Normals 2016-2022 Average Temperature',
+                        data:  [],
+                        borderColor: 'blue',
+                        backgroundColor: 'rgba(0, 0, 255, 0.1)',
+                        fill: true,
+                        pointRadius: 0,
+                        borderDash: [5, 5]
+                    },
+                    {
+                        label: 'Normals 2016-2022 High Temperature',
+                        data:  [],
+                        borderColor: 'red',
+                        backgroundColor: 'rgba(0, 0, 255, 0.1)',
+                        fill: true,
+                        pointRadius: 0,
+                        borderDash: [5, 5]
+                    },
+                    {
+                        label: 'Normals 2016-2022 Low Temperature',
+                        data:  [],
+                        borderColor: 'green',
+                        backgroundColor: 'rgba(0, 0, 255, 0.1)',
+                        fill: true,
+                        pointRadius: 0,
+                        borderDash: [5, 5]
                     },
                     {
                         label: 'Moving Average',
@@ -431,6 +461,9 @@
                                 responseData.averages,
                                 responseData.maximums,
                                 responseData.minimums,
+                                responseData.AvgTempAvgs,
+                                responseData.AvgTempHighs,
+                                responseData.AvgTempLows,
                                 responseData.movingAverages
                             );
 

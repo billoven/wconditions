@@ -47,29 +47,22 @@
                     <li><a class="dropdown-item" href="#" onclick="changeTheme('cerulean')">cerulean</a></li>
                     <li><a class="dropdown-item" href="#" onclick="changeTheme('darkly')">Dark</a></li>
                     <li><a class="dropdown-item" href="#" onclick="changeTheme('cosmo')">Cosmo</a></li>
-                    <li><a class="dropdown-item" href="#" onclick="changeTheme('cyborg')">Cyborg</a></li>
                     <li><a class="dropdown-item" href="#" onclick="changeTheme('flatly')">Flatly</a></li>
                     <li><a class="dropdown-item" href="#" onclick="changeTheme('journal')">Journal</a></li>
                     <li><a class="dropdown-item" href="#" onclick="changeTheme('litera')">Litera</a></li>
-                    <li><a class="dropdown-item" href="#" onclick="changeTheme('lumen')">Lumen</a></li>
                     <li><a class="dropdown-item" href="#" onclick="changeTheme('lux')">Lux</a></li>
                     <li><a class="dropdown-item" href="#" onclick="changeTheme('materia')">Materia</a></li>
                     <li><a class="dropdown-item" href="#" onclick="changeTheme('minty')">Minty</a></li>
-                    <li><a class="dropdown-item" href="#" onclick="changeTheme('morph')">Morph</a></li>
                     <li><a class="dropdown-item" href="#" onclick="changeTheme('pulse')">Pulse</a></li>
-                    <li><a class="dropdown-item" href="#" onclick="changeTheme('quartz')">Quartz</a></li>
                     <li><a class="dropdown-item" href="#" onclick="changeTheme('sandstone')">Sandstone</a></li>
-                    <li><a class="dropdown-item" href="#" onclick="changeTheme('simplex')">Simplex</a></li>
                     <li><a class="dropdown-item" href="#" onclick="changeTheme('sketchy')">Sketchy</a></li>
                     <li><a class="dropdown-item" href="#" onclick="changeTheme('slate')">Slate</a></li>
                     <li><a class="dropdown-item" href="#" onclick="changeTheme('solar')">Solar</a></li>
                     <li><a class="dropdown-item" href="#" onclick="changeTheme('spacelab')">Spacelab</a></li>
-                    <li><a class="dropdown-item" href="#" onclick="changeTheme('superhero')">Superhero</a></li>	
                     <li><a class="dropdown-item" href="#" onclick="changeTheme('united')">United</a></li>	
                     <li><a class="dropdown-item" href="#" onclick="changeTheme('spacelab')">Spacelab</a></li>	
                     <li><a class="dropdown-item" href="#" onclick="changeTheme('vapor')">Vapor</a></li>	
-                    <li><a class="dropdown-item" href="#" onclick="changeTheme('yeti')">Yeti</a></li>		
-                    <li><a class="dropdown-item" href="#" onclick="changeTheme('zephir')">Zephir</a></li>		
+                    <li><a class="dropdown-item" href="#" onclick="changeTheme('yeti')">Yeti</a></li>				
                     </ul>
                 </div>
             </div>
@@ -105,6 +98,18 @@
         changeTheme(selectedTheme);
     });
 
+  // Function to update the text of the dropdown toggle button
+  function updateDropdownButtonText(dbName) {
+        const dropdownButton = document.getElementById('dropdownDbButton');
+        if (dbName === 'db1') {
+            dropdownButton.textContent = 'Villebon';
+        } else if (dbName === 'db2') {
+            dropdownButton.textContent = 'Bethune';
+        } else {
+            dropdownButton.textContent = 'Select DB';
+        }
+    }
+
     // Function to change the selected database
     function changeDb(dbName) {
         // Store the selected database in session storage
@@ -132,18 +137,6 @@
 
         // Log the New Url
         console.log("NewUrl:", newUrl);
-    }
-
-    // Function to update the text of the dropdown toggle button
-    function updateDropdownButtonText(dbName) {
-        const dropdownButton = document.getElementById('dropdownDbButton');
-        if (dbName === 'db1') {
-            dropdownButton.textContent = 'Villebon';
-        } else if (dbName === 'db2') {
-            dropdownButton.textContent = 'Bethune';
-        } else {
-            dropdownButton.textContent = 'Select DB';
-        }
     }
 
     // Event listener for the database selector

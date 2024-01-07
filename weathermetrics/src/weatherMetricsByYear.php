@@ -5,9 +5,6 @@
     ini_set('display_errors', 1);
     error_reporting(E_ALL);
 
-    // Now you can use $theme in your PHP code
-    echo "SelectedDB received from JavaScript: " . $selectedDb;
-
     if (isset($dbConfigs[$selectedDb])) {
         $dbConfig = $dbConfigs[$selectedDb];
         $conn = new mysqli($dbConfig['host'], $dbConfig['username'], $dbConfig['password'], $dbConfig['database']);
@@ -112,6 +109,9 @@
 <div class="container mt-5">
     <h2 class="mb-4">Climatologic Statistics by Year</h2>
     <form method="GET" action="#statistics" id="year-form">
+        <!-- Add a hidden input field to store the selectedDb value -->
+        <input type="hidden" name="selectedDb" value="<?php echo isset($_GET['selectedDb']) ? htmlspecialchars($_GET['selectedDb']) : 'db1'; ?>">
+
         <div class="form-group">
             <label for="selected_years">Select Years:  </label>
             <button type="button" class="btn btn-sm btn-secondary" id="select-all-btn">Select All</button>

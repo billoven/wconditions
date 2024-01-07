@@ -32,10 +32,39 @@
             die("File: $currentFile - Invalid database selection.");
         }
 
+        // Use placeholders for the table names
+        $tabledwc = $dbConfig['tabledwc'];
+        $tableNormals1 = $dbConfig['TableNormals1'];
+        $tableNormals2 = $dbConfig['TableNormals2'];
 
         // Fetch data for the selected date range from the database
-        $sql = "SELECT WC_Date, WC_TempAvg, WC_TempHigh, WC_TempLow, WC_PrecipitationSum FROM DayWeatherConditions WHERE WC_Date BETWEEN '$start_date' AND '$end_date'";
+        $sql = "SELECT 
+                    WC_Date, 
+                    WC_TempAvg, 
+                    WC_TempHigh,
+                     WC_TempLow, 
+                     WC_PrecipitationSum 
+                FROM $tabledwc 
+                WHERE WC_Date 
+                BETWEEN '$start_date' AND '$end_date'";
+
         $result = $conn->query($sql);
+
+        $sql1 = "SELECT 
+                    DWC.WC_Date, 
+                    NORM.DayOfYear, 
+                    DWC.WC_TempAvg, 
+                    NORM.AvgTempAvg as NormAvgTempAvg, 
+                    NORM.AvgTempHigh as NormAvgTempHigh, 
+                    NORM.AvgTempLow as NormAvgTempLow, 
+                    ORM.AvgPrecipitationSum as NormAvgPrecipSum 
+                FROM $tabledwc DWC 
+                JOIN $tableNormals2 NORM 
+                ON DATE_FORMAT(DWC.WC_Date, '%m-%d') = NORM.DayOfYear 
+                WHERE DWC.WC_Date 
+                BETWEEN '$start_date' AND '$end_date'" ;
+        
+        $result1 = $conn->query($sql1);
 	
         $dates = [];
         $averages = [];
@@ -43,6 +72,10 @@
         $minimums = [];
 	    $precipitations = [];
         $cumulativePrecipitations = [];
+        $AvgTempAvgs = [] ;
+        $AvgTempHighs = [] ;
+        $AvgTempLows = [] ;
+        $AvgPrecipitationSums = [] ;
         $cumulativeSum = 0;
 
         while ($row = $result->fetch_assoc()) {
@@ -52,8 +85,17 @@
             $minimums[] = $row['WC_TempLow'];
 	        $precipitations[] = $row['WC_PrecipitationSum'];
             $cumulativeSum += $row['WC_PrecipitationSum'];
+
             $cumulativePrecipitations[] = $cumulativeSum;
         }
+
+        while ($row1 = $result1->fetch_assoc()) {
+            $AvgTempAvgs[] = $row1['NormAvgTempAvg'];
+            $AvgTempHighs[] = $row1['NormAvgTempHigh'];
+            $AvgTempLows[] = $row1['NormAvgTempLow'];
+            $AvgPrecipitationSums[] = $row1['NormAvgPrecipSum'];
+        }        
+
 	    // Calculate moving average for the average temperature
         $movingAverages = calculateMovingAverage($averages, 7);
 
@@ -118,6 +160,10 @@
         'averages' => $averages,
         'maximums' => $maximums,
         'minimums' => $minimums,
+        'AvgTempAvgs' => $AvgTempAvgs,
+        'AvgTempHighs' => $AvgTempHighs,
+        'AvgTempLows' => $AvgTempLows,
+        'AvgPrecipitationSums' => $AvgPrecipitationSums,
         'movingAverages' => $movingAverages,
         'monthlyAvgLabels' => $monthlyAvgLabels,
         'monthlyAvgData' => $monthlyAvgData,
