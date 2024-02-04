@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Vérifier si le nombre correct d'arguments est fourni
-if [ "$#" -ne 3 ]; then
+if [ "$#" -ne 2 ]; then
     echo "Usage: $0 <input_file> <output_file>"
     exit 1
 fi
@@ -31,9 +31,20 @@ tail -n +2 "$input_file" | while IFS=';' read -r AAAAMMJJ NUM_POSTE NOM_USUEL LA
     fi
    
     # Vérifier et traiter les champs sans valeur
+    if [ -z "$TN" ]; then TN=NULL; fi
+    if [ -z "$TX" ]; then TX=NULL; fi
+    if [ -z "$TM" ] && [ "$TN" != "NULL" ] && [ "$TX" != "NULL" ]; then
+	# Set LC_NUMERIC to force dot as the decimal separator
+	export LC_NUMERIC="en_US.UTF-8"
+        result=$(echo "scale=1; ($TX + $TN) / 2" | bc)
+	TM=$(printf "%.1f\n" "$result")
+    else
+        if [ -z "$TM" ]; then TM=NULL; fi
+    fi
     if [ -z "$UM" ]; then UM=NULL; fi
     if [ -z "$UN" ]; then UN=NULL; fi
     if [ -z "$UX" ]; then UX=NULL; fi
+    if [ -z "$RR" ]; then RR=NULL; fi
     if [ -z "$PMERM" ]; then PMERM=NULL; fi
     if [ -z "$PMERMIN" ]; then PMERMIN=NULL; fi
 
