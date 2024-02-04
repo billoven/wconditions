@@ -4,11 +4,11 @@
 DB_USER="admin"
 DB_HOSTNAME="192.168.17.10"
 # DB_PASSWORD="your_password"
-DB_NAME="BethuneWeatherReport"
+DB_NAME="VillebonWeatherReport"
 
 # Table names
-SOURCE_TABLE="LilleLesquinDayWeatherConditions"
-DEST_TABLE="Normals_1991_2020"
+SOURCE_TABLE="ParisMontsourisDayWeatherConditions"
+DEST_TABLE="Normals_1931_1960"
 
 # MySQL command to execute SQL statements
 MYSQL_CMD="mysql -u$DB_USER -p -h$DB_HOSTNAME -D$DB_NAME -e"
@@ -114,7 +114,7 @@ SELECT
 FROM
     $DB_NAME.$SOURCE_TABLE
 WHERE
-    WC_Date BETWEEN '1991-01-01' AND '2020-12-31'
+    WC_Date BETWEEN '1931-01-01' AND '1960-12-31'
 GROUP BY
     DayOfYear;"
 
