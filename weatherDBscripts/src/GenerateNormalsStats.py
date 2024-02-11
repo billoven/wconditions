@@ -9,12 +9,18 @@ def calculate_average(data, column_name, precision=1):
     return round(sum(values) / len(values), precision) if values else None
 
 def find_max_with_dates(data, column_name):
-    max_value = max(data, key=lambda x: x[column_name] if x[column_name] is not None else float('-inf'))
-    return [{'Date': str(max_value['Date']), 'Value': str(max_value[column_name])}]
+    max_value = max(entry[column_name] if entry[column_name] is not None else float('-inf') for entry in data)
+    max_entries = [{'Date': str(entry['Date']), 'Value': str(entry[column_name])} for entry in data if entry[column_name] == max_value]    
+    return max_entries
 
 def find_min_with_dates(data, column_name):
-    min_value = min(data, key=lambda x: x[column_name] if x[column_name] is not None else float('inf'))
-    return [{'Date': str(min_value['Date']), 'Value': str(min_value[column_name])}]
+    # Extract the minimum value using the lambda function
+    min_value = min(data, key=lambda x: x[column_name] if x[column_name] is not None else float('inf'))[column_name]
+
+    # Extract all entries with the minimum value
+    min_entries = [{'Date': str(entry['Date']), 'Value': str(entry[column_name])} for entry in data if entry[column_name] == min_value]
+
+    return min_entries
 
 def calculate_average_days_precipitation(data, precipitation_range):
     days_precipitation_by_year = {}
@@ -85,45 +91,46 @@ def calculate_average_days_temp_low(data, temp_low_range):
 def write_to_json(data, filename):
     # Creating a dictionary to hold comments for each field
     comments = {
-    'Avg_TempAvg': 'Average temperature of TempAvg',
-    'Avg_TempHigh': 'Average temperature of TempHigh',
-    'Avg_TempLow': 'Average temperature of TempLow',
-    'Sum_Precipitation': 'Sum of daily precipitations',
-    'Max_Daily_Precipitation': 'Maximal daily precipitation(s) with the dates',
-    'Avg_Daily_Precipitation': 'Average daily precipitations of the period',
-    'Max_TempHigh': 'Maximal(s) temperature of TempHigh with the dates',
-    'Min_TempLow': 'Minimal(s) temperature of TempLow with the dates',
-    'Max_TempAvg': 'Maximal(s) temperature of TempAvg with the dates',
-    'Min_TempAvg': 'Minimal(s) temperature of TempAvg with the dates',
-    'Avg_Days_TempLow_-5': 'Number of days with TempLow <= -5°C by year',
-    'Avg_Days_TempLow_0': 'Number of days with TempLow <= 0°C by year',
-    'Avg_Days_TempLow_0_5': 'Number of days with TempLow > 0 and <= 5°C by year',
-    'Avg_Days_TempLow_5_10': 'Number of days with TempLow > 5 and <= 10°C by year',
-    'Avg_Days_TempLow_10_15': 'Number of days with TempLow > 10 and <= 15°C by year',
-    'Avg_Days_TempLow_15_20': 'Number of days with TempLow > 15 and <= 20°C by year',
-    'Avg_Days_TempLow_20': 'Number of days with TempLow >= 20°C by year',
-    'Avg_Days_TempHigh_0': 'Number of days with TempHigh <= 0°C by year',
-    'Avg_Days_TempHigh_30': 'Number of days with TempHigh >= 30°C by year',
-    'Avg_Days_TempHigh_0_5': 'Number of days with TempHigh > 0 and <= 5°C by year',
-    'Avg_Days_TempHigh_5_10': 'Number of days with TempHigh > 5 and <= 10°C by year',
-    'Avg_Days_TempHigh_10_15': 'Number of days with TempHigh > 10 and <= 15°C by year',
-    'Avg_Days_TempHigh_15_20': 'Number of days with TempHigh > 15 and <= 20°C by year',
-    'Avg_Days_TempHigh_20': 'Number of days with TempHigh >= 20°C by year',
-    'Avg_Days_TempAvg_0': 'Number of days with TempAvg <= 0°C by year',
-    'Avg_Days_TempAvg_25': 'Number of days with TempAvg >= 25°C by year',
-    'Avg_Days_TempAvg_0_5': 'Number of days with TempAvg > 0 and <= 5°C by year',
-    'Avg_Days_TempAvg_5_10': 'Number of days with TempAvg > 5 and <= 10°C by year',
-    'Avg_Days_TempAvg_10_15': 'Number of days with TempAvg > 10 and <= 15°C by year',
-    'Avg_Days_TempAvg_15_20': 'Number of days with TempAvg > 15 and <= 20°C by year',
-    'Avg_Days_TempAvg_20': 'Number of days with TempAvg >= 20°C by year',
-    'Avg_Days_Precipitation_1': 'Number of days with PrecipitationSum >= 1 by year',
-    'Avg_Days_Precipitation_0': 'Number of days with PrecipitationSum > 0 by year',
-    'Avg_Days_Precipitation_1_5': 'Number of days with PrecipitationSum >= 1 and < 5 by year',
-    'Avg_Days_Precipitation_5_10': 'Number of days with PrecipitationSum >= 5 and < 10 by year',
-    'Avg_Days_Precipitation_10': 'Number of days with PrecipitationSum >= 10 by year',
-    'Avg_Days_Precipitation_20': 'Number of days with PrecipitationSum >= 20 by year',
-    'Yearly_Avg_Precipitation': 'Yearly average precipitation',
-}
+        'Avg_TempAvg': 'Average temperature of daily mean temperatures',
+        'Avg_TempHigh': 'Average temperature of daily maximum temperatures',
+        'Avg_TempLow': 'Average temperature of daily minimum temperatures',
+        'PrecipitationSum': 'Total daily precipitations',
+        'Max_Daily_Precipitation': 'Maximum daily precipitation(s) with the dates',
+        'Avg_Daily_Precipitation': 'Average daily precipitations of the period',
+        'Max_TempHigh': 'Highest daily temperature record with the dates',
+        'Min_TempLow': 'Lowest daily temperature record with the dates',
+        'Max_TempAvg': 'Highest daily average temperature record with the dates',
+        'Min_TempAvg': 'Lowest daily average temperature record with the dates',
+        'Avg_Days_TempLow_-5': 'Annual average days with minimum temperature <= -5°C by year',
+        'Avg_Days_TempLow_0': 'Annual average days with minimum temperature <= 0°C by year',
+        'Avg_Days_TempLow_0_5': 'Annual average days with minimum temperature > 0°C and <= 5°C by year',
+        'Avg_Days_TempLow_5_10': 'Annual average days with minimum temperature > 5°C and <= 10°C by year',
+        'Avg_Days_TempLow_10_15': 'Annual average days with minimum temperature > 10°C and <= 15°C by year',
+        'Avg_Days_TempLow_15_20': 'Annual average days with minimum temperature > 15°C and <= 20°C by year',
+        'Avg_Days_TempLow_20': 'Annual average days with minimum temperature >= 20°C by year',
+        'Avg_Days_TempHigh_0': 'Annual average days with maximum temperature <= 0°C by year',
+        'Avg_Days_TempHigh_30': 'Number of days with TempHigh >= 30°C by year',
+        'Avg_Days_TempHigh_0_5': 'Annual average days with maximum temperature > 0°C and <= 5°C by year',
+        'Avg_Days_TempHigh_5_10': 'Annual average days with maximum temperature > 5°C and <= 10°C by year',
+        'Avg_Days_TempHigh_10_15': 'Annual average days with maximum temperature > 10°C and <= 15°C by year',
+        'Avg_Days_TempHigh_15_20': 'Annual average days with maximum temperature > 15°C and <= 20°C by year',
+        'Avg_Days_TempHigh_20': 'Annual average days with maximum temperature >= 20°C by year',
+        'Avg_Days_TempAvg_0': 'Annual average days with average temperature <= 0°C by year',
+        'Avg_Days_TempAvg_25': 'NAnnual average days with average temperature >= 25°C by year',
+        'Avg_Days_TempAvg_0_5': 'Annual average days with average temperature > 0°C and <= 5°C by year',
+        'Avg_Days_TempAvg_5_10': 'Annual average days with average temperature > 5°C and <= 10°C by year',
+        'Avg_Days_TempAvg_10_15': 'Annual average days with average temperature > 10°C and <= 15°C by year',
+        'Avg_Days_TempAvg_15_20': 'Annual average days with average temperature > 15°C and <= 20°C by year',
+        'Avg_Days_TempAvg_20': 'Annual average days with average temperature >= 20°C by year',
+        'Avg_Days_Precipitation_1': 'Annual Average Days with Precipitation >= 1mm',
+        'Avg_Days_Precipitation_0': 'Annual Average Days with Precipitation > 0mm',
+        'Avg_Days_Precipitation_1_5': 'Annual Average Days with Precipitation >= 1mm and < 5mm',
+        'Avg_Days_Precipitation_5_10': 'Annual Average Days with Precipitation >= 5mm and < 10mm',
+        'Avg_Days_Precipitation_10': 'Annual Average Days with Precipitation >= 10mm',
+        'Avg_Days_Precipitation_20': 'Annual Average Days with Precipitation >= 20mm',
+        'Yearly_Avg_Precipitation': 'Annual average precipitation',
+    }
+    
     with open(filename, 'w') as json_file:
         # Writing comments as dictionary at the beginning of the file
         json.dump({'_comments': comments, **data}, json_file, indent=4)
