@@ -14,7 +14,10 @@
 
         // Fetch available years from the database
         $years = array();
-        $yearQuery = "SELECT DISTINCT YEAR(WC_Date) AS Year FROM DayWeatherConditions ORDER by Year DESC";
+        $yearQuery = "SELECT DISTINCT 
+                            YEAR(WC_Date) AS Year 
+                        FROM DayWeatherConditions 
+                        ORDER by Year DESC";
         $yearResult = $conn->query($yearQuery);
         while ($row = $yearResult->fetch_assoc()) {
             $years[] = $row['Year'];
@@ -25,6 +28,78 @@
     }
 
     $selected_years = array(); // Initialize the variable
+
+    /**
+    * Calculates climate statistics for a given table and year.
+    *
+    * @param mysqli $conn The MySQLi database connection
+    * @param string $tableName The name of the table
+    * @param int $yearField The field representing the year
+    * @param array $conditions An associative array mapping fields in the table to their corresponding names in the statistics calculation
+    * @return array|null An associative array containing climate statistics or null if no data is found
+    */
+    function calculateClimateStatistics($conn, $tableName, $yearField, $conditions) {
+        // Fetch statistics from the database
+        $sql = "SELECT
+                    AVG({$conditions['TempAvg']}) AS AvgTemp,
+                    MAX({$conditions['TempAvg']}) AS MaxAvgTemp,
+                    MIN({$conditions['TempAvg']}) AS MinAvgTemp,
+                    (SELECT DATE_FORMAT(WC_Date, '%d/%m') FROM $tableName WHERE YEAR(WC_Date) = $yearField ORDER BY {$conditions['TempAvg']} ASC LIMIT 1) AS DateMinAvgTemp,
+                    (SELECT DATE_FORMAT(WC_Date, '%d/%m') FROM $tableName WHERE YEAR(WC_Date) = $yearField ORDER BY {$conditions['TempAvg']} DESC LIMIT 1) AS DateMaxAvgTemp,
+                    SUM(CASE WHEN {$conditions['TempAvg']} <= 0 THEN 1 ELSE 0 END) AS DaysLessThanEqualTo0,
+                    SUM(CASE WHEN {$conditions['TempAvg']} >= 25 THEN 1 ELSE 0 END) AS DaysGreaterThanOrEqualTo25,
+                    SUM(CASE WHEN {$conditions['TempAvg']} <= 0 THEN 1 ELSE 0 END) AS DaysLessThanOrEqualTo0,
+                    SUM(CASE WHEN {$conditions['TempAvg']} > 0 AND {$conditions['TempAvg']} < 5 THEN 1 ELSE 0 END) AS DaysGreater0AndLess5,
+                    SUM(CASE WHEN {$conditions['TempAvg']} >= 5 AND {$conditions['TempAvg']} < 10 THEN 1 ELSE 0 END) AS DaysGreaterOrEqual5AndLess10,
+                    SUM(CASE WHEN {$conditions['TempAvg']} >= 10 AND {$conditions['TempAvg']} < 15 THEN 1 ELSE 0 END) AS DaysGreaterOrEqual10AndLess15,
+                    SUM(CASE WHEN {$conditions['TempAvg']} >= 15 AND {$conditions['TempAvg']} < 20 THEN 1 ELSE 0 END) AS DaysGreaterOrEqual15AndLess20,
+                    SUM(CASE WHEN {$conditions['TempAvg']} >= 20 THEN 1 ELSE 0 END) AS DaysGreaterThanOrEqualTo20,
+                    AVG({$conditions['TempLow']}) AS AvgLowTemp,
+                    MAX({$conditions['TempLow']}) AS MaxLowTemp,
+                    MIN({$conditions['TempLow']}) AS MinLowTemp,
+                    (SELECT DATE_FORMAT(WC_Date, '%d/%m') FROM $tableName WHERE YEAR(WC_Date) = $yearField ORDER BY {$conditions['TempLow']} ASC LIMIT 1) AS DateMinLowTemp,
+                    (SELECT DATE_FORMAT(WC_Date, '%d/%m') FROM $tableName WHERE YEAR(WC_Date) = $yearField ORDER BY {$conditions['TempLow']} DESC LIMIT 1) AS DateMaxLowTemp,
+                    SUM(CASE WHEN {$conditions['TempLow']} <= -5 THEN 1 ELSE 0 END) AS DaysLowLessThanEqualToMinus5,
+                    SUM(CASE WHEN {$conditions['TempLow']} >= 20 THEN 1 ELSE 0 END) AS DaysLowGreaterThanOrEqualTo20,
+                    SUM(CASE WHEN {$conditions['TempLow']} <= 0 THEN 1 ELSE 0 END) AS DaysLowLessThanOrEqualTo0,
+                    SUM(CASE WHEN {$conditions['TempLow']} > 0 AND {$conditions['TempLow']} < 5 THEN 1 ELSE 0 END) AS DaysLowGreater0AndLess5,
+                    SUM(CASE WHEN {$conditions['TempLow']} >= 5 AND {$conditions['TempLow']} < 10 THEN 1 ELSE 0 END) AS DaysLowGreaterOrEqual5AndLess10,
+                    SUM(CASE WHEN {$conditions['TempLow']} >= 10 AND {$conditions['TempLow']} < 15 THEN 1 ELSE 0 END) AS DaysLowGreaterOrEqual10AndLess15,
+                    SUM(CASE WHEN {$conditions['TempLow']} >= 15 AND {$conditions['TempLow']} < 20 THEN 1 ELSE 0 END) AS DaysLowGreaterOrEqual15AndLess20,
+                    SUM(CASE WHEN {$conditions['TempLow']} >= 20 THEN 1 ELSE 0 END) AS DaysLowGreaterThanOrEqualTo20,
+                    AVG({$conditions['TempHigh']}) AS AvgHighTemp,
+                    MAX({$conditions['TempHigh']}) AS MaxHighTemp,
+                    MIN({$conditions['TempHigh']}) AS MinHighTemp,
+                    (SELECT DATE_FORMAT(WC_Date, '%d/%m') FROM $tableName WHERE YEAR(WC_Date) = $yearField ORDER BY {$conditions['TempHigh']} ASC LIMIT 1) AS DateMinHighTemp,
+                    (SELECT DATE_FORMAT(WC_Date, '%d/%m') FROM $tableName WHERE YEAR(WC_Date) = $yearField ORDER BY {$conditions['TempHigh']} DESC LIMIT 1) AS DateMaxHighTemp,
+                    SUM(CASE WHEN {$conditions['TempHigh']} <= 0 THEN 1 ELSE 0 END) AS DaysHighLessThanEqual0,
+                    SUM(CASE WHEN {$conditions['TempHigh']} >= 30 THEN 1 ELSE 0 END) AS DaysHighGreaterThanOrEqualTo30,
+                    SUM(CASE WHEN {$conditions['TempHigh']} <= 0 THEN 1 ELSE 0 END) AS DaysHighLessThanOrEqualTo0,
+                    SUM(CASE WHEN {$conditions['TempHigh']} > 0 AND {$conditions['TempHigh']} < 5 THEN 1 ELSE 0 END) AS DaysHighGreater0AndLess5,
+                    SUM(CASE WHEN {$conditions['TempHigh']} >= 5 AND {$conditions['TempHigh']} < 10 THEN 1 ELSE 0 END) AS DaysHighGreaterOrEqual5AndLess10,
+                    SUM(CASE WHEN {$conditions['TempHigh']} >= 10 AND {$conditions['TempHigh']} < 15 THEN 1 ELSE 0 END) AS DaysHighGreaterOrEqual10AndLess15,
+                    SUM(CASE WHEN {$conditions['TempHigh']} >= 15 AND {$conditions['TempHigh']} < 20 THEN 1 ELSE 0 END) AS DaysHighGreaterOrEqual15AndLess20,
+                    SUM(CASE WHEN {$conditions['TempHigh']} >= 20 THEN 1 ELSE 0 END) AS DaysHighGreaterThanOrEqualTo20,
+                    SUM({$conditions['PrecipitationSum']}) AS YearTotalPrecipit,
+                    MAX({$conditions['PrecipitationSum']}) AS DayMaxPrecipit,
+                    SUM(CASE WHEN {$conditions['PrecipitationSum']} >= 20 THEN 1 ELSE 0 END) AS DaysPrecipitGreaterOrEqual20,
+                    SUM(CASE WHEN {$conditions['PrecipitationSum']} > 0 AND {$conditions['PrecipitationSum']} < 1 THEN 1 ELSE 0 END) AS DaysPrecipitLess1,
+                    SUM(CASE WHEN {$conditions['PrecipitationSum']} >= 1 AND {$conditions['PrecipitationSum']} < 5 THEN 1 ELSE 0 END) AS DaysPrecipitGreaterOrEqual1AndLess5,
+                    SUM(CASE WHEN {$conditions['PrecipitationSum']} >= 5 AND {$conditions['PrecipitationSum']} < 10 THEN 1 ELSE 0 END) AS DaysPrecipitGreaterOrEqual5AndLess10,
+                    SUM(CASE WHEN {$conditions['PrecipitationSum']} >= 10 THEN 1 ELSE 0 END) AS DaysPrecipitGreaterOrEqual10,
+                    COUNT(*) AS TotalDays
+                FROM $tableName
+                WHERE YEAR(WC_Date) = $yearField";
+
+        $result = $conn->query($sql);
+
+        if ($result && $result->num_rows > 0) {
+            $row = $result->fetch_assoc();
+            return $row;
+        } else {
+            return null;
+        }
+    }
 
     // Check if the form was submitted
     if (isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['selected_years'])) {
@@ -38,66 +113,22 @@
                 die("Connection failed: " . $conn->connect_error);
             }
 
+            $tableDwc = $dbConfig['tabledwc'];
+            $statistics = [];
+
             foreach ($selected_years as $year) {
-                // Fetch statistics from the database
-                $sql = "SELECT
-                AVG(WC_TempAvg) AS AvgTemp,
-                MAX(WC_TempAvg) AS MaxAvgTemp,
-                MIN(WC_TempAvg) AS MinAvgTemp,
-                (SELECT DATE_FORMAT(WC_Date, '%d/%m') FROM DayWeatherConditions WHERE YEAR(WC_Date) = '$year' ORDER BY WC_TempAvg ASC LIMIT 1) AS DateMinAvgTemp,
-                (SELECT DATE_FORMAT(WC_Date, '%d/%m') FROM DayWeatherConditions WHERE YEAR(WC_Date) = '$year' ORDER BY WC_TempAvg DESC LIMIT 1) AS DateMaxAvgTemp,
-                SUM(CASE WHEN WC_TempAvg <= 0 THEN 1 ELSE 0 END) AS DaysLessThanEqualTo0,
-                SUM(CASE WHEN WC_TempAvg >= 25 THEN 1 ELSE 0 END) AS DaysGreaterThanOrEqualTo25,
-                SUM(CASE WHEN WC_TempAvg <= 0 THEN 1 ELSE 0 END) AS DaysLessThanOrEqualTo0,
-                SUM(CASE WHEN WC_TempAvg > 0 AND WC_TempAvg < 5 THEN 1 ELSE 0 END) AS DaysGreater0AndLess5,
-                SUM(CASE WHEN WC_TempAvg >= 5 AND WC_TempAvg < 10 THEN 1 ELSE 0 END) AS DaysGreaterOrEqual5AndLess10,
-                SUM(CASE WHEN WC_TempAvg >= 10 AND WC_TempAvg < 15 THEN 1 ELSE 0 END) AS DaysGreaterOrEqual10AndLess15,
-                SUM(CASE WHEN WC_TempAvg >= 15 AND WC_TempAvg < 20 THEN 1 ELSE 0 END) AS DaysGreaterOrEqual15AndLess20,
-                SUM(CASE WHEN WC_TempAvg >= 20 THEN 1 ELSE 0 END) AS DaysGreaterThanOrEqualTo20,
-                -- Add more similar cases for Minimal temperatures
-                AVG(WC_TempLow) AS AvgLowTemp,
-                MAX(WC_TempLow) AS MaxLowTemp,
-                MIN(WC_TempLow) AS MinLowTemp,
-                (SELECT DATE_FORMAT(WC_Date, '%d/%m') FROM DayWeatherConditions WHERE YEAR(WC_Date) = '$year' ORDER BY WC_TempLow ASC LIMIT 1) AS DateMinLowTemp,
-                (SELECT DATE_FORMAT(WC_Date, '%d/%m') FROM DayWeatherConditions WHERE YEAR(WC_Date) = '$year' ORDER BY WC_TempLow DESC LIMIT 1) AS DateMaxLowTemp,
-                SUM(CASE WHEN WC_TempLow <= -5 THEN 1 ELSE 0 END) AS DaysLowLessThanEqualToMinus5,
-                SUM(CASE WHEN WC_TempLow >= 20 THEN 1 ELSE 0 END) AS DaysLowGreaterThanOrEqualTo20,
-                SUM(CASE WHEN WC_TempLow <= 0 THEN 1 ELSE 0 END) AS DaysLowLessThanOrEqualTo0,
-                SUM(CASE WHEN WC_TempLow > 0 AND WC_TempLow < 5 THEN 1 ELSE 0 END) AS DaysLowGreater0AndLess5,
-                SUM(CASE WHEN WC_TempLow >= 5 AND WC_TempLow < 10 THEN 1 ELSE 0 END) AS DaysLowGreaterOrEqual5AndLess10,
-                SUM(CASE WHEN WC_TempLow >= 10 AND WC_TempLow < 15 THEN 1 ELSE 0 END) AS DaysLowGreaterOrEqual10AndLess15,
-                SUM(CASE WHEN WC_TempLow >= 15 AND WC_TempLow < 20 THEN 1 ELSE 0 END) AS DaysLowGreaterOrEqual15AndLess20,
-                SUM(CASE WHEN WC_TempLow >= 20 THEN 1 ELSE 0 END) AS DaysLowGreaterThanOrEqualTo20,
-                                            -- Add more similar cases for Minimal temperatures
-                AVG(WC_TempHigh) AS AvgHighTemp,
-                MAX(WC_TempHigh) AS MaxHighTemp,
-                MIN(WC_TempHigh) AS MinHighTemp,
-                (SELECT DATE_FORMAT(WC_Date, '%d/%m') FROM DayWeatherConditions WHERE YEAR(WC_Date) = '$year' ORDER BY WC_TempHigh ASC LIMIT 1) AS DateMinHighTemp,
-                (SELECT DATE_FORMAT(WC_Date, '%d/%m') FROM DayWeatherConditions WHERE YEAR(WC_Date) = '$year' ORDER BY WC_TempHigh DESC LIMIT 1) AS DateMaxHighTemp,
-                SUM(CASE WHEN WC_TempHigh <= 0 THEN 1 ELSE 0 END) AS DaysHighLessThanEqual0,
-                SUM(CASE WHEN WC_TempHigh >= 30 THEN 1 ELSE 0 END) AS DaysHighGreaterThanOrEqualTo30,
-                SUM(CASE WHEN WC_TempHigh <= 0 THEN 1 ELSE 0 END) AS DaysHighLessThanOrEqualTo0,
-                SUM(CASE WHEN WC_TempHigh > 0 AND WC_TempHigh < 5 THEN 1 ELSE 0 END) AS DaysHighGreater0AndLess5,
-                SUM(CASE WHEN WC_TempHigh >= 5 AND WC_TempHigh < 10 THEN 1 ELSE 0 END) AS DaysHighGreaterOrEqual5AndLess10,
-                SUM(CASE WHEN WC_TempHigh >= 10 AND WC_TempHigh < 15 THEN 1 ELSE 0 END) AS DaysHighGreaterOrEqual10AndLess15,
-                SUM(CASE WHEN WC_TempHigh >= 15 AND WC_TempHigh < 20 THEN 1 ELSE 0 END) AS DaysHighGreaterOrEqual15AndLess20,
-                SUM(CASE WHEN WC_TempHigh >= 20 THEN 1 ELSE 0 END) AS DaysHighGreaterThanOrEqualTo20,
-                SUM(WC_PrecipitationSum) AS YearTotalPrecipit,
-                MAX(WC_PrecipitationSum) AS DayMaxPrecipit,
-                SUM(CASE WHEN WC_PrecipitationSum >= 20 THEN 1 ELSE 0 END) AS DaysPrecipitGreaterOrEqual20,
-                SUM(CASE WHEN WC_PrecipitationSum > 0 AND WC_PrecipitationSum < 1 THEN 1 ELSE 0 END) AS DaysPrecipitLess1,
-                SUM(CASE WHEN WC_PrecipitationSum >= 1 AND WC_PrecipitationSum < 5 THEN 1 ELSE 0 END) AS DaysPrecipitGreaterOrEqual1AndLess5,
-                SUM(CASE WHEN WC_PrecipitationSum >= 5 AND WC_PrecipitationSum < 10 THEN 1 ELSE 0 END) AS DaysPrecipitGreaterOrEqual5AndLess10,
-                SUM(CASE WHEN WC_PrecipitationSum >= 10 THEN 1 ELSE 0 END) AS DaysPrecipitGreaterOrEqual10,
-                COUNT(*) AS TotalDays
-            FROM DayWeatherConditions
-            WHERE YEAR(WC_Date) = '$year'";
+                $conditions = [
+                    'TempAvg' => 'WC_TempAvg',
+                    'TempLow' => 'WC_TempLow',
+                    'TempHigh' => 'WC_TempHigh',
+                    'PrecipitationSum' => 'WC_PrecipitationSum'
+                    // Add more fields as needed
+                ];
 
-                $result = $conn->query($sql);         
+                $result = calculateClimateStatistics($conn, 'DayWeatherConditions', $year, $conditions);
 
-                if ($result && $result->num_rows > 0) {
-                    $row = $result->fetch_assoc();
-                    $statistics[$year] = $row;
+                if ($result !== null) {
+                    $statistics[$year] = $result;
                 }
             }
 

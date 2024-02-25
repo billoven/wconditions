@@ -2,6 +2,8 @@
 import argparse
 import pymysql
 import json
+import calendar
+from collections import defaultdict
 from decimal import Decimal
 from datetime import datetime, date
 
@@ -89,6 +91,72 @@ def calculate_average_days_temp_low(data, temp_low_range):
     avg_days_temp_low = round(sum(days_temp_low_by_year.values()) / len(days_temp_low_by_year))
     return avg_days_temp_low
 
+def calculate_monthly_normals(data, month, column_name):
+    monthly_data = [entry[column_name] for entry in data if entry['Date'].month == month and entry[column_name] is not None]
+    return round(sum(monthly_data) / len(monthly_data), 1) if monthly_data else None
+
+def calculate_average_monthly(data, month, column_name):
+    monthly_data = [entry[column_name] for entry in data if entry['Date'].month == month and entry[column_name] is not None]
+    return round(sum(monthly_data) / len(monthly_data), 1) if monthly_data else None
+
+
+def calculate_monthly_max_min(data, month, column_name):
+    monthly_entries = [entry for entry in data if entry['Date'].month == month]
+    max_value = max(monthly_entries, key=lambda x: x[column_name] if x[column_name] is not None else float('-inf'))[column_name]
+    min_value = min(monthly_entries, key=lambda x: x[column_name] if x[column_name] is not None else float('inf'))[column_name]
+    return {'Max': max_value, 'Min': min_value}
+
+def generate_monthly_normals(data):
+    monthly_normals = defaultdict(dict)
+
+    # Grouping data by month
+    data_by_month = defaultdict(list)
+    for entry in data:
+        data_by_month[entry['Date'].month].append(entry)
+
+    for month in range(1, 13):  # January to December
+        # Average temperature of the month
+        monthly_normals[calendar.month_name[month]]['Avg_TempAvg'] = calculate_monthly_normals(data, month, 'TempAvg')
+
+        # Average temperature of daily Maximal temperatures of the month
+        monthly_normals[calendar.month_name[month]]['Avg_TempHigh'] = calculate_monthly_normals(data, month, 'TempHigh')
+
+        # Average temperature of daily Minimal temperatures of the month
+        monthly_normals[calendar.month_name[month]]['Avg_TempLow'] = calculate_monthly_normals(data, month, 'TempLow')
+
+        # Highest temperature of the month with the date
+        monthly_normals[calendar.month_name[month]]['Max_TempHigh'] = calculate_monthly_max_min(data, month, 'TempHigh')
+
+        # Lowest temperature of the month with the date
+        monthly_normals[calendar.month_name[month]]['Min_TempLow'] = calculate_monthly_max_min(data, month, 'TempLow')
+
+        # Total precipitation of the month
+        total_monthly_precipitation = sum(entry['PrecipitationSum'] for entry in data_by_month[month] if entry['PrecipitationSum'] is not None)
+        total_years = len(set(entry['Date'].year for entry in data_by_month[month]))
+
+        # Average monthly precipitation
+        monthly_normals[calendar.month_name[month]]['Avg_Monthly_Precipitation'] = round(total_monthly_precipitation / total_years, 1) if total_years > 0 else None
+
+        # Number of days with Precipitations >= 1mm
+        total_days_precipitation_1 = sum(1 for entry in data_by_month[month] if entry['PrecipitationSum'] >= 1)
+        monthly_normals[calendar.month_name[month]]['Avg_Days_Precipitation_1'] = round(total_days_precipitation_1 / total_years)
+
+    return monthly_normals
+def write_monthly_normals_to_json(monthly_normals, filename):
+    with open(filename, 'r') as json_file:
+        try:
+            # Load existing data to preserve comments
+            existing_data = json.load(json_file)
+        except json.JSONDecodeError:
+            # File is empty or not in JSON format, start with an empty dictionary
+            existing_data = {}
+
+    # Merge the existing data with new data
+    merged_data = {**existing_data, **monthly_normals}
+
+    with open(filename, 'w') as json_file:
+        json.dump(merged_data, json_file, indent=4)
+
 def write_to_json(data, filename):
     # Creating a dictionary to hold comments for each field
     comments = {
@@ -135,6 +203,7 @@ def write_to_json(data, filename):
     with open(filename, 'w') as json_file:
         # Writing comments as dictionary at the beginning of the file
         json.dump({'_comments': comments, **data}, json_file, indent=4)
+
 
 def generate_climate_stats(year_start, year_end, host, user, password, database, table, output_file):
     # Establishing a connection to the MySQL database
@@ -322,6 +391,11 @@ def generate_climate_stats(year_start, year_end, host, user, password, database,
 
     # Writing the climate statistics to a JSON file
     write_to_json(climate_stats, output_file)
+
+    # Generating and writing monthly normals to the same JSON file
+    monthly_normals = generate_monthly_normals(data)
+    write_monthly_normals_to_json(monthly_normals, output_file)
+
 
 if __name__ == "__main__":
     # Configuring Argparse to handle arguments
