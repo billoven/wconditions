@@ -1,0 +1,284 @@
+{
+    "_comments": {
+        "Avg_TempAvg": "Average temperature of daily mean temperatures",
+        "Avg_TempHigh": "Average temperature of daily maximum temperatures",
+        "Avg_TempLow": "Average temperature of daily minimum temperatures",
+        "PrecipitationSum": "Total daily precipitations",
+        "Max_Daily_Precipitation": "Maximum daily precipitation(s) with the dates",
+        "Avg_Daily_Precipitation": "Average daily precipitations of the period",
+        "Max_TempHigh": "Highest daily temperature record with the dates",
+        "Min_TempLow": "Lowest daily temperature record with the dates",
+        "Max_TempAvg": "Highest daily average temperature record with the dates",
+        "Min_TempAvg": "Lowest daily average temperature record with the dates",
+        "Avg_Days_TempLow_-5": "Annual average days with minimum temperature <= -5\u00b0C by year",
+        "Avg_Days_TempLow_0": "Annual average days with minimum temperature <= 0\u00b0C by year",
+        "Avg_Days_TempLow_0_5": "Annual average days with minimum temperature > 0\u00b0C and <= 5\u00b0C by year",
+        "Avg_Days_TempLow_5_10": "Annual average days with minimum temperature > 5\u00b0C and <= 10\u00b0C by year",
+        "Avg_Days_TempLow_10_15": "Annual average days with minimum temperature > 10\u00b0C and <= 15\u00b0C by year",
+        "Avg_Days_TempLow_15_20": "Annual average days with minimum temperature > 15\u00b0C and <= 20\u00b0C by year",
+        "Avg_Days_TempLow_20": "Annual average days with minimum temperature >= 20\u00b0C by year",
+        "Avg_Days_TempHigh_0": "Annual average days with maximum temperature <= 0\u00b0C by year",
+        "Avg_Days_TempHigh_30": "Number of days with TempHigh >= 30\u00b0C by year",
+        "Avg_Days_TempHigh_0_5": "Annual average days with maximum temperature > 0\u00b0C and <= 5\u00b0C by year",
+        "Avg_Days_TempHigh_5_10": "Annual average days with maximum temperature > 5\u00b0C and <= 10\u00b0C by year",
+        "Avg_Days_TempHigh_10_15": "Annual average days with maximum temperature > 10\u00b0C and <= 15\u00b0C by year",
+        "Avg_Days_TempHigh_15_20": "Annual average days with maximum temperature > 15\u00b0C and <= 20\u00b0C by year",
+        "Avg_Days_TempHigh_20": "Annual average days with maximum temperature >= 20\u00b0C by year",
+        "Avg_Days_TempAvg_0": "Annual average days with average temperature <= 0\u00b0C by year",
+        "Avg_Days_TempAvg_25": "NAnnual average days with average temperature >= 25\u00b0C by year",
+        "Avg_Days_TempAvg_0_5": "Annual average days with average temperature > 0\u00b0C and <= 5\u00b0C by year",
+        "Avg_Days_TempAvg_5_10": "Annual average days with average temperature > 5\u00b0C and <= 10\u00b0C by year",
+        "Avg_Days_TempAvg_10_15": "Annual average days with average temperature > 10\u00b0C and <= 15\u00b0C by year",
+        "Avg_Days_TempAvg_15_20": "Annual average days with average temperature > 15\u00b0C and <= 20\u00b0C by year",
+        "Avg_Days_TempAvg_20": "Annual average days with average temperature >= 20\u00b0C by year",
+        "Avg_Days_Precipitation_1": "Annual Average Days with Precipitation >= 1mm",
+        "Avg_Days_Precipitation_0": "Annual Average Days with Precipitation > 0mm",
+        "Avg_Days_Precipitation_1_5": "Annual Average Days with Precipitation >= 1mm and < 5mm",
+        "Avg_Days_Precipitation_5_10": "Annual Average Days with Precipitation >= 5mm and < 10mm",
+        "Avg_Days_Precipitation_10": "Annual Average Days with Precipitation >= 10mm",
+        "Avg_Days_Precipitation_20": "Annual Average Days with Precipitation >= 20mm",
+        "Yearly_Avg_Precipitation": "Annual average precipitation"
+    },
+    "Avg_TempAvg": 11.4,
+    "Avg_TempHigh": 15.1,
+    "Avg_TempLow": 8.3,
+    "Yearly_Avg_Precipitation": 641.4,
+    "Max_Daily_Precipitation": [
+        {
+            "Date": "1987-08-24",
+            "Value": "95.7"
+        }
+    ],
+    "Avg_Daily_Precipitation": 1.8,
+    "Max_TempHigh": [
+        {
+            "Date": "1990-08-04",
+            "Value": "36.6"
+        }
+    ],
+    "Min_TempLow": [
+        {
+            "Date": "1985-01-17",
+            "Value": "-13.9"
+        }
+    ],
+    "Max_TempAvg": [
+        {
+            "Date": "1990-08-04",
+            "Value": "30.0"
+        }
+    ],
+    "Min_TempAvg": [
+        {
+            "Date": "1985-01-16",
+            "Value": "-11.5"
+        }
+    ],
+    "Avg_Days_TempLow_-5": 5,
+    "Avg_Days_TempLow_0": 29,
+    "Avg_Days_TempLow_0_5": 81,
+    "Avg_Days_TempLow_5_10": 106,
+    "Avg_Days_TempLow_10_15": 105,
+    "Avg_Days_TempLow_15_20": 42,
+    "Avg_Days_TempLow_20": 2,
+    "Avg_Days_TempHigh_0": 6,
+    "Avg_Days_TempHigh_30": 6,
+    "Avg_Days_TempHigh_0_5": 28,
+    "Avg_Days_TempHigh_5_10": 69,
+    "Avg_Days_TempHigh_10_15": 84,
+    "Avg_Days_TempHigh_15_20": 80,
+    "Avg_Days_TempHigh_20": 107,
+    "Avg_Days_TempAvg_0": 13,
+    "Avg_Days_TempAvg_25": 3,
+    "Avg_Days_TempAvg_0_5": 50,
+    "Avg_Days_TempAvg_5_10": 94,
+    "Avg_Days_TempAvg_10_15": 94,
+    "Avg_Days_TempAvg_15_20": 88,
+    "Avg_Days_TempAvg_20": 33,
+    "Avg_Days_Precipitation_1": 112,
+    "Avg_Days_Precipitation_0": 171,
+    "Avg_Days_Precipitation_1_5": 68,
+    "Avg_Days_Precipitation_5_10": 28,
+    "Avg_Days_Precipitation_10": 16,
+    "Avg_Days_Precipitation_20": 3,
+    "January": {
+        "Avg_TempAvg": 4.0,
+        "Avg_TempHigh": 6.3,
+        "Avg_TempLow": 2.0,
+        "Max_TempHigh": {
+            "Max": 15.3,
+            "Min": -10.0
+        },
+        "Min_TempLow": {
+            "Max": 12.4,
+            "Min": -13.9
+        },
+        "Avg_Monthly_Precipitation": 55.0,
+        "Avg_Days_Precipitation_1": 11
+    },
+    "February": {
+        "Avg_TempAvg": 5.0,
+        "Avg_TempHigh": 7.9,
+        "Avg_TempLow": 2.6,
+        "Max_TempHigh": {
+            "Max": 20.3,
+            "Min": -3.6
+        },
+        "Min_TempLow": {
+            "Max": 12.5,
+            "Min": -9.8
+        },
+        "Avg_Monthly_Precipitation": 45.3,
+        "Avg_Days_Precipitation_1": 9
+    },
+    "March": {
+        "Avg_TempAvg": 7.5,
+        "Avg_TempHigh": 11.0,
+        "Avg_TempLow": 4.5,
+        "Max_TempHigh": {
+            "Max": 24.7,
+            "Min": -2.4
+        },
+        "Min_TempLow": {
+            "Max": 15.4,
+            "Min": -8.6
+        },
+        "Avg_Monthly_Precipitation": 52.2,
+        "Avg_Days_Precipitation_1": 11
+    },
+    "April": {
+        "Avg_TempAvg": 10.3,
+        "Avg_TempHigh": 14.5,
+        "Avg_TempLow": 6.7,
+        "Max_TempHigh": {
+            "Max": 27.8,
+            "Min": 2.8
+        },
+        "Min_TempLow": {
+            "Max": 16.1,
+            "Min": -1.8
+        },
+        "Avg_Monthly_Precipitation": 49.5,
+        "Avg_Days_Precipitation_1": 10
+    },
+    "May": {
+        "Avg_TempAvg": 14.0,
+        "Avg_TempHigh": 18.4,
+        "Avg_TempLow": 10.1,
+        "Max_TempHigh": {
+            "Max": 30.2,
+            "Min": 7.1
+        },
+        "Min_TempLow": {
+            "Max": 18.3,
+            "Min": 2.0
+        },
+        "Avg_Monthly_Precipitation": 62.0,
+        "Avg_Days_Precipitation_1": 10
+    },
+    "June": {
+        "Avg_TempAvg": 17.2,
+        "Avg_TempHigh": 21.6,
+        "Avg_TempLow": 13.2,
+        "Max_TempHigh": {
+            "Max": 34.4,
+            "Min": 11.9
+        },
+        "Min_TempLow": {
+            "Max": 23.4,
+            "Min": 4.2
+        },
+        "Avg_Monthly_Precipitation": 53.2,
+        "Avg_Days_Precipitation_1": 8
+    },
+    "July": {
+        "Avg_TempAvg": 19.3,
+        "Avg_TempHigh": 23.9,
+        "Avg_TempLow": 15.2,
+        "Max_TempHigh": {
+            "Max": 35.4,
+            "Min": 14.3
+        },
+        "Min_TempLow": {
+            "Max": 24.0,
+            "Min": 9.5
+        },
+        "Avg_Monthly_Precipitation": 58.3,
+        "Avg_Days_Precipitation_1": 8
+    },
+    "August": {
+        "Avg_TempAvg": 18.9,
+        "Avg_TempHigh": 23.6,
+        "Avg_TempLow": 14.8,
+        "Max_TempHigh": {
+            "Max": 36.6,
+            "Min": 13.4
+        },
+        "Min_TempLow": {
+            "Max": 22.8,
+            "Min": 8.2
+        },
+        "Avg_Monthly_Precipitation": 46.0,
+        "Avg_Days_Precipitation_1": 7
+    },
+    "September": {
+        "Avg_TempAvg": 16.2,
+        "Avg_TempHigh": 20.8,
+        "Avg_TempLow": 12.6,
+        "Max_TempHigh": {
+            "Max": 32.7,
+            "Min": 10.3
+        },
+        "Min_TempLow": {
+            "Max": 19.9,
+            "Min": 5.8
+        },
+        "Avg_Monthly_Precipitation": 52.8,
+        "Avg_Days_Precipitation_1": 8
+    },
+    "October": {
+        "Avg_TempAvg": 12.2,
+        "Avg_TempHigh": 16.0,
+        "Avg_TempLow": 9.4,
+        "Max_TempHigh": {
+            "Max": 28.0,
+            "Min": 3.2
+        },
+        "Min_TempLow": {
+            "Max": 18.3,
+            "Min": 0.4
+        },
+        "Avg_Monthly_Precipitation": 54.9,
+        "Avg_Days_Precipitation_1": 9
+    },
+    "November": {
+        "Avg_TempAvg": 7.4,
+        "Avg_TempHigh": 10.1,
+        "Avg_TempLow": 5.2,
+        "Max_TempHigh": {
+            "Max": 20.3,
+            "Min": -1.8
+        },
+        "Min_TempLow": {
+            "Max": 14.1,
+            "Min": -4.2
+        },
+        "Avg_Monthly_Precipitation": 57.0,
+        "Avg_Days_Precipitation_1": 10
+    },
+    "December": {
+        "Avg_TempAvg": 4.9,
+        "Avg_TempHigh": 7.0,
+        "Avg_TempLow": 2.9,
+        "Max_TempHigh": {
+            "Max": 17.1,
+            "Min": -5.7
+        },
+        "Min_TempLow": {
+            "Max": 14.0,
+            "Min": -10.8
+        },
+        "Avg_Monthly_Precipitation": 55.1,
+        "Avg_Days_Precipitation_1": 10
+    }
+}
