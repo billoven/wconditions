@@ -16,8 +16,42 @@
         .table td:first-child {
         position: sticky;
         left: 0;
-        }
+        } 
     </style>   
+
+    <style type="text/css">
+        /* ============ desktop view ============ */
+        @media all and (min-width: 992px) {
+
+            .dropdown-menu li{
+                position: relative;
+            }
+            .dropdown-menu .submenu{ 
+                display: none;
+                position: absolute;
+                left:100%; top:-7px;
+            }
+            .dropdown-menu .submenu-left{ 
+                right:100%; left:auto;
+            }
+
+            .dropdown-menu > li:hover{ background-color: #f1f1f1 }
+            .dropdown-menu > li:hover > .submenu{
+                display: block;
+            }
+        }	
+        /* ============ desktop view .end// ============ */
+
+        /* ============ small devices ============ */ 
+        @media (max-width: 991px) {
+            .dropdown-menu .dropdown-menu{
+                    margin-left:0.7rem; margin-right:0.7rem; margin-bottom: .5rem;
+            }
+        } 	
+        /* ============ small devices .end// ============ */
+    </style>
+
+
 </head>
 <body class="p-3 m-0 border-0 bd-example m-0 border-0">
     <script>
@@ -123,8 +157,86 @@
                     </li>
                     <!-- Add more navigation links as needed -->
                 </ul>
-                <!-- Dropdowns for database and theme selection -->
+                 <!-- Dropdowns for Normals, database, theme selections -->
                 <div class="ms-auto d-flex">
+                    <div class="dropdown me-3">
+                        <!-- Normals selection dropdown toggle button -->
+                        <button class="btn btn-secondary btn-sm dropdown-toggle" type="button" id="dropdownNormalsButton" data-bs-toggle="dropdown" aria-expanded="false">
+                            Select Normals
+                        </button>
+
+
+
+                        <!-- Normals selection options -->
+                        <ul class="dropdown-menu dropdown-menu-right" id="normals-selector" aria-labelledby="dropdownNormalsButton">
+                            <!-- Weather Station: LilleLesquin -->
+                            <li class="dropdown-submenu">
+                                <a class="dropdown-item dropdown-toggle" href="#">LilleLesquin</a>
+                                <ul class="submenu submenu-left dropdown-menu">
+                                    <!-- Normals Files for LilleLesquin -->
+                                    <li><a class="dropdown-item" href="#" onclick="changeNormals('LilleLesquin', 'StatsNormals_LIlleLesquin_1951_1980.json')">1951-1980</a></li>
+                                    <li><a class="dropdown-item" href="#" onclick="changeNormals('LilleLesquin', 'StatsNormals_LIlleLesquin_1961_1990.json')">1961-1990</a></li>
+                                    <li><a class="dropdown-item" href="#" onclick="changeNormals('LilleLesquin', 'StatsNormals_LIlleLesquin_1971_2000.json')">1971-2000</a></li>
+                                    <li><a class="dropdown-item" href="#" onclick="changeNormals('LilleLesquin', 'StatsNormals_LIlleLesquin_1981_2010.json')">1981-2010</a></li>
+                                    <li><a class="dropdown-item" href="#" onclick="changeNormals('LilleLesquin', 'StatsNormals_LIlleLesquin_1991_2020.json')">1991-2020</a></li>
+                                </ul>
+                            </li>
+
+                            <!-- Weather Station: ParisMontsouris -->
+                            <li class="dropdown-submenu">
+                                <a class="dropdown-item dropdown-toggle" href="#">ParisMontsouris</a>
+                                <ul class="submenu submenu-left dropdown-menu">
+                                    <!-- Normals Files for ParisMontsouris -->
+                                    <li><a class="dropdown-item" href="#" onclick="changeNormals('ParisMontsouris', 'StatsNormals_ParisMontsouris_1873_1900.json')">1873-1900</a></li>
+                                    <li><a class="dropdown-item" href="#" onclick="changeNormals('ParisMontsouris', 'StatsNormals_ParisMontsouris_1881_1910.json')">1881-1910</a></li>
+                                    <li><a class="dropdown-item" href="#" onclick="changeNormals('ParisMontsouris', 'StatsNormals_ParisMontsouris_1891_1920.json')">1891-1920</a></li>
+                                    <li><a class="dropdown-item" href="#" onclick="changeNormals('ParisMontsouris', 'StatsNormals_ParisMontsouris_1901_1930.json')">1901-1930</a></li>
+                                    <li><a class="dropdown-item" href="#" onclick="changeNormals('ParisMontsouris', 'StatsNormals_ParisMontsouris_1911_1940.json')">1911-1940</a></li>
+                                    <li><a class="dropdown-item" href="#" onclick="changeNormals('ParisMontsouris', 'StatsNormals_ParisMontsouris_1921_1950.json')">1921-1950</a></li>
+                                    <li><a class="dropdown-item" href="#" onclick="changeNormals('ParisMontsouris', 'StatsNormals_ParisMontsouris_1931_1960.json')">1931-1960</a></li>
+                                    <li><a class="dropdown-item" href="#" onclick="changeNormals('ParisMontsouris', 'StatsNormals_ParisMontsouris_1941_1970.json')">1941-1970</a></li>
+                                    <li><a class="dropdown-item" href="#" onclick="changeNormals('ParisMontsouris', 'StatsNormals_ParisMontsouris_1951_1980.json')">1951-1980</a></li>
+                                    <li><a class="dropdown-item" href="#" onclick="changeNormals('ParisMontsouris', 'StatsNormals_ParisMontsouris_1961_1990.json')">1961-1990</a></li>
+                                    <li><a class="dropdown-item" href="#" onclick="changeNormals('ParisMontsouris', 'StatsNormals_ParisMontsouris_1971_2000.json')">1971-2000</a></li>
+                                    <li><a class="dropdown-item" href="#" onclick="changeNormals('ParisMontsouris', 'StatsNormals_ParisMontsouris_1981_2010.json')">1981-2010</a></li>
+                                    <li><a class="dropdown-item" href="#" onclick="changeNormals('ParisMontsouris', 'StatsNormals_ParisMontsouris_1991_2020.json')">1991-2020</a></li>
+                                    <!-- Add more as needed -->
+                                </ul>
+                            </li>
+
+                            <!-- Weather Station: VillebonSurYvette -->
+                            <li class="dropdown-submenu">
+                                <a class="dropdown-item dropdown-toggle" href="#">VillebonSurYvette</a>
+                                <ul class="submenu submenu-left dropdown-menu">
+                                    <!-- Normals Files for VillebonSurYvette -->
+                                    <li><a class="dropdown-item" href="#" onclick="changeNormals('VillebonSurYvette', 'StatsNormals_VillebonSurYvette_2016_2023.json')">2016-2023</a></li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- JavaScript to handle the dropdown -->
+                <script>
+                    $(document).ready(function () {
+                        // Handle click on Weather Station to show/hide sub-menu
+                        $('.dropdown-submenu a.dropdown-toggle').on('click', function (e) {
+                            $(this).next('ul').toggle();
+                            e.stopPropagation();
+                            e.preventDefault();
+                        });
+
+                        // Handle click on Normals to change the selected Normals file
+                        $('.dropdown-menu a.dropdown-item').on('click', function (e) {
+                            // Implement your changeNormals function here
+                            console.log('Selected Normals:', $(this).text());
+                            e.stopPropagation();
+                            e.preventDefault();
+                        });
+                    });
+                </script>
+
+
                     <div class="dropdown me-3">
                         <!-- Database selection dropdown toggle button -->
                         <button class="btn btn-secondary btn-sm dropdown-toggle" type="button" id="dropdownDbButton" data-bs-toggle="dropdown" aria-expanded="false">
@@ -167,6 +279,7 @@
             </div>
         </div>
     </nav>
+
 
     <!-- Script section for JavaScript code -->
     <script>
