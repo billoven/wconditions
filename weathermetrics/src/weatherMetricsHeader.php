@@ -20,7 +20,7 @@
     </style>   
 
     <style type="text/css">
-        /* ============ desktop view ============ */
+        /* ============ desktop view necessary for normals selection with sub-menu ============ */
         @media all and (min-width: 992px) {
 
             .dropdown-menu li{
