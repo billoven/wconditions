@@ -165,8 +165,6 @@
                             Select Normals
                         </button>
 
-
-
                         <!-- Normals selection options -->
                         <ul class="dropdown-menu dropdown-menu-right" id="normals-selector" aria-labelledby="dropdownNormalsButton">
                             <!-- Weather Station: LilleLesquin -->
@@ -225,15 +223,42 @@
                             e.stopPropagation();
                             e.preventDefault();
                         });
+                            // Event handler for when a sub-menu item (period) is clicked
+                            $('.dropdown-submenu a.dropdown-item').on('click', function (e) {
+                                // Get the selected city from the parent menu
+                                const selectedCity = $(this).closest('.dropdown-submenu').find('a.dropdown-toggle').text();
+                                // Get the selected period from the clicked sub-menu item
+                                const selectedPeriod = $(this).text();
+                                
+                                // Update the text of the "Select Normals" button with the abbreviated city name and period
+                                const abbreviatedCity = selectedCity.substring(0, 2); // Get the first two letters of the city name
+                                const buttonLabel = `${abbreviatedCity}-${selectedPeriod}`; // Concatenate abbreviated city name and period
+                                $('#dropdownNormalsButton').text(buttonLabel);
+                                
+                                // Trigger the changeNormals function with the selected city and period
+                                //changeNormals(selectedCity, selectedPeriod);
 
-                        // Handle click on Normals to change the selected Normals file
-                        $('.dropdown-menu a.dropdown-item').on('click', function (e) {
-                            // Implement your changeNormals function here
-                            console.log('Selected Normals:', $(this).text());
-                            e.stopPropagation();
-                            e.preventDefault();
-                        });
+                                // Hide both parent and sub-menu
+                                $(this).closest('.dropdown').removeClass('show').find('.dropdown-menu').removeClass('show');
+                                
+                                e.stopPropagation();
+                                e.preventDefault();
+                            });
+
+
+
                     });
+                    
+                    // Function to change the selected normals
+                    function changeNormals(city, selectedPeriod) {
+                        // Implement logic to handle the selected normals for the specified city
+                        console.log('Changing normals for city:', city);
+                        console.log('Selected period:', selectedPeriod);
+
+                        // For demonstration purposes, you can perform any action here based on the selected city and period
+                        // For example, you can load data from the selected normals file associated with the city
+                    }
+
                 </script>
 
 
