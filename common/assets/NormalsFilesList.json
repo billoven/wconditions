@@ -1,29 +1,29 @@
 {
   "WeatherStations": {
     "LilleLesquin": [
-      "StatsNormals_LIlleLesquin_1951_1980.json",
-      "StatsNormals_LIlleLesquin_1961_1990.json",
-      "StatsNormals_LIlleLesquin_1971_2000.json",
-      "StatsNormals_LIlleLesquin_1981_2010.json",
-      "StatsNormals_LIlleLesquin_1991_2020.json"
+      "1951_1980",
+      "1961_1990",
+      "1971_2000",
+      "1981_2010",
+      "1991_2020"
     ],
     "ParisMontsouris": [
-      "StatsNormals_ParisMontsouris_1873_1900.json",
-      "StatsNormals_ParisMontsouris_1881_1910.json",
-      "StatsNormals_ParisMontsouris_1891_1920.json",
-      "StatsNormals_ParisMontsouris_1901_1930.json",
-      "StatsNormals_ParisMontsouris_1911_1940.json",
-      "StatsNormals_ParisMontsouris_1921_1950.json",
-      "StatsNormals_ParisMontsouris_1931_1960.json",
-      "StatsNormals_ParisMontsouris_1941_1970.json",
-      "StatsNormals_ParisMontsouris_1951_1980.json",
-      "StatsNormals_ParisMontsouris_1961_1990.json",
-      "StatsNormals_ParisMontsouris_1971_2000.json",
-      "StatsNormals_ParisMontsouris_1981_2010.json",
-      "StatsNormals_ParisMontsouris_1991_2020.json"
+      "1873_1900",
+      "1881_1910",
+      "1891_1920",
+      "1901_1930",
+      "1911_1940",
+      "1921_1950",
+      "1931_1960",
+      "1941_1970",
+      "1951_1980",
+      "1961_1990",
+      "1971_2000",
+      "1981_2010",
+      "1991_2020"
     ],
     "VillebonSurYvette": [
-      "StatsNormals_VillebonSurYvette_2016_2023.json"
+      "2016_2023"
     ]
   }
 }
