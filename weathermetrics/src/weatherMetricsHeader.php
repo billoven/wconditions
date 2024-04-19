@@ -31,14 +31,7 @@
                 position: absolute;
                 left:100%; top:-7px;
             }
-            .dropdown-menu .submenu-left{ 
-                right:100%; left:auto;
-            }
-
-            .dropdown-menu > li:hover{ background-color: #f1f1f1 }
-            .dropdown-menu > li:hover > .submenu{
-                display: block;
-            }
+            .dropdown-menu .submenu-left{         //window.location.href = window.location.href;
             .dropdown-submenu .dropdown-menu {
                width: auto;
             }
@@ -57,46 +50,100 @@
 
 </head>
 <body class="p-3 m-0 border-0 bd-example m-0 border-0">
-    <script>
-        // Function to change the theme
-        function changeTheme(themeName) {
+ 
+ <script>
+    // Function to change the theme
+    function changeTheme(themeName) {
+        // Get the link element for the theme stylesheet
+        const themeLink = document.getElementById('bootstrap-theme');
         
-            // Get the link element for the theme stylesheet
-            const themeLink = document.getElementById('bootstrap-theme');
-        
-            // Update the href attribute with the selected theme
-            themeLink.href = `https://cdn.jsdelivr.net/npm/bootswatch@5.3.1/dist/${themeName}/bootstrap.min.css`;
+        // Update the href attribute with the selected theme
+        themeLink.href = `https://cdn.jsdelivr.net/npm/bootswatch@5.3.1/dist/${themeName}/bootstrap.min.css`;
 
-            // Store the selected theme in session storage
-            sessionStorage.setItem('theme', themeName);
+        // Store the selected theme in a cookie
+        document.cookie = `theme=${themeName}; path=/; SameSite=None; Secure`;
 
-            // Log the selected theme
-            const storedTheme = sessionStorage.getItem('theme');
-            console.log("Theme stored:", storedTheme);
+        $('#dropdownMenuButton').text(themeName);
+
+        // Log the selected theme
+        console.log("Theme stored:", themeName);
+    }
+
+
+
+    // Function to change the selected normals
+    function changeNormals(city, selectedPeriod) {
+        // Store the selected Period in a cookie if it is not empty
+        if (selectedPeriod) {
+            document.cookie = `selectedNormals=${selectedPeriod}; path=/; SameSite=None; Secure`;
         }
 
-        // Get the theme value from the session storage
-        const theme = sessionStorage.getItem('theme');
-
-         // Check if a theme is stored in session storage
-         if (theme == undefined || theme == null) {
-             // If no theme is stored, set the default theme (darkly).
-            theme = "darkly"
+        // Store the selected City in a cookie if it is not empty
+        if (city) {
+            document.cookie = `selectedNormalsCity=${city}; path=/; SameSite=None; Secure`;
         }
-        
-        // Display the theme value in the console
-        console.log("Theme=[", theme, "]");
-       
-        // Set the theme or change it
-        changeTheme(theme)
+
+        // Log the stored selected Normals and City
+        const storedCity = getCookie('selectedNormalsCity');
+        console.log("Normals City Stored:", storedCity);
+        const storedNormals = getCookie('selectedNormals');
+        console.log("Normals Period Stored:", storedNormals);
+
+        // Update the text of the "Select Normals" button with the abbreviated city name and period
+        const abbreviatedCity = city.substring(0, 2); // Get the first two letters of the city name
+        const buttonLabel = `${abbreviatedCity}-${selectedPeriod}`; // Concatenate abbreviated city name and period
+        console.log("Dans changeNormals buttonLabel:", buttonLabel);
+        $('#dropdownNormalsButton').text(buttonLabel);
+
+        // Log the selected city and period
+        console.log("Selected city:", city);
+        console.log("Selected period:", selectedPeriod);
+
+        // Using window.location.href
+        location.reload();
+    }
+
+    // Function to retrieve a specific cookie by name
+    function getCookie(name) {
+        const value = `; ${document.cookie}`;
+        const parts = value.split(`; ${name}=`);
+        if (parts.length === 2) return parts.pop().split(';').shift();
+    }
+
+
+
+    // Function to change the selected database
+    function changeDb(dbid, station) {
+        // Store the selected database in a cookie
+        document.cookie = `selectedDb=${dbid}; path=/; SameSite=None; Secure`;
+        document.cookie = `selectedStation=${station}; path=/; SameSite=None; Secure`;
+
+        // Update the text of the "Select Db" button with the station name 
+        $('#dropdownDbButton').text(station);
+
+        // Log the selected database
+        console.log("Selected DBid stored:", dbid);
+        console.log("Selected DB station stored:", station);
+
+        // Using window.location.href
+        location.reload();
+
+    }
 
     </script>
+
     <?php
-        // Retrieve the DB value from the URL parameter or put db1 by default
-        $selectedDb = $_GET['selectedDb'] ?? "db1";
+
+        // Set the selectedDb cookie to "db1" if it hasn't been set
+        if (!isset($_COOKIE['selectedDb'])) {
+            setcookie('selectedDb', 'db1', 0, '/');
+        }
+
+        // Retrieve the DB value from the cookie
+        $selectedDb = $_COOKIE['selectedDb'] ?? "db1";
 
         // Able to use $selectedDb in PHP code
-        echo "SelectedDB received from JavaScript: " . htmlspecialchars($selectedDb) . "<BR>";
+        echo "SelectedDB received from Cookie: " . htmlspecialchars($selectedDb) . "<BR>";
 
         // Database configuration
         require_once('/etc/wconditions/db_config.php'); // Adjust the path accordingly
@@ -116,6 +163,32 @@
             echo "TableDwc          : " . $dbConfig['tabledwc'] . "<br>";
             echo "DefaultNormals    : " . $dbConfig['DefaultNormals'] . "<br>";
             echo "DefaultNormalsCity: " . $dbConfig['DefaultNormalsCity'] . "<br>";
+            ?>
+            <script>
+                // Retrieve the value of the selectedNormalsCity cookie
+                const selectedNormalsCity = getCookie('selectedNormalsCity');
+
+                // Check if the selectedNormalsCity cookie is not set
+                if (!selectedNormalsCity) {
+                    // If the cookie is not set, set it to the default value from $dbConfig
+                    document.cookie = `selectedNormalsCity=<?php echo $dbConfig['DefaultNormalsCity']; ?>; path=/; SameSite=None; Secure`;
+                }
+                // Check if the selectedNormals cookie exists
+                const selectedNormalsCookie = getCookie('selectedNormals');
+
+                // If the selectedNormals cookie doesn't exist, set it to the default value from PHP
+                if (!selectedNormalsCookie) {
+                    const defaultNormals = "<?php echo $dbConfig['DefaultNormals']; ?>";
+                    document.cookie = `selectedNormals=${defaultNormals}; path=/; SameSite=None; Secure`;
+                }
+            
+            </script>
+            <?php
+
+            // Retrieve the city and period values from the cookie
+            $selectedCity = $_COOKIE['selectedNormalsCity'] ?? $dbConfig['DefaultNormalsCity'];
+            $selectedPeriod = $_COOKIE['selectedNormals'] ?? $dbConfig['DefaultNormals'];
+
     
             // Fetch available years from the database
             $years = array();
@@ -129,14 +202,29 @@
             $conn->close();
         }
 
-        // Check if the selectedNormals variable is set in PHP
-        if (isset($selectedNormals)) {
-            echo $selectedNormals; // Output the selectedNormals value if it's set
-        } else {
-            echo "Select Normals"; // Default text if selectedNormals is not set
-        }
+ 
+        // Check if a cookie exists and is not empty
+        // Do something with the cookie values
+        echo "Cookie NormalsCity: " . $selectedCity . "<br>";
+        echo "Cookie Selected NormalsPeriod: " . $selectedPeriod . "<br>";
+        echo "Cookie Selected DB: " . $selectedDb . "<br>";
 
     ?>
+    <?php
+        // Check if the JSON Normals stats file exists
+        function checkNormalsStatsFile($city, $period) {
+            $filename = "normals/StatsNormals_" . str_replace(' ', '', $city) . "_" . $period . ".json";
+            return file_exists($filename);
+        }
+
+        if (checkNormalsStatsFile($selectedCity, $selectedPeriod)) {
+            echo "Normals stats file exists for $selectedCity - $selectedPeriod.";
+        } else {
+            echo "Normals stats file does not exist for $selectedCity - $selectedPeriod.";
+        }
+    ?>
+
+
     <!-- Release Container -->
     <div class="release-container" id="releaseContainer">
         <!-- Release version will be inserted here -->
@@ -209,100 +297,57 @@
 
                 <!-- JavaScript to handle the dropdown -->
                 <script>
-                    $(document).ready(function () {
-                        // Handle click on Weather Station to show/hide sub-menu
-                        $('.dropdown-submenu a.dropdown-toggle').on('click', function (e) {
-                            $(this).next('ul').toggle();
-                            e.stopPropagation();
-                            e.preventDefault();
-                        });
-                            // Event handler for when a sub-menu item (period) is clicked
-                            $('.dropdown-submenu a.dropdown-item').on('click', function (e) {
-                                // Get the selected city from the parent menu
-                                const selectedCity = $(this).closest('.dropdown-submenu').find('a.dropdown-toggle').text();
-                                // Get the selected period from the clicked sub-menu item
-                                const selectedPeriod = $(this).text();
-                                
-                                
-                                
-                                // Hide both parent and sub-menu
-                                $(this).closest('.dropdown').removeClass('show').find('.dropdown-menu').removeClass('show');
-                                
-                                // Prevents further propagation of the current event 
-                                // in the capturing and bubbling phases
-                                e.stopPropagation();
-                                // Cancels the event if it is cancelable, meaning that 
-                                // the default action that belongs to the event will not occur
-                                e.preventDefault();
-
-                            });
-
-
-
+                // JavaScript to handle the dropdown
+                $(document).ready(function () {
+                    // Handle mouse enter on Weather Station to show sub-menu
+                    $('.dropdown-submenu').on('mouseenter', function () {
+                        $(this).find('.submenu').show();
+                    }).on('mouseleave', function () {
+                        $(this).find('.submenu').hide();
                     });
-                    
-                    // Function to change the selected normals
-                    function changeNormals(city, selectedPeriod) {
 
-                        console.log("changeNormals function called");
+                    // Event handler for when a sub-menu item (period) is clicked
+                    $('.dropdown-submenu a.dropdown-item').on('click', function (e) {
+                        // Get the selected city from the parent menu
+                        const selectedCity = $(this).closest('.dropdown-submenu').find('a.dropdown-toggle').text();
+                        // Get the selected period from the clicked sub-menu item
+                        const selectedPeriod = $(this).text();
 
-                        // Store the selected Period Json File name in session storage
-                        sessionStorage.setItem('Normals', selectedPeriod);
-                        sessionStorage.setItem('NormalsCity', city);
-                                                                        
-                        // Implement logic to handle the selected normals for the specified city
-                        // Log the stored selected Normals and City
-                        const storedCity = sessionStorage.getItem('NormalsCity');
-                        console.log("Normals City Stored:", storedCity);
-                        const storedNormals = sessionStorage.getItem('Normals');
-                        console.log("Normals Period Stored:", storedNormals);
+                        // Hide both parent and sub-menu
+                        $(this).closest('.dropdown').removeClass('show').find('.dropdown-menu').removeClass('show');
 
+                        // Prevent further propagation of the current event 
+                        // in the capturing and bubbling phases
+                        e.stopPropagation();
+                        // Cancel the event if it is cancelable, meaning that 
+                        // the default action that belongs to the event will not occur
+                        e.preventDefault();
+                    });
+                });
 
-                        // For demonstration purposes, you can perform any action here based on the selected city and period
-                        // For example, you can load data from the selected normals file associated with the city
-                        // Function to change the selected normals
-
-                        // Update the text of the "Select Normals" button with the abbreviated city name and period
-                        const abbreviatedCity = city.substring(0, 2); // Get the first two letters of the city name
-                        const buttonLabel = `${abbreviatedCity}-${selectedPeriod}`; // Concatenate abbreviated city name and period
-                        $('#dropdownNormalsButton').text(buttonLabel);
-
-                        // Get the current URL
-                        const currentUrl = window.location.href;
-
-                        // Check if there is already a query string in the URL
-                        const hasQueryString = currentUrl.indexOf('?') !== -1;
-
-                        // Build the new URL with the selectedCity and selectedPeriod as GET parameters
-                        const newUrl = hasQueryString
-                            ? `${currentUrl.split('?')[0]}?selectedCity=${encodeURIComponent(city)}&selectedPeriod=${encodeURIComponent(selectedPeriod)}`
-                            : `${currentUrl}?selectedCity=${encodeURIComponent(city)}&selectedPeriod=${encodeURIComponent(selectedPeriod)}`;
-
-                        // Navigate to the new URL
-                        window.location.href = newUrl;
-
-                        // Log the selected city and period
-                        console.log("Selected city:", city);
-                        console.log("Selected period:", selectedPeriod);
-                        // Log the New Url
-                        console.log("NewUrl:", newUrl);
-                    
-                    }
 
                 </script>
+ 
 
+                <div class="dropdown me-3">
+                    <!-- Database selection dropdown toggle button -->
+                    <button class="btn btn-secondary btn-sm dropdown-toggle" type="button" id="dropdownDbButton" data-bs-toggle="dropdown" aria-expanded="false">
+                        Select DB
+                    </button>
+                        <!-- Retrieve the selected database from the cookie -->
+                        <?php $selectedDbCookie = isset($_COOKIE['selectedDb']) ? $_COOKIE['selectedDb'] : "db1"; ?>
 
-                    <div class="dropdown me-3">
-                        <!-- Database selection dropdown toggle button -->
-                        <button class="btn btn-secondary btn-sm dropdown-toggle" type="button" id="dropdownDbButton" data-bs-toggle="dropdown" aria-expanded="false">
-                            Select DB
-                        </button>
                         <!-- Database selection options -->
                         <ul class="dropdown-menu" id="db-selector" aria-labelledby="dropdownDbButton">
                             <?php foreach ($dbConfigs as $dbid => $dbConfig): ?>
-                            <li><a class="dropdown-item" href="#" onclick="changeDb('<?php echo $dbid; ?>','<?php echo $dbConfig['weatherStation']; ?>')"><?php echo $dbConfig['weatherStation']; ?></a></li>
+                            <?php 
+                                // Check if this is the currently selected database and set the class accordingly
+                                $isActive = ($selectedDbCookie == $dbid) ? 'active' : ''; 
+                            ?>
+                            <li><a class="dropdown-item <?php echo $isActive; ?>" href="#" onclick="changeDb('<?php echo $dbid; ?>','<?php echo $dbConfig['weatherStation']; ?>')"><?php echo $dbConfig['weatherStation']; ?></a></li>
                             <?php endforeach; ?>
                         </ul>
+
                     </div>
                     <div class="dropdown ms-3">
                         <button class="btn btn-secondary btn-sm dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
@@ -347,64 +392,47 @@
             const selectedTheme = this.value;
             // Call the function to change the theme
             changeTheme(selectedTheme);
-        });
+        });      
 
-        // Function to change the selected database
-        function changeDb(dbid,station) {
-            // Store the selected database in session storage
-            sessionStorage.setItem('selectedDb', dbid);
-            sessionStorage.setItem('selectedStation', station);
+        // Get the theme value from the cookie
+        const themeCookie = getCookie('theme');
 
-            // Get the current URL
-            const currentUrl = window.location.href;
-
-                // Check if there is already a query string in the URL
-            const hasQueryString = currentUrl.indexOf('?') !== -1;
-
-            // Build the new URL with the selectedDb as a GET parameter
-            const newUrl = hasQueryString
-                ? `${currentUrl.split('?')[0]}?selectedDb=${encodeURIComponent(dbid)}`
-                : `${currentUrl}?selectedDb=${encodeURIComponent(dbid)}`;
-
-            // Navigate to the new URL
-            window.location.href = newUrl;
-
-            // Log the selected database
-            console.log("Selected DBid stored:", dbid);
-            console.log("Selected DB station stored:", station);
-            
-
-            // Log the New Url
-            console.log("NewUrl:", newUrl);
+        // Check if a theme is stored in a cookie
+        if (!themeCookie) {
+            // If no theme is stored, set the default theme (darkly).
+            changeTheme("darkly");
+        } else {
+            // Set the theme
+            changeTheme(themeCookie);
         }
-
-        // Event listener for the database selector
-        const dbSelectors = document.querySelectorAll('.dropdownDbButton');
-        dbSelectors.forEach(function (dbSelector) {
-            dbSelector.addEventListener('click', function (event) {
-                // Trigger the changeDb function with the selected database
-                const selectedDb = event.target.innerText;
-                changeDb(selectedDb);
-
-                // Manually navigate to the new URL
-                window.location.href = newUrl;
-            });
-        });
-
-        // Initial setup: Check if database, normals are already selected 
-        // and update the button text
+        
         document.addEventListener('DOMContentLoaded', function () {
-            const storedStation = sessionStorage.getItem('selectedStation');
-            $('#dropdownDbButton').text(storedStation);
-            
-            const storedNormalsCity = sessionStorage.getItem('NormalsCity');
-            const storedNormalsPeriod = sessionStorage.getItem('Normals');
-            const abbreviatedCity = storedNormalsCity.substring(0, 2); // Get the first two letters of the city name
-            const buttonLabel = `${abbreviatedCity}-${storedNormalsPeriod}`; // Concatenate abbreviated city name and period
-            $('#dropdownNormalsButton').text(buttonLabel);
-            
-        });
+                const storedNormalsCity = getCookie('selectedNormalsCity');
+                const storedNormalsPeriod = getCookie('selectedNormals');
+                
+                // Get the default values from PHP
+                const defaultNormalsCity = "<?php echo $dbConfig['DefaultNormalsCity']; ?>";
+                const defaultNormalsPeriod = "<?php echo $dbConfig['DefaultNormals']; ?>";
 
+                // Set the button text to default values if stored values are null
+                const cityToDisplay = storedNormalsCity ? storedNormalsCity : defaultNormalsCity;
+                const periodToDisplay = storedNormalsPeriod ? storedNormalsPeriod : defaultNormalsPeriod;
+
+                const abbreviatedCity = cityToDisplay.substring(0, 2); // Get the first two letters of the city name
+                const buttonLabel = `${abbreviatedCity}-${periodToDisplay}`; // Concatenate abbreviated city name and period
+                console.log("Normals Button:", document.buttonLabel);
+                $('#dropdownNormalsButton').text(buttonLabel);
+                
+                // Debugging: Log the cookies
+                console.log("All Cookies:", document.cookie);
+
+                // Additional code for other functionalities
+                const storedStation = getCookie('selectedStation');
+                console.log("Stored Station:", storedStation); // Debugging: Log the stored station
+                $('#dropdownDbButton').text(storedStation);
+            });
+
+ 
         $(document).ready(function () {
             // Fetch release version from release_installed.txt
             $.get('release_installed.txt')
