@@ -110,8 +110,6 @@
         if (parts.length === 2) return parts.pop().split(';').shift();
     }
 
-
-
     // Function to change the selected database
     function changeDb(dbid, station) {
         // Store the selected database in a cookie
@@ -133,6 +131,27 @@
     </script>
 
     <?php
+        // Read a Normals stats json file associated to a City
+        function readNormalsJsonFile($city, $period) {
+            $filename = "./normals/StatsNormals_" . str_replace(' ', '', $city) . "_" . $period . ".json";
+            
+            if(file_exists($filename)) {
+                $json_data = file_get_contents($filename);
+                $data = json_decode($json_data, true);
+                
+                if($data === null) {
+                    // JSON decoding failed
+                    return null;
+                } else {
+                    // JSON decoding successful
+                    echo "Normals Json Filename read: [$filename]";
+                    return $data;
+                }
+            } else {
+                // File does not exist
+                return null;
+            }
+        }
 
         // Set the selectedDb cookie to "db1" if it hasn't been set
         if (!isset($_COOKIE['selectedDb'])) {
@@ -152,7 +171,7 @@
             $dbConfig = $dbConfigs[$selectedDb];
             $conn = new mysqli($dbConfig['host'], $dbConfig['username'], $dbConfig['password'], $dbConfig['database']);
             if ($conn->connect_error) {
-                die("Connection failed: " . $conn->connect_error);
+                die("Database Connection failed: " . $conn->connect_error);
             }
 
             // Echo the host, username, and database
@@ -189,7 +208,11 @@
             $selectedCity = $_COOKIE['selectedNormalsCity'] ?? $dbConfig['DefaultNormalsCity'];
             $selectedPeriod = $_COOKIE['selectedNormals'] ?? $dbConfig['DefaultNormals'];
 
-    
+            // Display the cookie values
+            echo "Cookie NormalsCity: " . $selectedCity . "<br>";
+            echo "Cookie Selected NormalsPeriod: " . $selectedPeriod . "<br>";
+            echo "Cookie Selected DB: " . $selectedDb . "<br>";
+
             // Fetch available years from the database
             $years = array();
             $yearQuery = "SELECT DISTINCT YEAR(WC_Date) AS Year FROM DayWeatherConditions ORDER by Year DESC";
@@ -198,30 +221,37 @@
                 $years[] = $row['Year'];
             }
         
+            // TableNormals name for the selected Normals period
+            $selectedPeriodTable = "Normals_" . $selectedPeriod;
+
+            // SQL query to check if the table exists
+            $sql = "SHOW TABLES LIKE '" . $selectedPeriodTable . "'";
+            $result = $conn->query($sql);
+
+            // If the table exists, initialize $TableNormals variable
+            if ($result->num_rows > 0) {
+                $TableNormals = $selectedPeriodTable;
+            } else {
+                // If the table doesn't exist, handle the error accordingly
+                echo "Error: Normals table for the selected period does not exist.";
+            }
+
             // Close the database connection
             $conn->close();
         }
 
- 
-        // Check if a cookie exists and is not empty
-        // Do something with the cookie values
-        echo "Cookie NormalsCity: " . $selectedCity . "<br>";
-        echo "Cookie Selected NormalsPeriod: " . $selectedPeriod . "<br>";
-        echo "Cookie Selected DB: " . $selectedDb . "<br>";
+        // Read Normals Json File of Stats for a city
+        $normalsData = readNormalsJsonFile($selectedCity, $selectedPeriod);
 
-    ?>
-    <?php
-        // Check if the JSON Normals stats file exists
-        function checkNormalsStatsFile($city, $period) {
-            $filename = "normals/StatsNormals_" . str_replace(' ', '', $city) . "_" . $period . ".json";
-            return file_exists($filename);
-        }
-
-        if (checkNormalsStatsFile($selectedCity, $selectedPeriod)) {
-            echo "Normals stats file exists for $selectedCity - $selectedPeriod.";
+        if ($normalsData !== null) {
+            // Normals data loaded successfully
+            //echo json_encode($normalsData, JSON_PRETTY_PRINT);
         } else {
-            echo "Normals stats file does not exist for $selectedCity - $selectedPeriod.";
+            // Failed to load normals data
+            echo "Failed to load normals data for $selectedCity - $selectedPeriod.";
         }
+
+  
     ?>
 
 
