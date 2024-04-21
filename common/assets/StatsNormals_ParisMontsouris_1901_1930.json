@@ -7,7 +7,9 @@
         "Max_Daily_Precipitation": "Maximum daily precipitation(s) with the dates",
         "Avg_Daily_Precipitation": "Average daily precipitations of the period",
         "Max_TempHigh": "Highest daily temperature record with the dates",
+        "Min_TempHigh": "Lowest daily High temperature record with the dates",
         "Min_TempLow": "Lowest daily temperature record with the dates",
+        "Max_TempLow": "Highest daily low temperature record with the dates",
         "Max_TempAvg": "Highest daily average temperature record with the dates",
         "Min_TempAvg": "Lowest daily average temperature record with the dates",
         "Avg_Days_TempLow_-5": "Annual average days with minimum temperature <= -5\u00b0C by year",
@@ -56,10 +58,22 @@
             "Value": "37.7"
         }
     ],
+    "Max_TempLow": [
+        {
+            "Date": "1928-07-15",
+            "Value": "20.8"
+        }
+    ],
     "Min_TempLow": [
         {
             "Date": "1929-02-13",
             "Value": "-14.1"
+        }
+    ],
+    "Min_TempHigh": [
+        {
+            "Date": "1929-02-13",
+            "Value": "-7.8"
         }
     ],
     "Max_TempAvg": [
@@ -80,24 +94,24 @@
     ],
     "Avg_Days_TempLow_-5": 7,
     "Avg_Days_TempLow_0": 48,
-    "Avg_Days_TempLow_0_5": 98,
-    "Avg_Days_TempLow_5_10": 102,
-    "Avg_Days_TempLow_10_15": 96,
+    "Avg_Days_TempLow_0_5": 95,
+    "Avg_Days_TempLow_5_10": 100,
+    "Avg_Days_TempLow_10_15": 95,
     "Avg_Days_TempLow_15_20": 20,
     "Avg_Days_TempLow_20": 0,
     "Avg_Days_TempHigh_0": 6,
     "Avg_Days_TempHigh_30": 9,
-    "Avg_Days_TempHigh_0_5": 31,
-    "Avg_Days_TempHigh_5_10": 68,
-    "Avg_Days_TempHigh_10_15": 84,
-    "Avg_Days_TempHigh_15_20": 70,
+    "Avg_Days_TempHigh_0_5": 29,
+    "Avg_Days_TempHigh_5_10": 66,
+    "Avg_Days_TempHigh_10_15": 82,
+    "Avg_Days_TempHigh_15_20": 68,
     "Avg_Days_TempHigh_20": 114,
     "Avg_Days_TempAvg_0": 17,
     "Avg_Days_TempAvg_25": 2,
-    "Avg_Days_TempAvg_0_5": 59,
-    "Avg_Days_TempAvg_5_10": 100,
-    "Avg_Days_TempAvg_10_15": 87,
-    "Avg_Days_TempAvg_15_20": 84,
+    "Avg_Days_TempAvg_0_5": 57,
+    "Avg_Days_TempAvg_5_10": 99,
+    "Avg_Days_TempAvg_10_15": 84,
+    "Avg_Days_TempAvg_15_20": 83,
     "Avg_Days_TempAvg_20": 25,
     "Avg_Days_Precipitation_1": 114,
     "Avg_Days_Precipitation_0": 175,

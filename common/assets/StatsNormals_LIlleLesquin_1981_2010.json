@@ -41,258 +41,262 @@
         "Avg_Days_Precipitation_20": "Annual Average Days with Precipitation >= 20mm",
         "Yearly_Avg_Precipitation": "Annual average precipitation"
     },
-    "Avg_TempAvg": 11.3,
-    "Avg_TempHigh": 15.1,
-    "Avg_TempLow": 8.0,
-    "Yearly_Avg_Precipitation": 630.8,
+    "Avg_TempAvg": 10.6,
+    "Avg_TempHigh": 14.5,
+    "Avg_TempLow": 7.1,
+    "Yearly_Avg_Precipitation": 742.6,
     "Max_Daily_Precipitation": [
         {
-            "Date": "1955-07-19",
-            "Value": "76.8"
+            "Date": "2005-08-19",
+            "Value": "62.8"
         }
     ],
-    "Avg_Daily_Precipitation": 1.7,
+    "Avg_Daily_Precipitation": 2.0,
     "Max_TempHigh": [
         {
-            "Date": "1952-07-01",
-            "Value": "38.0"
+            "Date": "2003-08-10",
+            "Value": "36.6"
         }
     ],
     "Max_TempLow": [
         {
-            "Date": "1976-07-04",
-            "Value": "24.0"
+            "Date": "2004-08-09",
+            "Value": "22.4"
         }
     ],
     "Min_TempLow": [
         {
-            "Date": "1956-02-02",
-            "Value": "-14.7"
+            "Date": "1982-01-14",
+            "Value": "-19.5"
         }
     ],
     "Min_TempHigh": [
         {
-            "Date": "1956-02-02",
-            "Value": "-8.3"
+            "Date": "1985-01-16",
+            "Value": "-11.3"
         }
     ],
     "Max_TempAvg": [
         {
-            "Date": "1952-07-01",
-            "Value": "29.6"
+            "Date": "2003-08-06",
+            "Value": "28.0"
+        },
+        {
+            "Date": "2003-08-11",
+            "Value": "28.0"
         }
     ],
     "Min_TempAvg": [
         {
-            "Date": "1956-02-02",
-            "Value": "-11.8"
+            "Date": "1985-01-16",
+            "Value": "-14.5"
         }
     ],
-    "Avg_Days_TempLow_-5": 5,
-    "Avg_Days_TempLow_0": 32,
-    "Avg_Days_TempLow_0_5": 81,
-    "Avg_Days_TempLow_5_10": 103,
-    "Avg_Days_TempLow_10_15": 102,
-    "Avg_Days_TempLow_15_20": 37,
-    "Avg_Days_TempLow_20": 2,
-    "Avg_Days_TempHigh_0": 5,
-    "Avg_Days_TempHigh_30": 6,
-    "Avg_Days_TempHigh_0_5": 28,
-    "Avg_Days_TempHigh_5_10": 65,
-    "Avg_Days_TempHigh_10_15": 80,
-    "Avg_Days_TempHigh_15_20": 79,
-    "Avg_Days_TempHigh_20": 107,
-    "Avg_Days_TempAvg_0": 14,
-    "Avg_Days_TempAvg_25": 2,
-    "Avg_Days_TempAvg_0_5": 50,
-    "Avg_Days_TempAvg_5_10": 92,
-    "Avg_Days_TempAvg_10_15": 92,
-    "Avg_Days_TempAvg_15_20": 90,
-    "Avg_Days_TempAvg_20": 28,
-    "Avg_Days_Precipitation_1": 109,
-    "Avg_Days_Precipitation_0": 170,
-    "Avg_Days_Precipitation_1_5": 67,
-    "Avg_Days_Precipitation_5_10": 27,
-    "Avg_Days_Precipitation_10": 16,
+    "Avg_Days_TempLow_-5": 7,
+    "Avg_Days_TempLow_0": 43,
+    "Avg_Days_TempLow_0_5": 86,
+    "Avg_Days_TempLow_5_10": 106,
+    "Avg_Days_TempLow_10_15": 98,
+    "Avg_Days_TempLow_15_20": 26,
+    "Avg_Days_TempLow_20": 0,
+    "Avg_Days_TempHigh_0": 7,
+    "Avg_Days_TempHigh_30": 5,
+    "Avg_Days_TempHigh_0_5": 30,
+    "Avg_Days_TempHigh_5_10": 68,
+    "Avg_Days_TempHigh_10_15": 85,
+    "Avg_Days_TempHigh_15_20": 83,
+    "Avg_Days_TempHigh_20": 92,
+    "Avg_Days_TempAvg_0": 19,
+    "Avg_Days_TempAvg_25": 1,
+    "Avg_Days_TempAvg_0_5": 53,
+    "Avg_Days_TempAvg_5_10": 95,
+    "Avg_Days_TempAvg_10_15": 95,
+    "Avg_Days_TempAvg_15_20": 82,
+    "Avg_Days_TempAvg_20": 22,
+    "Avg_Days_Precipitation_1": 127,
+    "Avg_Days_Precipitation_0": 182,
+    "Avg_Days_Precipitation_1_5": 75,
+    "Avg_Days_Precipitation_5_10": 33,
+    "Avg_Days_Precipitation_10": 20,
     "Avg_Days_Precipitation_20": 3,
     "January": {
-        "Avg_TempAvg": 3.8,
-        "Avg_TempHigh": 6.1,
-        "Avg_TempLow": 1.7,
+        "Avg_TempAvg": 3.5,
+        "Avg_TempHigh": 6.0,
+        "Avg_TempLow": 1.2,
         "Max_TempHigh": {
-            "Max": 15.3,
-            "Min": -6.9
+            "Max": 15.2,
+            "Min": -11.3
         },
         "Min_TempLow": {
-            "Max": 12.4,
-            "Min": -13.6
+            "Max": 11.7,
+            "Min": -19.5
         },
-        "Avg_Monthly_Precipitation": 53.5,
-        "Avg_Days_Precipitation_1": 10
+        "Avg_Monthly_Precipitation": 60.5,
+        "Avg_Days_Precipitation_1": 12
     },
     "February": {
-        "Avg_TempAvg": 4.7,
-        "Avg_TempHigh": 7.7,
-        "Avg_TempLow": 2.2,
+        "Avg_TempAvg": 3.9,
+        "Avg_TempHigh": 6.9,
+        "Avg_TempLow": 1.3,
         "Max_TempHigh": {
-            "Max": 21.4,
-            "Min": -8.3
+            "Max": 17.8,
+            "Min": -6.1
         },
         "Min_TempLow": {
-            "Max": 11.8,
-            "Min": -14.7
+            "Max": 11.7,
+            "Min": -12.7
         },
-        "Avg_Monthly_Precipitation": 48.6,
+        "Avg_Monthly_Precipitation": 47.4,
         "Avg_Days_Precipitation_1": 10
     },
     "March": {
-        "Avg_TempAvg": 7.4,
-        "Avg_TempHigh": 11.3,
-        "Avg_TempLow": 4.2,
+        "Avg_TempAvg": 6.8,
+        "Avg_TempHigh": 10.6,
+        "Avg_TempLow": 3.6,
         "Max_TempHigh": {
-            "Max": 25.7,
-            "Min": -2.4
+            "Max": 22.0,
+            "Min": -1.0
         },
         "Min_TempLow": {
-            "Max": 12.8,
-            "Min": -8.6
+            "Max": 12.7,
+            "Min": -7.4
         },
-        "Avg_Monthly_Precipitation": 46.6,
-        "Avg_Days_Precipitation_1": 10
+        "Avg_Monthly_Precipitation": 58.3,
+        "Avg_Days_Precipitation_1": 11
     },
     "April": {
-        "Avg_TempAvg": 10.3,
-        "Avg_TempHigh": 14.7,
-        "Avg_TempLow": 6.5,
+        "Avg_TempAvg": 9.5,
+        "Avg_TempHigh": 14.1,
+        "Avg_TempLow": 5.4,
         "Max_TempHigh": {
-            "Max": 28.6,
-            "Min": 4.8
+            "Max": 27.9,
+            "Min": 0.5
         },
         "Min_TempLow": {
-            "Max": 15.4,
-            "Min": -0.4
+            "Max": 15.0,
+            "Min": -2.5
         },
-        "Avg_Monthly_Precipitation": 42.9,
-        "Avg_Days_Precipitation_1": 9
+        "Avg_Monthly_Precipitation": 50.7,
+        "Avg_Days_Precipitation_1": 10
     },
     "May": {
-        "Avg_TempAvg": 14.0,
-        "Avg_TempHigh": 18.6,
-        "Avg_TempLow": 9.9,
-        "Max_TempHigh": {
-            "Max": 32.5,
-            "Min": 7.1
-        },
-        "Min_TempLow": {
-            "Max": 20.3,
-            "Min": 2.0
-        },
-        "Avg_Monthly_Precipitation": 57.2,
-        "Avg_Days_Precipitation_1": 10
-    },
-    "June": {
-        "Avg_TempAvg": 17.1,
-        "Avg_TempHigh": 21.7,
-        "Avg_TempLow": 12.9,
-        "Max_TempHigh": {
-            "Max": 34.6,
-            "Min": 12.7
-        },
-        "Min_TempLow": {
-            "Max": 23.4,
-            "Min": 4.2
-        },
-        "Avg_Monthly_Precipitation": 55.9,
-        "Avg_Days_Precipitation_1": 8
-    },
-    "July": {
-        "Avg_TempAvg": 18.9,
-        "Avg_TempHigh": 23.6,
-        "Avg_TempLow": 14.8,
-        "Max_TempHigh": {
-            "Max": 38.0,
-            "Min": 14.3
-        },
-        "Min_TempLow": {
-            "Max": 24.0,
-            "Min": 9.0
-        },
-        "Avg_Monthly_Precipitation": 59.9,
-        "Avg_Days_Precipitation_1": 8
-    },
-    "August": {
-        "Avg_TempAvg": 18.4,
-        "Avg_TempHigh": 23.2,
-        "Avg_TempLow": 14.5,
-        "Max_TempHigh": {
-            "Max": 35.7,
-            "Min": 13.4
-        },
-        "Min_TempLow": {
-            "Max": 22.7,
-            "Min": 8.1
-        },
-        "Avg_Monthly_Precipitation": 54.4,
-        "Avg_Days_Precipitation_1": 8
-    },
-    "September": {
-        "Avg_TempAvg": 16.0,
-        "Avg_TempHigh": 20.7,
-        "Avg_TempLow": 12.3,
-        "Max_TempHigh": {
-            "Max": 32.7,
-            "Min": 12.1
-        },
-        "Min_TempLow": {
-            "Max": 19.6,
-            "Min": 2.7
-        },
-        "Avg_Monthly_Precipitation": 54.4,
-        "Avg_Days_Precipitation_1": 8
-    },
-    "October": {
-        "Avg_TempAvg": 11.9,
-        "Avg_TempHigh": 15.8,
+        "Avg_TempAvg": 13.3,
+        "Avg_TempHigh": 17.9,
         "Avg_TempLow": 8.9,
         "Max_TempHigh": {
-            "Max": 27.5,
-            "Min": 4.3
+            "Max": 31.7,
+            "Min": 7.2
         },
         "Min_TempLow": {
-            "Max": 16.6,
-            "Min": -3.0
+            "Max": 18.0,
+            "Min": -1.0
         },
-        "Avg_Monthly_Precipitation": 48.9,
-        "Avg_Days_Precipitation_1": 8
+        "Avg_Monthly_Precipitation": 64.0,
+        "Avg_Days_Precipitation_1": 11
+    },
+    "June": {
+        "Avg_TempAvg": 16.0,
+        "Avg_TempHigh": 20.6,
+        "Avg_TempLow": 11.7,
+        "Max_TempHigh": {
+            "Max": 32.9,
+            "Min": 11.3
+        },
+        "Min_TempLow": {
+            "Max": 19.3,
+            "Min": 2.0
+        },
+        "Avg_Monthly_Precipitation": 64.6,
+        "Avg_Days_Precipitation_1": 10
+    },
+    "July": {
+        "Avg_TempAvg": 18.4,
+        "Avg_TempHigh": 23.3,
+        "Avg_TempLow": 13.8,
+        "Max_TempHigh": {
+            "Max": 36.0,
+            "Min": 13.9
+        },
+        "Min_TempLow": {
+            "Max": 20.2,
+            "Min": 4.6
+        },
+        "Avg_Monthly_Precipitation": 68.5,
+        "Avg_Days_Precipitation_1": 10
+    },
+    "August": {
+        "Avg_TempAvg": 18.2,
+        "Avg_TempHigh": 23.3,
+        "Avg_TempLow": 13.6,
+        "Max_TempHigh": {
+            "Max": 36.6,
+            "Min": 13.2
+        },
+        "Min_TempLow": {
+            "Max": 22.4,
+            "Min": 5.6
+        },
+        "Avg_Monthly_Precipitation": 62.8,
+        "Avg_Days_Precipitation_1": 9
+    },
+    "September": {
+        "Avg_TempAvg": 15.1,
+        "Avg_TempHigh": 19.7,
+        "Avg_TempLow": 11.2,
+        "Max_TempHigh": {
+            "Max": 30.6,
+            "Min": 10.3
+        },
+        "Min_TempLow": {
+            "Max": 19.9,
+            "Min": 3.1
+        },
+        "Avg_Monthly_Precipitation": 61.6,
+        "Avg_Days_Precipitation_1": 10
+    },
+    "October": {
+        "Avg_TempAvg": 11.3,
+        "Avg_TempHigh": 15.2,
+        "Avg_TempLow": 8.1,
+        "Max_TempHigh": {
+            "Max": 27.5,
+            "Min": 3.0
+        },
+        "Min_TempLow": {
+            "Max": 17.2,
+            "Min": -3.5
+        },
+        "Avg_Monthly_Precipitation": 66.2,
+        "Avg_Days_Precipitation_1": 11
     },
     "November": {
-        "Avg_TempAvg": 7.2,
-        "Avg_TempHigh": 9.9,
-        "Avg_TempLow": 4.9,
+        "Avg_TempAvg": 6.9,
+        "Avg_TempHigh": 9.8,
+        "Avg_TempLow": 4.4,
         "Max_TempHigh": {
-            "Max": 20.8,
-            "Min": 0.1
+            "Max": 20.1,
+            "Min": -3.2
         },
         "Min_TempLow": {
-            "Max": 14.1,
-            "Min": -4.3
+            "Max": 14.5,
+            "Min": -7.8
         },
-        "Avg_Monthly_Precipitation": 56.8,
-        "Avg_Days_Precipitation_1": 10
+        "Avg_Monthly_Precipitation": 70.1,
+        "Avg_Days_Precipitation_1": 13
     },
     "December": {
-        "Avg_TempAvg": 4.8,
-        "Avg_TempHigh": 7.1,
-        "Avg_TempLow": 2.7,
+        "Avg_TempAvg": 4.1,
+        "Avg_TempHigh": 6.4,
+        "Avg_TempLow": 1.9,
         "Max_TempHigh": {
-            "Max": 16.7,
-            "Min": -5.7
+            "Max": 15.9,
+            "Min": -5.6
         },
         "Min_TempLow": {
-            "Max": 14.0,
-            "Min": -10.8
+            "Max": 11.9,
+            "Min": -10.9
         },
-        "Avg_Monthly_Precipitation": 51.7,
-        "Avg_Days_Precipitation_1": 10
+        "Avg_Monthly_Precipitation": 67.8,
+        "Avg_Days_Precipitation_1": 11
     }
 }

@@ -167,7 +167,9 @@ def write_to_json(data, filename):
         'Max_Daily_Precipitation': 'Maximum daily precipitation(s) with the dates',
         'Avg_Daily_Precipitation': 'Average daily precipitations of the period',
         'Max_TempHigh': 'Highest daily temperature record with the dates',
+        'Min_TempHigh': 'Lowest daily High temperature record with the dates',
         'Min_TempLow': 'Lowest daily temperature record with the dates',
+        'Max_TempLow': 'Highest daily low temperature record with the dates',
         'Max_TempAvg': 'Highest daily average temperature record with the dates',
         'Min_TempAvg': 'Lowest daily average temperature record with the dates',
         'Avg_Days_TempLow_-5': 'Annual average days with minimum temperature <= -5°C by year',
@@ -292,8 +294,14 @@ def generate_climate_stats(year_start, year_end, host, user, password, database,
     # Maximal(s) temperature of TempHigh with the dates
     climate_stats['Max_TempHigh'] = find_max_with_dates(data, 'TempHigh')
 
+    # Maximal(s) temperature of TempLow with the dates
+    climate_stats['Max_TempLow'] = find_max_with_dates(data, 'TempLow')
+
     # Minimal(s) temperature of TempLow with the dates
     climate_stats['Min_TempLow'] = find_min_with_dates(data, 'TempLow')
+
+    # Minimal(s) temperature of TempHigh with the dates
+    climate_stats['Min_TempHigh'] = find_min_with_dates(data, 'TempHigh')
 
     # Maximal(s) temperature of TempAvg with the dates
     climate_stats['Max_TempAvg'] = find_max_with_dates(data, 'TempAvg')
@@ -302,64 +310,64 @@ def generate_climate_stats(year_start, year_end, host, user, password, database,
     climate_stats['Min_TempAvg'] = find_min_with_dates(data, 'TempAvg')
 
     # Number of days with TempLow <= -5° by year
-    climate_stats['Avg_Days_TempLow_-5'] = calculate_average_days_temp_low(data, (-99, -5))
+    climate_stats['Avg_Days_TempLow_-5'] = calculate_average_days_temp_low(data, (float('-inf'), -5))
     
     # Number of days with TempLow <= 0 by year
-    climate_stats['Avg_Days_TempLow_0'] = calculate_average_days_temp_low(data, (-99, 0))
+    climate_stats['Avg_Days_TempLow_0'] = calculate_average_days_temp_low(data, (float('-inf'), 0))
 
-    # Number of days with TempLow > 0 and <= 5 by year
-    climate_stats['Avg_Days_TempLow_0_5'] = calculate_average_days_temp_low(data, (0, 5))
+    # Number of days with TempLow > 0 and < 5 by year
+    climate_stats['Avg_Days_TempLow_0_5'] = calculate_average_days_temp_low(data, (0.01, 4.99))
 
-    # Number of days with TempLow > 5 and <= 10 by year
-    climate_stats['Avg_Days_TempLow_5_10'] = calculate_average_days_temp_low(data, (5, 10))
+    # Number of days with TempLow >= 5 and < 10 by year
+    climate_stats['Avg_Days_TempLow_5_10'] = calculate_average_days_temp_low(data, (5, 9.99))
 
-    # Number of days with TempLow > 10 and <= 15 by year
-    climate_stats['Avg_Days_TempLow_10_15'] = calculate_average_days_temp_low(data, (10, 15))
+    # Number of days with TempLow >= 10 and < 15 by year
+    climate_stats['Avg_Days_TempLow_10_15'] = calculate_average_days_temp_low(data, (10, 14.99))
 
-    # Number of days with TempLow > 15 and <= 20 by year
-    climate_stats['Avg_Days_TempLow_15_20'] = calculate_average_days_temp_low(data, (15, 20))
+    # Number of days with TempLow >= 15 and < 20 by year
+    climate_stats['Avg_Days_TempLow_15_20'] = calculate_average_days_temp_low(data, (15, 19.99))
 
     # Number of days with TempLow >= 20 by year
     climate_stats['Avg_Days_TempLow_20'] = calculate_average_days_temp_low(data, (20, float('inf')))
 
     # Number of days with TempHigh <= 0 by year
-    climate_stats['Avg_Days_TempHigh_0'] = calculate_average_days_temp_high(data, (-999, 0))
+    climate_stats['Avg_Days_TempHigh_0'] = calculate_average_days_temp_high(data, (float('-inf'), 0))
 
     # Number of days with TempHigh >= 30 by year
     climate_stats['Avg_Days_TempHigh_30'] = calculate_average_days_temp_high(data, (30, float('inf')))
 
-    # Number of days with TempHigh > 0 and <= 5 by year
-    climate_stats['Avg_Days_TempHigh_0_5'] = calculate_average_days_temp_high(data, (0, 5))
+    # Number of days with TempHigh > 0 and < 5 by year
+    climate_stats['Avg_Days_TempHigh_0_5'] = calculate_average_days_temp_high(data, (0.01, 4.99))
 
-    # Number of days with TempHigh > 5 and <= 10 by year
-    climate_stats['Avg_Days_TempHigh_5_10'] = calculate_average_days_temp_high(data, (5, 10))
+    # Number of days with TempHigh >= 5 and < 10 by year
+    climate_stats['Avg_Days_TempHigh_5_10'] = calculate_average_days_temp_high(data, (5, 9.99))
 
-    # Number of days with TempHigh > 10 and <= 15 by year
-    climate_stats['Avg_Days_TempHigh_10_15'] = calculate_average_days_temp_high(data, (10, 15))
+    # Number of days with TempHigh >= 10 and < 15 by year
+    climate_stats['Avg_Days_TempHigh_10_15'] = calculate_average_days_temp_high(data, (10, 14.99))
 
-    # Number of days with TempHigh > 15 and <= 20 by year
-    climate_stats['Avg_Days_TempHigh_15_20'] = calculate_average_days_temp_high(data, (15, 20))
+    # Number of days with TempHigh >= 15 and < 20 by year
+    climate_stats['Avg_Days_TempHigh_15_20'] = calculate_average_days_temp_high(data, (15, 19.99))
 
     # Number of days with TempHigh >= 20 by year
     climate_stats['Avg_Days_TempHigh_20'] = calculate_average_days_temp_high(data, (20, float('inf')))
 
       # Number of days with TempAvg <= 0 by year
-    climate_stats['Avg_Days_TempAvg_0'] = calculate_average_days_temp_avg(data, (-999, 0))
+    climate_stats['Avg_Days_TempAvg_0'] = calculate_average_days_temp_avg(data, (float('-inf'), 0))
 
     # Number of days with TempAvg >= 25 by year
     climate_stats['Avg_Days_TempAvg_25'] = calculate_average_days_temp_avg(data, (25, float('inf')))
 
-    # Number of days with TempAvg > 0 and <= 5 by year
-    climate_stats['Avg_Days_TempAvg_0_5'] = calculate_average_days_temp_avg(data, (0, 5))
+    # Number of days with TempAvg > 0 and < 5 by year
+    climate_stats['Avg_Days_TempAvg_0_5'] = calculate_average_days_temp_avg(data, (0.01, 4.99))
 
-    # Number of days with TempAvg > 5 and <= 10 by year
-    climate_stats['Avg_Days_TempAvg_5_10'] = calculate_average_days_temp_avg(data, (5, 10))
+    # Number of days with TempAvg >= 5 and < 10 by year
+    climate_stats['Avg_Days_TempAvg_5_10'] = calculate_average_days_temp_avg(data, (5, 9.99))
 
-    # Number of days with TempAvg > 10 and <= 15 by year
-    climate_stats['Avg_Days_TempAvg_10_15'] = calculate_average_days_temp_avg(data, (10, 15))
+    # Number of days with TempAvg >= 10 and < 15 by year
+    climate_stats['Avg_Days_TempAvg_10_15'] = calculate_average_days_temp_avg(data, (10, 14.99))
 
-    # Number of days with TempAvg > 15 and <= 20 by year
-    climate_stats['Avg_Days_TempAvg_15_20'] = calculate_average_days_temp_avg(data, (15, 20))
+    # Number of days with TempAvg >= 15 and < 20 by year
+    climate_stats['Avg_Days_TempAvg_15_20'] = calculate_average_days_temp_avg(data, (15, 19.99))
 
     # Number of days with TempAvg >= 20 by year
     climate_stats['Avg_Days_TempAvg_20'] = calculate_average_days_temp_avg(data, (20, float('inf')))
@@ -371,10 +379,10 @@ def generate_climate_stats(year_start, year_end, host, user, password, database,
     climate_stats['Avg_Days_Precipitation_0'] = calculate_average_days_precipitation(data, (0.1, float('inf')))
 
     # Number of days with PrecipitationSum >= 1 and < 5 by year
-    climate_stats['Avg_Days_Precipitation_1_5'] = calculate_average_days_precipitation(data, (1, 5))
+    climate_stats['Avg_Days_Precipitation_1_5'] = calculate_average_days_precipitation(data, (1, 4.99))
 
     # Number of days with PrecipitationSum >= 5 and < 10 by year
-    climate_stats['Avg_Days_Precipitation_5_10'] = calculate_average_days_precipitation(data, (5, 10))
+    climate_stats['Avg_Days_Precipitation_5_10'] = calculate_average_days_precipitation(data, (5, 9.99))
 
     # Number of days with PrecipitationSum >= 10 by year
     climate_stats['Avg_Days_Precipitation_10'] = calculate_average_days_precipitation(data, (10, float('inf')))
