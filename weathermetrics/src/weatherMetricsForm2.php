@@ -107,6 +107,6 @@
         'WeatherData2' => $weatherdata2,
         'DataType' => $DataType
     );
-    console.log($responseData);
+    //console.log($responseData);
     echo json_encode($responseData);
 ?>
