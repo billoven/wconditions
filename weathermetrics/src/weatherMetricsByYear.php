@@ -282,7 +282,7 @@
                 generateStatisticRow('Max', $statistics, $selected_years, 'MaxAvgTemp','DateMaxAvgTemp', 1, '°C', $normalsData['Max_TempAvg'][0]['Value']);
                 generateStatCatHeader('Average Extreme Temperatures', $numberOfYears);
                 generateStatisticRow('≤0°', $statistics, $selected_years, 'DaysLessThanEqualTo0', '', 0, 'd', $normalsData['Avg_Days_TempAvg_0']);
-                generateStatisticRow('≥25°', $statistics, $selected_years, 'DaysGreaterThanOrEqualTo25', 'd', 0, '', $normalsData['Avg_Days_TempAvg_25']);
+                generateStatisticRow('≥25°', $statistics, $selected_years, 'DaysGreaterThanOrEqualTo25', '', 0, 'd', $normalsData['Avg_Days_TempAvg_25']);
                 generateStatCatHeader('Average Temperatures Distribution', $numberOfYears);
                 generateStatisticRow('≤0°', $statistics, $selected_years, 'DaysLessThanEqualTo0', '', 0, 'd', $normalsData['Avg_Days_TempAvg_0']);
                 generateStatisticRow('>0°And<5°', $statistics, $selected_years, 'DaysGreater0AndLess5', '', 0, 'd', $normalsData['Avg_Days_TempAvg_0_5']);
@@ -299,15 +299,15 @@
                 generateStatisticRow('Max', $statistics, $selected_years, 'MaxLowTemp', 'DateMaxLowTemp', 1, '°C', $normalsData['Max_TempLow'][0]['Value']);
                 generateStatisticRow('Min', $statistics, $selected_years, 'MinLowTemp', 'DateMinLowTemp', 1, '°C', $normalsData['Min_TempLow'][0]['Value']);
                 generateStatCatHeader('Low Extreme Temperatures', $numberOfYears);
-                generateStatisticRow('≤ -5°', $statistics, $selected_years, 'DaysLowLessThanEqualToMinus5', '', 0, '', 3);
-                generateStatisticRow('≥ 20', $statistics, $selected_years, 'DaysLowGreaterThanOrEqualTo20', '', 0, '', 4);
+                generateStatisticRow('≤ -5°', $statistics, $selected_years, 'DaysLowLessThanEqualToMinus5', '', 0, 'd',  $normalsData['Avg_Days_TempLow_-5']);
+                generateStatisticRow('≥ 20', $statistics, $selected_years, 'DaysLowGreaterThanOrEqualTo20', '', 0, 'd', $normalsData['Avg_Days_TempLow_20']);
                 generateStatCatHeader('Low Temperatures Distribution', $numberOfYears);
-                generateStatisticRow('≤ 0°', $statistics, $selected_years, 'DaysLowLessThanOrEqualTo0', '', 0, '', 25);
-                generateStatisticRow('> 0° And < 5°', $statistics, $selected_years, 'DaysLowGreater0AndLess5', '', 0, '', 77);
-                generateStatisticRow('≥ 5° And < 10°', $statistics, $selected_years, 'DaysLowGreaterOrEqual5AndLess10', '', 0, '', 106);
-                generateStatisticRow('≥ 10° And < 15°', $statistics, $selected_years, 'DaysLowGreaterOrEqual10AndLess15', '', 0, '', 105);
-                generateStatisticRow('≥ 15° And < 20°', $statistics, $selected_years, 'DaysLowGreaterOrEqual15AndLess20', '', 0, '', 48);
-                generateStatisticRow('≥ 20°', $statistics, $selected_years, 'DaysLowGreaterThanOrEqualTo20', '', 0, '', 4);
+                generateStatisticRow('≤ 0°', $statistics, $selected_years, 'DaysLowLessThanOrEqualTo0', '', 0, 'd', $normalsData['Avg_Days_TempLow_0']);
+                generateStatisticRow('> 0° And < 5°', $statistics, $selected_years, 'DaysLowGreater0AndLess5', '', 0, 'd', $normalsData['Avg_Days_TempLow_0_5']);
+                generateStatisticRow('≥ 5° And < 10°', $statistics, $selected_years, 'DaysLowGreaterOrEqual5AndLess10', '', 0, 'd', $normalsData['Avg_Days_TempLow_5_10']);
+                generateStatisticRow('≥ 10° And < 15°', $statistics, $selected_years, 'DaysLowGreaterOrEqual10AndLess15', '', 0, 'd', $normalsData['Avg_Days_TempLow_10_15']);
+                generateStatisticRow('≥ 15° And < 20°', $statistics, $selected_years, 'DaysLowGreaterOrEqual15AndLess20', '', 0, 'd', $normalsData['Avg_Days_TempLow_15_20']);
+                generateStatisticRow('≥ 20°', $statistics, $selected_years, 'DaysLowGreaterThanOrEqualTo20', '', 0, 'd', $normalsData['Avg_Days_TempLow_20']);
 
             break;
             case "High":
@@ -317,15 +317,15 @@
                 generateStatisticRow('Max', $statistics, $selected_years, 'MaxHighTemp', 'DateMaxHighTemp', 1, '°C', $normalsData['Max_TempHigh'][0]['Value']);
                 generateStatisticRow('Min', $statistics, $selected_years, 'MinHighTemp', 'DateMinHighTemp', 1, '°C', $normalsData['Min_TempHigh'][0]['Value']);
                 generateStatCatHeader('High Extreme Temperatures', $numberOfYears);
-                generateStatisticRow('≤ 0°', $statistics, $selected_years, 'DaysHighLessThanEqual0', '', 0, '', 4);
-                generateStatisticRow('≥ 30°', $statistics, $selected_years, 'DaysHighGreaterThanOrEqualTo30', '', 0, '', 9);
+                generateStatisticRow('≤ 0°', $statistics, $selected_years, 'DaysHighLessThanEqual0', '', 0, 'd', $normalsData['Avg_Days_TempHigh_0']);
+                generateStatisticRow('≥ 30°', $statistics, $selected_years, 'DaysHighGreaterThanOrEqualTo30', '', 0, 'd', $normalsData['Avg_Days_TempHigh_30']);
                 generateStatCatHeader('High Temperatures Distribution', $numberOfYears);
-                generateStatisticRow('≤ 0°', $statistics, $selected_years, 'DaysHighGreater0AndLess5', '', 0, '', 4);
-                generateStatisticRow('> 0° And < 5°', $statistics, $selected_years, 'DaysHighGreater0AndLess5', '', 0, '', 23);
-                generateStatisticRow('≥ 5° And < 10°', $statistics, $selected_years, 'DaysHighGreaterOrEqual5AndLess10', '', 0, '', 64);
-                generateStatisticRow('≥ 10° And < 15°', $statistics, $selected_years, 'DaysHighGreaterOrEqual10AndLess15', '', 0, '', 88);
-                generateStatisticRow('≥ 15° And < 20°', $statistics, $selected_years, 'DaysHighGreaterOrEqual15AndLess20', '', 0, '', 75);
-                generateStatisticRow('≥ 20°', $statistics, $selected_years, 'DaysHighGreaterThanOrEqualTo20', '', 0, '', 111);
+                generateStatisticRow('≤ 0°', $statistics, $selected_years, 'DaysHighGreater0AndLess5', '', 0, 'd', $normalsData['Avg_Days_TempHigh_0']);
+                generateStatisticRow('> 0° And < 5°', $statistics, $selected_years, 'DaysHighGreater0AndLess5', '', 0, 'd', $normalsData['Avg_Days_TempHigh_0_5']);
+                generateStatisticRow('≥ 5° And < 10°', $statistics, $selected_years, 'DaysHighGreaterOrEqual5AndLess10', '', 0, 'd', $normalsData['Avg_Days_TempHigh_5_10']);
+                generateStatisticRow('≥ 10° And < 15°', $statistics, $selected_years, 'DaysHighGreaterOrEqual10AndLess15', '', 0, 'd', $normalsData['Avg_Days_TempHigh_10_15']);
+                generateStatisticRow('≥ 15° And < 20°', $statistics, $selected_years, 'DaysHighGreaterOrEqual15AndLess20', '', 0, 'd', $normalsData['Avg_Days_TempHigh_15_20']);
+                generateStatisticRow('≥ 20°', $statistics, $selected_years, 'DaysHighGreaterThanOrEqualTo20', '', 0, 'd', $normalsData['Avg_Days_TempHigh_20']);
             break;
             case "Rainfall":
                 // Call the function to generate rows for Precipiatations

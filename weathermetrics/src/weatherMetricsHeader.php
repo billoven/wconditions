@@ -61,7 +61,7 @@
         themeLink.href = `https://cdn.jsdelivr.net/npm/bootswatch@5.3.1/dist/${themeName}/bootstrap.min.css`;
 
         // Store the selected theme in a cookie
-        document.cookie = `theme=${themeName}; path=/; SameSite=None; Secure`;
+        document.cookie = `theme=${themeName}; path=/; SameSite=None`;
 
         $('#dropdownMenuButton').text(themeName);
 
@@ -75,12 +75,12 @@
     function changeNormals(city, selectedPeriod) {
         // Store the selected Period in a cookie if it is not empty
         if (selectedPeriod) {
-            document.cookie = `selectedNormals=${selectedPeriod}; path=/; SameSite=None; Secure`;
+            document.cookie = `selectedNormals=${selectedPeriod}; path=/; SameSite=None`;
         }
 
         // Store the selected City in a cookie if it is not empty
         if (city) {
-            document.cookie = `selectedNormalsCity=${city}; path=/; SameSite=None; Secure`;
+            document.cookie = `selectedNormalsCity=${city}; path=/; SameSite=None`;
         }
 
         // Log the stored selected Normals and City
@@ -113,8 +113,8 @@
     // Function to change the selected database
     function changeDb(dbid, station) {
         // Store the selected database in a cookie
-        document.cookie = `selectedDb=${dbid}; path=/; SameSite=None; Secure`;
-        document.cookie = `selectedStation=${station}; path=/; SameSite=None; Secure`;
+        document.cookie = `selectedDb=${dbid}; path=/; SameSite=None;`;
+        document.cookie = `selectedStation=${station}; path=/; SameSite=None;`;
 
         // Update the text of the "Select Db" button with the station name 
         $('#dropdownDbButton').text(station);
@@ -144,7 +144,7 @@
                     return null;
                 } else {
                     // JSON decoding successful
-                    echo "Normals Json Filename read: [$filename]";
+                    //echo "Normals Json Filename read: [$filename]";
                     return $data;
                 }
             } else {
@@ -162,7 +162,7 @@
         $selectedDb = $_COOKIE['selectedDb'] ?? "db1";
 
         // Able to use $selectedDb in PHP code
-        echo "SelectedDB received from Cookie: " . htmlspecialchars($selectedDb) . "<BR>";
+        //echo "SelectedDB received from Cookie: " . htmlspecialchars($selectedDb) . "<BR>";
 
         // Database configuration
         require_once('/etc/wconditions/db_config.php'); // Adjust the path accordingly
@@ -175,13 +175,13 @@
             }
 
             // Echo the host, username, and database
-            echo "Weather Station   : " . $dbConfig['weatherStation'] . "<br>";
-            echo "Host              : " . $dbConfig['host'] . "<br>";
-            echo "Username          : " . $dbConfig['username'] . "<br>";
-            echo "Database          : " . $dbConfig['database'] . "<br>";
-            echo "TableDwc          : " . $dbConfig['tabledwc'] . "<br>";
-            echo "DefaultNormals    : " . $dbConfig['DefaultNormals'] . "<br>";
-            echo "DefaultNormalsCity: " . $dbConfig['DefaultNormalsCity'] . "<br>";
+            //echo "Weather Station   : " . $dbConfig['weatherStation'] . "<br>";
+            //echo "Host              : " . $dbConfig['host'] . "<br>";
+            //echo "Username          : " . $dbConfig['username'] . "<br>";
+            //echo "Database          : " . $dbConfig['database'] . "<br>";
+            //echo "TableDwc          : " . $dbConfig['tabledwc'] . "<br>";
+            //echo "DefaultNormals    : " . $dbConfig['DefaultNormals'] . "<br>";
+            //echo "DefaultNormalsCity: " . $dbConfig['DefaultNormalsCity'] . "<br>";
             ?>
             <script>
                 // Retrieve the value of the selectedNormalsCity cookie
@@ -190,7 +190,7 @@
                 // Check if the selectedNormalsCity cookie is not set
                 if (!selectedNormalsCity) {
                     // If the cookie is not set, set it to the default value from $dbConfig
-                    document.cookie = `selectedNormalsCity=<?php echo $dbConfig['DefaultNormalsCity']; ?>; path=/; SameSite=None; Secure`;
+                    document.cookie = `selectedNormalsCity=<?php echo $dbConfig['DefaultNormalsCity']; ?>; path=/; SameSite=None`;
                 }
                 // Check if the selectedNormals cookie exists
                 const selectedNormalsCookie = getCookie('selectedNormals');
@@ -198,7 +198,7 @@
                 // If the selectedNormals cookie doesn't exist, set it to the default value from PHP
                 if (!selectedNormalsCookie) {
                     const defaultNormals = "<?php echo $dbConfig['DefaultNormals']; ?>";
-                    document.cookie = `selectedNormals=${defaultNormals}; path=/; SameSite=None; Secure`;
+                    document.cookie = `selectedNormals=${defaultNormals}; path=/; SameSite=None`;
                 }
             
             </script>
@@ -209,9 +209,9 @@
             $selectedPeriod = $_COOKIE['selectedNormals'] ?? $dbConfig['DefaultNormals'];
 
             // Display the cookie values
-            echo "Cookie NormalsCity: " . $selectedCity . "<br>";
-            echo "Cookie Selected NormalsPeriod: " . $selectedPeriod . "<br>";
-            echo "Cookie Selected DB: " . $selectedDb . "<br>";
+            //echo "Cookie NormalsCity: " . $selectedCity . "<br>";
+            //echo "Cookie Selected NormalsPeriod: " . $selectedPeriod . "<br>";
+            //echo "Cookie Selected DB: " . $selectedDb . "<br>";
 
             // Fetch available years from the database
             $years = array();

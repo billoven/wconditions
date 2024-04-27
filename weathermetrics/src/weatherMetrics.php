@@ -4,8 +4,6 @@
 
     ini_set('display_errors', 1);
     error_reporting(E_ALL);
-
-    $normalsLabel= $dbConfig['LabelNormals2'] ;
 ?>
 
     <?php include 'alertBox.php'; ?>
@@ -215,7 +213,7 @@
                         fill: true
                     },
                     {
-                        label: '<?php echo $normalsLabel; ?> Average Temperature',
+                        label: '<?php global $selectedPeriod, $selectedCity; echo substr($selectedCity, 0, 2) . "-" . $selectedPeriod; ?> Avg Norm. Temp.',
                         data:  [],
                         borderColor: 'blue',
                         backgroundColor: 'rgba(0, 0, 255, 0.1)',
@@ -224,7 +222,7 @@
                         borderDash: [5, 5]
                     },
                     {
-                        label: '<?php echo $normalsLabel; ?> High Temperature',
+                        label: '<?php global $selectedPeriod, $selectedCity; echo substr($selectedCity, 0, 2) . "-" . $selectedPeriod; ?> High Norm. Temp.',
                         data:  [],
                         borderColor: 'red',
                         backgroundColor: 'rgba(0, 0, 255, 0.1)',
@@ -233,7 +231,7 @@
                         borderDash: [5, 5]
                     },
                     {
-                        label: '<?php echo $normalsLabel; ?> Low Temperature',
+                        label: '<?php global $selectedPeriod, $selectedCity; echo substr($selectedCity, 0, 2) . "-" . $selectedPeriod; ?> Low Norm. Temp.',
                         data:  [],
                         borderColor: 'green',
                         backgroundColor: 'rgba(0, 0, 255, 0.1)',

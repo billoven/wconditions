@@ -35,8 +35,12 @@
 
         // Use placeholders for the table names
         $tabledwc = $dbConfig['tabledwc'];
-        $tableNormals1 = $dbConfig['TableNormals1'];
-        $tableNormals2 = $dbConfig['TableNormals2'];
+
+        // Retrieve the city and period values from the cookie
+        $selectedPeriod = $_COOKIE['selectedNormals'] ?? $dbConfig['DefaultNormals'];
+
+        // TableNormals name for the selected Normals period
+        $selectedPeriodTable = "Normals_" . $selectedPeriod;
 
         // Fetch data for the selected date range from the database
         $sql = "SELECT 
@@ -60,7 +64,7 @@
                     NORM.AvgTempLow as NormAvgTempLow, 
                     NORM.AvgPrecipitationSum as NormAvgPrecipSum 
                 FROM $tabledwc DWC 
-                JOIN $tableNormals2 NORM 
+                JOIN $selectedPeriodTable NORM 
                 ON DATE_FORMAT(DWC.WC_Date, '%m-%d') = NORM.DayOfYear 
                 WHERE DWC.WC_Date 
                 BETWEEN '$start_date' AND '$end_date'" ;
