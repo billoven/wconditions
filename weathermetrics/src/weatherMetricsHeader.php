@@ -354,18 +354,15 @@
                         e.preventDefault();
                     });
                 });
-
-
                 </script>
- 
-
                 <div class="dropdown me-3">
                     <!-- Database selection dropdown toggle button -->
-                    <button class="btn btn-secondary btn-sm dropdown-toggle" type="button" id="dropdownDbButton" data-bs-toggle="dropdown" aria-expanded="false">
-                        Select DB
+                    <button class="btn btn-secondary btn-sm dropdown-toggle" type="button" id="dropdownDbButton" data-bs-toggle="dropdown" aria-expanded="false">  
+                        <?php 
+                            // Display default weatherStation name
+                            echo $dbConfig['weatherStation']; 
+                        ?>
                     </button>
-                        <!-- Retrieve the selected database from the cookie -->
-                        <?php $selectedDbCookie = isset($_COOKIE['selectedDb']) ? $_COOKIE['selectedDb'] : "db1"; ?>
 
                         <!-- Database selection options -->
                         <ul class="dropdown-menu" id="db-selector" aria-labelledby="dropdownDbButton">
