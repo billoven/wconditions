@@ -198,7 +198,7 @@
             echo "<tr>";
             echo "<th class='small'>$label1</th>";
             //echo "<td class='small'>{$norm1}</td><td class='small'>N/A</td>";
-            echo "<td class='small'>{$norm1}</td>";
+            echo "<td class='small'>{$norm1} {$unit}</td>";
             foreach ($selected_years as $year) {
                 $value = isset($statisticsArray[$year][$statisticKey]) ? $statisticsArray[$year][$statisticKey] : null;
                 $datevalue = isset($statisticsArray[$year][$datekey]) ? $statisticsArray[$year][$datekey] : null;                

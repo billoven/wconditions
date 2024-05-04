@@ -31,7 +31,8 @@
         $start_date2 = $_POST['start_date_2'];
         $end_date2 = $_POST['end_date_2'];
         $selected_data_type = $_POST['weather_data_type'];
-        $selectedDb = $_POST['selectedDb'];
+        // Retrieve the DB value from the cookie
+        $selectedDb = $_COOKIE['selectedDb'] ?? "db1";
 
         // Database configuration
         if (isset($dbConfigs[$selectedDb])) {

@@ -16,10 +16,12 @@
             die("File: $currentFile - Error: Configuration file '$configFilePath' not found.");
         }
 
-        // Get the selected date range
+        // Get the selected date range 
         $start_date = $_POST['start_date'];
         $end_date = $_POST['end_date'];
-        $selectedDb = $_POST['selectedDb'];
+        
+        // Retrieve the DB value from the cookie
+        $selectedDb = $_COOKIE['selectedDb'] ?? "db1";
 
         // Database configuration
         if (isset($dbConfigs[$selectedDb])) {
