@@ -70,17 +70,19 @@
     }
 
 
-
     // Function to change the selected normals
     function changeNormals(city, selectedPeriod) {
+        // Check if the site is using HTTPS
+        const isSecure = location.protocol === 'https:';
+
         // Store the selected Period in a cookie if it is not empty
         if (selectedPeriod) {
-            document.cookie = `selectedNormals=${selectedPeriod}; path=/; SameSite=None`;
+            document.cookie = `selectedNormals=${selectedPeriod}; path=/; SameSite=None;${isSecure ? ' Secure;' : ''}`;
         }
 
         // Store the selected City in a cookie if it is not empty
         if (city) {
-            document.cookie = `selectedNormalsCity=${city}; path=/; SameSite=None`;
+            document.cookie = `selectedNormalsCity=${city}; path=/; SameSite=None;${isSecure ? ' Secure;' : ''}`;
         }
 
         // Log the stored selected Normals and City
@@ -102,6 +104,7 @@
         // Using window.location.href
         location.reload();
     }
+    
 
     // Function to retrieve a specific cookie by name
     function getCookie(name) {
@@ -112,9 +115,12 @@
 
     // Function to change the selected database
     function changeDb(dbid, station) {
+        // Check if the site is using HTTPS
+        const isSecure = location.protocol === 'https:';
+
         // Store the selected database in a cookie
-        document.cookie = `selectedDb=${dbid}; path=/; SameSite=None;`;
-        document.cookie = `selectedStation=${station}; path=/; SameSite=None;`;
+        document.cookie = `selectedDb=${dbid}; path=/; SameSite=None;${isSecure ? ' Secure;' : ''}`;
+        document.cookie = `selectedStation=${station}; path=/; SameSite=None;${isSecure ? ' Secure;' : ''}`;
 
         // Update the text of the "Select Db" button with the station name 
         $('#dropdownDbButton').text(station);
@@ -123,10 +129,10 @@
         console.log("Selected DBid stored:", dbid);
         console.log("Selected DB station stored:", station);
 
-        // Using window.location.href
+        // Using window.location.href to reload the page
         location.reload();
-
     }
+
 
     </script>
 
@@ -274,13 +280,16 @@
                 <!-- Navigation links -->
                 <ul class="navbar-nav">
                     <li class="nav-item">
-                        <a href="weatherMetrics.php" class="nav-link btn btn-light fs-6 text-dark" role="button">Temperatures</a>
+                        <a href="weatherMetricsTemp.php" class="nav-link btn btn-light fs-6 text-dark" role="button">Temperatures</a>
                     </li>
                     <li class="nav-item">
-                        <a href="#" class="nav-link btn btn-light fs-6 text-dark" role="button">Rainfall</a>
+                        <a href="weatherMetricsRain.php" class="nav-link btn btn-light fs-6 text-dark" role="button">Rainfall</a>
                     </li>
                     <li class="nav-item">
                         <a href="#" class="nav-link btn btn-light fs-6 text-dark" role="button">Pressure</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="weatherMetricsComp.php" class="nav-link btn btn-light fs-6 text-dark" role="button">Comparison</a>
                     </li>
                     <li class="nav-item">
                         <a href="weatherMetricsByYear.php" class="nav-link btn btn-light fs-6 text-dark" role="button">Climatologic</a>
