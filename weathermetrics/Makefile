@@ -42,7 +42,8 @@ build:
 install:
 	@echo "Installing ..."
 	# Deploy the project to the destination server using scp
-	scp -r $(SOURCE_DIR)/* ${DEST_USER}@${DEST_IP}:$(DEST_DIR)
+	# Recursively copy all the source directory structure (-r) and keep symbolic links (-p)
+	scp -rp $(SOURCE_DIR)/* ${DEST_USER}@${DEST_IP}:$(DEST_DIR)
 
 clean:
 	@echo "Cleaning ..."
