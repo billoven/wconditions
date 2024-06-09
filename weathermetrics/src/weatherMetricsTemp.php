@@ -31,6 +31,7 @@
         <div id="DailyTempGraphContainer">
            <canvas id="DailyTempChart" width="1024" height="400"></canvas>  
         </div>
+        <div id="DailyTempSummary"></div> <!-- Container for Daily Temp Summary -->
       </div>
       <div class="graph-container">
         <h2>Monthly Temperatures Graph</h2>
@@ -43,11 +44,107 @@
 
         console.log("Debut Script");
 
-        // Define the temperatureChart variable outside the function
-        var temperatureChart;
-        var monthlyAvgChart;
-
         $(document).ready(function () {
+            // Function to calculate statistics with debugging information
+            function calculateStatistics(data) {
+                // Convert all string values to numbers
+                const numericData = data.map(Number);
+                
+                // Log the input data
+                console.log("Input data:", numericData);
+
+                // Calculate the sum of all values in the data array
+                const sum = numericData.reduce((acc, val) => {
+                    console.log(`Acc: ${acc}, Val: ${val}, New Acc: ${acc + val}`);
+                    return acc + val;
+                }, 0);
+                console.log("Sum of data:", sum);
+
+                // Calculate the average value
+                const avg = sum / numericData.length;
+                console.log("Average value:", avg);
+
+                // Find the maximum value in the data array
+                const max = Math.max(...numericData);
+                console.log("Maximum value:", max);
+
+                // Find the minimum value in the data array
+                const min = Math.min(...numericData);
+                console.log("Minimum value:", min);
+
+                // Return an object containing the average, maximum, and minimum values
+                return { avg, max, min };
+            }
+
+            // Function to update the summary display
+            function updateSummary(containerId, datasets, normals) {
+                const summaryContainer = document.getElementById(containerId);
+                summaryContainer.innerHTML = ''; // Clear previous summary
+
+                const table = document.createElement('table');
+                table.style.borderCollapse = 'collapse';
+                table.style.width = '100%';
+
+                const thead = document.createElement('thead');
+                const tbody = document.createElement('tbody');
+
+                const headerRow = document.createElement('tr');
+                headerRow.innerHTML = `
+                    <th>Metric</th>
+                    <th>Average</th>
+                    <th>Max</th>
+                    <th>Min</th>
+                `;
+                thead.appendChild(headerRow);
+
+                datasets.forEach((dataset, index) => {
+                    if (dataset.label.includes('Norm')) return; // Skip normals
+
+                    console.log("Before Calculated statistics:", dataset.data);
+                    const stats = calculateStatistics(dataset.data);
+                    console.log("After Calculated statistics:", stats);
+                    let diff = '';
+                    // Calculate differences with normals only if it's not Moving Average
+                    if (!dataset.label.includes('Moving Average')) {
+                        if (dataset.label.includes('Average Temperature')) {
+                            diff = (stats.avg - normals.avg).toFixed(1);
+                        } else if (dataset.label.includes('Maximum Temperature')) {
+                            diff = (stats.avg - normals.max).toFixed(1);
+                        } else if (dataset.label.includes('Minimum Temperature')) {
+                            diff = (stats.avg - normals.min).toFixed(1);
+                        }
+                    }
+
+                    const dataRow = document.createElement('tr');
+                    dataRow.innerHTML = `
+                        <td><strong>${dataset.label}</strong></td>
+                        <td>${stats.avg.toFixed(1)}°C ${diff && `(${diff >= 0 ? '+' : ''}${diff}°C)`}</td>
+                        <td>${stats.max.toFixed(1)}°C</td>
+                        <td>${stats.min.toFixed(1)}°C</td>
+                    `;
+                    tbody.appendChild(dataRow);
+                });
+
+                // Display normals
+                const normalsRow = document.createElement('tr');
+                normalsRow.innerHTML = `
+                    <td><strong>Normals</strong></td>
+                    <td>${normals.avg.toFixed(1)}°C</td>
+                    <td>${normals.max.toFixed(1)}°C</td>
+                    <td>${normals.min.toFixed(1)}°C</td>
+                `;
+                tbody.appendChild(normalsRow);
+
+                table.appendChild(thead);
+                table.appendChild(tbody);
+                summaryContainer.appendChild(table);
+            }
+
+
+            // Define the temperatureChart variable outside the function
+            var temperatureChart;
+            var monthlyAvgChart;
+
             // Function to update the daily temperatures graph
             function updateDailyTempGraph(dates, averages, maximums, minimums, AvgTempAvgs, AvgTempHighs, AvgTempLows, movingAverages) {
                 // Update the existing chart instance (temperatureChart) with new data
@@ -60,6 +157,14 @@
                 temperatureChart.data.datasets[5].data = AvgTempLows;
                 temperatureChart.data.datasets[6].data = movingAverages;
                 temperatureChart.update();
+
+                // Update the summary
+                const normals = {
+                    avg: calculateStatistics(AvgTempAvgs).avg,
+                    max: calculateStatistics(AvgTempHighs).avg,
+                    min: calculateStatistics(AvgTempLows).avg
+                };
+                updateSummary('DailyTempSummary', temperatureChart.data.datasets, normals);
             }
 
             function UpdateMonthlyTempGraph(labels, monthlyAvgData) {
