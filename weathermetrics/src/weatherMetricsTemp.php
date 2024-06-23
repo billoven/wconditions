@@ -128,7 +128,7 @@
                 // Display normals
                 const normalsRow = document.createElement('tr');
                 normalsRow.innerHTML = `
-                    <td><strong>Normals</strong></td>
+                    <td><strong>Average normal temperatures for the period</strong></td>
                     <td>${normals.avg.toFixed(1)}°C</td>
                     <td>${normals.max.toFixed(1)}°C</td>
                     <td>${normals.min.toFixed(1)}°C</td>

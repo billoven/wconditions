@@ -41,6 +41,8 @@ build:
 
 install:
 	@echo "Installing ..."
+	# Create a backup of the DEST_DIR content
+	ssh ${DEST_USER}@${DEST_IP} "mv ${DEST_DIR} ${DEST_DIR}_backup_$(shell date +%Y%m%d_%H%M%S) && mkdir ${DEST_DIR}"
 	# Deploy the project to the destination server using scp
 	# Recursively copy all the source directory structure (-r) and keep symbolic links (-p)
 	scp -rp $(SOURCE_DIR)/* ${DEST_USER}@${DEST_IP}:$(DEST_DIR)

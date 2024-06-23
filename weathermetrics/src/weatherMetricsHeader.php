@@ -17,7 +17,29 @@
         position: sticky;
         left: 0;
         } 
-    </style>   
+        .navbar-brand-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+        #version-image-container {
+            display: flex;
+            justify-content: center;
+            margin-top: 5px; /* Adjust the margin as needed */
+        }
+        #version-image {
+            width: auto; /* Maintain aspect ratio */
+            height: 20px; /* Adjust the height as needed */
+        }
+        .release-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 5px; /* Adjust as needed */
+        }
+
+    </style>  
 
     <style type="text/css">
         /* ============ desktop view necessary for normals selection with sub-menu ============ */
@@ -261,17 +283,17 @@
     ?>
 
 
-    <!-- Release Container -->
-    <div class="release-container" id="releaseContainer">
-        <!-- Release version will be inserted here -->
-    </div>
-
     <!-- Navigation bar -->
     <nav class="navbar navbar-expand-md navbar-dark">
         <div class="container">
-            <a class="navbar-brand" href="#">
-                <img src="images/WeatherCondtions.png" alt="Logo" width="94" height="53" class="d-inline-block align-top">
-            </a>
+            <div class="navbar-brand-wrapper">
+                <a class="navbar-brand" href="#">
+                    <img src="images/WeatherCondtions.png" alt="Logo" width="90" height="50" class="d-inline-block align-top">
+                </a>
+                <div class="release-container" id="version-image-container">
+                    <!-- Release version will be inserted here as an image -->
+                </div>
+            </div>
             <!-- Navbar toggle button for small screens -->
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
@@ -468,17 +490,58 @@
                 $('#dropdownDbButton').text(storedStation);
             });
 
- 
         $(document).ready(function () {
-            // Fetch release version from release_installed.txt
-            $.get('release_installed.txt')
-                .done(function (data) {
-                    // Update the release container with the release version
-                    var releaseContainer = document.getElementById('releaseContainer');
-                    releaseContainer.innerHTML = 'Release ' + data.trim();
-                })
-                .fail(function () {
-                    console.error('Error loading release version from release_installed.txt');
-                });
+            // Function to fetch release version from file
+            function fetchReleaseVersion() {
+                return fetch('release_installed.txt')
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Failed to fetch release version');
+                        }
+                        return response.text();
+                    })
+                    .then(text => {
+                        // Extract release version from the text
+                        const releaseMatch = text.match(/^RELEASE=wconditions_(.+)$/m);
+                        if (releaseMatch) {
+                            return releaseMatch[1];
+                        } else {
+                            throw new Error('Release version not found in file');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error fetching release version:', error);
+                    });
+            }
+
+            // Function to create an image from a string
+            function createImageFromString(versionString) {
+                // Create a canvas element
+                const canvas = document.createElement('canvas');
+                const context = canvas.getContext('2d');
+
+                // Set the canvas dimensions
+                const text = `v${versionString}`;
+                context.font = '20px Verdana';
+                const textWidth = context.measureText(text).width;
+                canvas.width = textWidth + 20; // add some padding
+                canvas.height = 40; // height of the text
+
+                // Draw the text onto the canvas
+                context.font = '20px Verdana';
+                context.fillStyle = 'blue';
+                context.fillText(text,10,30); // draw the text with some padding
+
+                // Create an image element
+                const img = new Image();
+                img.src = canvas.toDataURL();
+                img.id = 'version-image';
+
+                // Append the image to the container
+                document.getElementById('version-image-container').appendChild(img);
+            }
+
+            // Fetch release version and generate image
+            fetchReleaseVersion().then(createImageFromString);
         });
     </script>
