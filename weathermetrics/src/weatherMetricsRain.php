@@ -10,30 +10,23 @@
      
     <!-- Section 1 and First Form -->
     <div class="container" id="Section1">
-      <h2>Select Date Range</h2>
-      <form id="formrain" class="form-group" method="POST" action="weatherMetricsFormRain.php">
-        <!-- Add a hidden input field to store the selectedDb value -->
-        <input type="hidden" name="selectedDb" value="<?php echo isset($_GET['selectedDb']) ? htmlspecialchars($_GET['selectedDb']) : 'db1'; ?>">
-        <div class="form-row">
-            <div class="form-group">
-                <label for="start_date">Start Date:</label>
-                <input type="date" id="start_date" name="start_date" class="input-small" requiredrequired pattern="\d{4}-\d{2}-\d{2}" value="<?php echo isset($_POST['start_date']) ? $_POST['start_date'] : ''; ?>">
+        <form id="formrain" class="form-group" method="POST" action="weatherMetricsFormRain.php">
+            <div class="form-row">
+                <div class="form-group">
+                    <!-- Hidden field for date range type -->
+                    <input type="hidden" id="date_range_type" name="date_range_type" value="custom">
+                    
+                    <?php include 'weatherMetricsDateSelector.php'; ?> <!-- Date selector inclusion -->
+                                       
+                </div>
             </div>
-            <div class="form-group">
-                <label for="end_date">End Date:</label>
-                <input type="date" id="end_date" name="end_date" class="input-small" requiredrequired pattern="\d{4}-\d{2}-\d{2}" value="<?php echo isset($_POST['end_date']) ? $_POST['end_date'] : ''; ?>">
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Generate Graph">
-            </div>
+        </form>
+        <div class="graph-container">
+            <h3>Daily rain fall and cumulative of the period</h3>
+            <div id="precipitationGraphContainer">
+                <canvas id="precipitationChart" width="1024" height="400"></canvas>
+    	    </div>
         </div>
-      </form>
-      <div class="graph-container">
-        <h2>Daily rain fall and cumulative of the period</h2>
-        <div id="precipitationGraphContainer">
-            <canvas id="precipitationChart" width="1024" height="400"></canvas>
-    	</div>
-      </div>
     </div>  
     <script>
 

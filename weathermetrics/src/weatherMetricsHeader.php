@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Climatologic Statistics with bootstra5.3.1</title>
-    <link id="bootstrap-theme" rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootswatch@5.3.1/dist/darkly/bootstrap.min.css">
+    <link id="bootstrap-theme" rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootswatch@5.3.1/dist/united/bootstrap.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-gradient"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
@@ -11,6 +11,8 @@
     <script src="scripts/weatherMetrics.js"></script>
     <link rel="stylesheet" href="styles/styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+    
     <style>
         .table th:first-child,
         .table td:first-child {
@@ -74,24 +76,6 @@
 <body class="p-3 m-0 border-0 bd-example m-0 border-0">
  
  <script>
-    // Function to change the theme
-    function changeTheme(themeName) {
-        // Get the link element for the theme stylesheet
-        const themeLink = document.getElementById('bootstrap-theme');
-        
-        // Update the href attribute with the selected theme
-        themeLink.href = `https://cdn.jsdelivr.net/npm/bootswatch@5.3.1/dist/${themeName}/bootstrap.min.css`;
-
-        // Store the selected theme in a cookie
-        document.cookie = `theme=${themeName}; path=/; SameSite=None`;
-
-        $('#dropdownMenuButton').text(themeName);
-
-        // Log the selected theme
-        console.log("Theme stored:", themeName);
-    }
-
-
     // Function to change the selected normals
     function changeNormals(city, selectedPeriod) {
         // Check if the site is using HTTPS
@@ -318,7 +302,7 @@
                     </li>
                     <!-- Add more navigation links as needed -->
                 </ul>
-                 <!-- Dropdowns for Normals, database, theme selections -->
+                 <!-- Dropdowns for Normals, database, selections -->
                 <div class="ms-auto d-flex">
                     <div class="dropdown me-3">
                         <!-- Normals selection dropdown toggle button -->
@@ -405,65 +389,15 @@
                             <li><a class="dropdown-item <?php echo $isActive; ?>" href="#" onclick="changeDb('<?php echo $dbid; ?>','<?php echo $dbConfig['weatherStation']; ?>')"><?php echo $dbConfig['weatherStation']; ?></a></li>
                             <?php endforeach; ?>
                         </ul>
-
                     </div>
-                    <div class="dropdown ms-3">
-                        <button class="btn btn-secondary btn-sm dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
-                        Select Theme
-                        </button>
-                        <ul class="dropdown-menu" id="theme-selector" aria-labelledby="dropdownMenuButton">
-                        <li><a class="dropdown-item" href="#" onclick="changeTheme('cerulean')">cerulean</a></li>
-                        <li><a class="dropdown-item" href="#" onclick="changeTheme('darkly')">Dark</a></li>
-                        <li><a class="dropdown-item" href="#" onclick="changeTheme('cosmo')">Cosmo</a></li>
-                        <li><a class="dropdown-item" href="#" onclick="changeTheme('flatly')">Flatly</a></li>
-                        <li><a class="dropdown-item" href="#" onclick="changeTheme('journal')">Journal</a></li>
-                        <li><a class="dropdown-item" href="#" onclick="changeTheme('litera')">Litera</a></li>
-                        <li><a class="dropdown-item" href="#" onclick="changeTheme('lux')">Lux</a></li>
-                        <li><a class="dropdown-item" href="#" onclick="changeTheme('materia')">Materia</a></li>
-                        <li><a class="dropdown-item" href="#" onclick="changeTheme('minty')">Minty</a></li>
-                        <li><a class="dropdown-item" href="#" onclick="changeTheme('pulse')">Pulse</a></li>
-                        <li><a class="dropdown-item" href="#" onclick="changeTheme('sandstone')">Sandstone</a></li>
-                        <li><a class="dropdown-item" href="#" onclick="changeTheme('sketchy')">Sketchy</a></li>
-                        <li><a class="dropdown-item" href="#" onclick="changeTheme('slate')">Slate</a></li>
-                        <li><a class="dropdown-item" href="#" onclick="changeTheme('solar')">Solar</a></li>
-                        <li><a class="dropdown-item" href="#" onclick="changeTheme('spacelab')">Spacelab</a></li>
-                        <li><a class="dropdown-item" href="#" onclick="changeTheme('united')">United</a></li>	
-                        <li><a class="dropdown-item" href="#" onclick="changeTheme('spacelab')">Spacelab</a></li>	
-                        <li><a class="dropdown-item" href="#" onclick="changeTheme('vapor')">Vapor</a></li>	
-                        <li><a class="dropdown-item" href="#" onclick="changeTheme('yeti')">Yeti</a></li>				
-                        </ul>
-                    </div>
-                </div>
+                 </div>
             </div>
         </div>
     </nav>
 
 
     <!-- Script section for JavaScript code -->
-    <script>
-        // Get the theme selector element
-        const themeSelector = document.getElementById('theme-selector');
-
-        // Add event listener to the theme selector
-        themeSelector.addEventListener('change', function () {
-            // Get the selected theme from the dropdown
-            const selectedTheme = this.value;
-            // Call the function to change the theme
-            changeTheme(selectedTheme);
-        });      
-
-        // Get the theme value from the cookie
-        const themeCookie = getCookie('theme');
-
-        // Check if a theme is stored in a cookie
-        if (!themeCookie) {
-            // If no theme is stored, set the default theme (darkly).
-            changeTheme("darkly");
-        } else {
-            // Set the theme
-            changeTheme(themeCookie);
-        }
-        
+    <script>     
         document.addEventListener('DOMContentLoaded', function () {
                 const storedNormalsCity = getCookie('selectedNormalsCity');
                 const storedNormalsPeriod = getCookie('selectedNormals');

@@ -19,6 +19,13 @@
         // Get the selected date range 
         $start_date = $_POST['start_date'];
         $end_date = $_POST['end_date'];
+
+        // Check if each checkbox is set (checked) in the form submission
+        // If checked, the value will be 'true', otherwise it will default to 'false'
+        $by_day = isset($_POST['by_day']) ? true : false;
+        $by_month = isset($_POST['by_month']) ? true : false;
+        $by_year = isset($_POST['by_year']) ? true : false;
+        $by_season = isset($_POST['by_season']) ? true : false;
         
         // Retrieve the DB value from the cookie
         $selectedDb = $_COOKIE['selectedDb'] ?? "db1";
@@ -75,7 +82,6 @@
         $averages = [];
         $maximums = [];
         $minimums = [];
-	    $precipitations = [];
         $AvgTempAvgs = [] ;
         $AvgTempHighs = [] ;
         $AvgTempLows = [] ;
@@ -122,6 +128,81 @@
             ];
         }
 
+        // Check if the 'by_year' checkbox is selected
+        //if (isset($_POST['by_year']) && $_POST['by_year'] === 'true') {
+            // Fetch annual average temperatures for the selected period
+            $yearlyAvgData = [];
+            $yearlyAvgLabels = [];
+            
+            $yearlyAvgQuery = "SELECT
+                                DATE_FORMAT(WC_Date, '%Y') AS Year,
+                                AVG(WC_TempAvg) AS AvgTemp,
+                                AVG(WC_TempHigh) AS MaxTemp,
+                                AVG(WC_TempLow) AS MinTemp
+                            FROM
+                                $tabledwc
+                            WHERE
+                                WC_Date BETWEEN '$start_date' AND '$end_date'
+                            GROUP BY
+                                Year";
+
+            $yearlyAvgResult = $conn->query($yearlyAvgQuery);
+
+            while ($row = $yearlyAvgResult->fetch_assoc()) {
+                $yearlyAvgLabels[] = $row['Year'];
+                $yearlyAvgData[] = [
+                    'avg' => $row['AvgTemp'],
+                    'max' => $row['MaxTemp'],
+                    'min' => $row['MinTemp']
+                ];
+            }
+        //}
+
+        // Check if the 'by_season' checkbox is selected
+        //if (isset($_POST['by_season']) && $_POST['by_season'] === 'true') {
+            // Fetch seasonal average temperatures for the selected period
+            $seasonalAvgData = [];
+            $seasonalAvgLabels = [];
+            
+            $seasonalAvgQuery = "SELECT
+                                    CONCAT(
+                                        CASE 
+                                            WHEN MONTH(WC_Date) IN (12, 1, 2) THEN 'Winter'
+                                            WHEN MONTH(WC_Date) IN (3, 4, 5) THEN 'Spring'
+                                            WHEN MONTH(WC_Date) IN (6, 7, 8) THEN 'Summer'
+                                            WHEN MONTH(WC_Date) IN (9, 10, 11) THEN 'Autumn'
+                                        END,
+                                        ' ',
+                                        CASE 
+                                            WHEN MONTH(WC_Date) = 12 THEN YEAR(WC_Date) + 1
+                                            ELSE YEAR(WC_Date)
+                                        END
+                                    ) AS Season,
+                                    AVG(WC_TempAvg) AS AvgTemp,
+                                    AVG(WC_TempHigh) AS MaxTemp,
+                                    AVG(WC_TempLow) AS MinTemp
+                                FROM
+                                    $tabledwc
+                                WHERE
+                                    WC_Date BETWEEN '$start_date' AND '$end_date'
+                                GROUP BY
+                                    Season
+                                ORDER BY
+                                    MIN(WC_Date)";  // Ensure seasons are ordered chronologically
+
+            $seasonalAvgResult = $conn->query($seasonalAvgQuery);
+
+            while ($row = $seasonalAvgResult->fetch_assoc()) {
+                $seasonalAvgLabels[] = $row['Season'];
+                $seasonalAvgData[] = [
+                    'avg' => $row['AvgTemp'],
+                    'max' => $row['MaxTemp'],
+                    'min' => $row['MinTemp']
+                ];
+            }
+
+        //}
+
         // Close the database connection
         $conn->close();
 
@@ -153,6 +234,8 @@
 
     // Return the JSON response with the necessary data for each graph
     $responseData = array(
+        'start_date' => $start_date,
+        'end_date' => $end_date,
         'dates' => $dates,
         'averages' => $averages,
         'maximums' => $maximums,
@@ -162,7 +245,13 @@
         'AvgTempLows' => $AvgTempLows,
         'movingAverages' => $movingAverages,
         'monthlyAvgLabels' => $monthlyAvgLabels,
-        'monthlyAvgData' => $monthlyAvgData
+        'monthlyAvgData' => $monthlyAvgData,
+        'yearlyAvgLabels' => $yearlyAvgLabels,
+        'yearlyAvgData' => $yearlyAvgData,
+        'seasonalAvgLabels' => $seasonalAvgLabels,
+        'seasonalAvgData' => $seasonalAvgData
+
+        
     );
 
     echo json_encode($responseData);

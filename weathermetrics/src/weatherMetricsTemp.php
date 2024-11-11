@@ -5,41 +5,45 @@
     ini_set('display_errors', 1);
     error_reporting(E_ALL);
 ?>
-
     <?php include 'alertBox.php'; ?>
-     
-    <!-- Temperatures Section -->
-    <div class="container" id="Temperatures">
-      <h2>Select Date Range</h2>
-      <form id="formtemp" class="form-group" method="POST" action="weatherMetricsFormTemp.php">
-        <div class="form-row">
-            <div class="form-group">
-                <label for="start_date">Start Date:</label>
-                <input type="date" id="start_date" name="start_date" class="input-small" requiredrequired pattern="\d{4}-\d{2}-\d{2}" value="<?php echo isset($_POST['start_date']) ? $_POST['start_date'] : ''; ?>">
+  
+    <!-- Weather Metrics Section -->
+    <div class="container" id="WeatherMetrics">
+        <form id="formtemp" class="form-group" method="POST" action="weatherMetricsFormTemp.php">
+            <div class="form-row">
+                <div class="form-group">
+                    <?php include 'weatherMetricsDateSelector.php'; ?> 
+                </div>
             </div>
-            <div class="form-group">
-                <label for="end_date">End Date:</label>
-                <input type="date" id="end_date" name="end_date" class="input-small" requiredrequired pattern="\d{4}-\d{2}-\d{2}" value="<?php echo isset($_POST['end_date']) ? $_POST['end_date'] : ''; ?>">
+        </form>
+
+        <!-- Graph containers -->
+        <div class="graph-container" id="DailyTempContainer">
+            <h3>Daily Temperatures Graph</h2>
+            <div id="DailyTempGraphContainer">
+                <canvas id="DailyTempChart" width="1024" height="500"></canvas>  
             </div>
-            <div class="form-group">
-                <input type="submit" value="Generate Graph">
+            <div id="DailyTempSummary"></div> <!-- Container for Daily Temp Summary -->
+        </div>
+        <div class="graph-container" id="MonthlyTempContainer">
+            <h3>Monthly Temperatures Graph</h2>
+            <div id="MonthlyTempGraphContainer">
+                <canvas id="MonthlyTempChart" width="1024" height="400"></canvas> 
             </div>
         </div>
-      </form>
-      <div class="graph-container">
-        <h2>Daily Temperatures Graph</h2>
-        <div id="DailyTempGraphContainer">
-           <canvas id="DailyTempChart" width="1024" height="400"></canvas>  
+        <div class="graph-container" id="YearlyTempContainer">
+            <h3>Yearly Temperatures Graph</h2>
+            <div id="YearlyTempGraphContainer">
+                <canvas id="YearlyTempChart" width="1024" height="400"></canvas> 
+            </div>
         </div>
-        <div id="DailyTempSummary"></div> <!-- Container for Daily Temp Summary -->
-      </div>
-      <div class="graph-container">
-        <h2>Monthly Temperatures Graph</h2>
-        <div id="MonthlyTempGraphContainer">
-            <canvas id="MonthlyTempChart" width="1024" height="400"></canvas> 
+        <div class="graph-container" id="SeasonalTempContainer">
+            <h3>Seasonal Temperatures Graph</h2>
+            <div id="SeasonalTempGraphContainer">
+                <canvas id="SeasonalTempChart" width="1024" height="400"></canvas> 
+            </div>
         </div>
-      </div>
-    </div>  
+    </div>   
     <script>
 
         console.log("Debut Script");
@@ -144,9 +148,15 @@
             // Define the temperatureChart variable outside the function
             var temperatureChart;
             var monthlyAvgChart;
+            var yearlyAvgChart;
+            var seasonalAvgChart;
 
             // Function to update the daily temperatures graph
-            function updateDailyTempGraph(dates, averages, maximums, minimums, AvgTempAvgs, AvgTempHighs, AvgTempLows, movingAverages) {
+            function updateDailyTempGraph(start_date,end_date,dates, averages, maximums, minimums, AvgTempAvgs, AvgTempHighs, AvgTempLows, movingAverages) {
+              
+                // Construct the period title based on start_date and end_date
+                const periodTitle = `Period: From ${start_date} To ${end_date}`;
+
                 // Update the existing chart instance (temperatureChart) with new data
                 temperatureChart.data.labels = dates;
                 temperatureChart.data.datasets[0].data = averages;
@@ -156,7 +166,9 @@
                 temperatureChart.data.datasets[4].data = AvgTempHighs;
                 temperatureChart.data.datasets[5].data = AvgTempLows;
                 temperatureChart.data.datasets[6].data = movingAverages;
-                temperatureChart.update();
+                
+                temperatureChart.options.plugins.title.text = periodTitle;  // Set title text here
+                temperatureChart.update();  // Update chart to apply new title
 
                 // Update the summary
                 const normals = {
@@ -168,7 +180,7 @@
             }
 
             function UpdateMonthlyTempGraph(labels, monthlyAvgData) {
-                console.log("labels:", labels);
+                console.log("Month labels:", labels);
                 console.log("monthlyAvgData:", monthlyAvgData);
                 // Update the existing chart instance (monthlyAvgChart) with new data
                 // Extract separate arrays for averages, maximums, and minimums from monthlyAvgData
@@ -184,6 +196,39 @@
                 monthlyAvgChart.update();
             }  
 
+            function UpdateYearlyTempGraph(labels, yearlyAvgData) {
+                console.log("Year labels:", labels);
+                console.log("yearlyAvgData:", yearlyAvgData);
+                // Update the existing chart instance (yearlyAvgChart) with new data
+                // Extract separate arrays for averages, maximums, and minimums from monthlyAvgData
+                var averages = yearlyAvgData.map(data => parseFloat(data.avg));
+                var maximums = yearlyAvgData.map(data => parseFloat(data.max));
+                var minimums = yearlyAvgData.map(data => parseFloat(data.min));
+
+                // Update the existing chart instance (monthlyAvgChart) with new data
+                yearlyAvgChart.data.labels = labels;
+                yearlyAvgChart.data.datasets[0].data = averages;
+                yearlyAvgChart.data.datasets[1].data = maximums;
+                yearlyAvgChart.data.datasets[2].data = minimums;
+                yearlyAvgChart.update();
+            }
+
+            function UpdateSeasonalTempGraph(labels, seasonalAvgData) {
+                console.log("labels:", labels);
+                console.log("seasonalAvgData:", seasonalAvgData);
+                // Update the existing chart instance (seasonalAvgChart) with new data
+                // Extract separate arrays for averages, maximums, and minimums from monthlyAvgData
+                var averages = seasonalAvgData.map(data => parseFloat(data.avg));
+                var maximums = seasonalAvgData.map(data => parseFloat(data.max));
+                var minimums = seasonalAvgData.map(data => parseFloat(data.min));
+
+                // Update the existing chart instance (seasonalAvgChart) with new data
+                seasonalAvgChart.data.labels = labels;
+                seasonalAvgChart.data.datasets[0].data = averages;
+                seasonalAvgChart.data.datasets[1].data = maximums;
+                seasonalAvgChart.data.datasets[2].data = minimums;
+                seasonalAvgChart.update();
+            }
 
             // Helper function to format the date range as 'from: MM-DD-YYYY to MM-DD-YYYY'
             function formatDateRange(startDate, endDate) {
@@ -288,6 +333,19 @@
                         }
                     },
                     plugins: {
+                        title: {
+                            display: true,
+                            text: "",  // Use the period title here
+                            font: {
+                                size: 16,
+                                weight: 'bold'
+                            },
+                            padding: {
+                                top: 10,
+                                bottom: 10
+                            },
+                            color: '#333' // Optional color customization
+                        },
                         tooltip: {
                             callbacks: {
                                 label: function(context) {
@@ -368,6 +426,129 @@
                 }
             });
 
+            console.log("Avant New Chart YearlyAvgCtx");
+            var yearlyAvgCtx = document.getElementById('YearlyTempChart').getContext('2d');
+            yearlyAvgChart = new Chart(yearlyAvgCtx, {
+                type: 'bar',
+                data: {
+                    labels: [],
+                    datasets: [
+                        {
+                            label: 'Average Temperature',
+                            data: [],
+                            backgroundColor: 'blue'
+                        },
+                        {
+                            label: 'Maximum Temperature',
+                            data: [],
+                            backgroundColor: 'red'
+                        },
+                        {
+                            label: 'Minimum Temperature',
+                            data: [],
+                            backgroundColor: 'green'
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        x: {
+                            display: true,
+                            title: {
+                                display: true,
+                                text: 'Year'
+                            }
+                        },
+                        y: {
+                            display: true,
+                            title: {
+                                display: true,
+                                text: 'Temperature'
+                            }
+                        }
+                    },
+                    plugins: {
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    var label = context.dataset.label || '';
+                                    if (label) {
+                                        label += ': ';
+                                    }
+                                    if (context.parsed.y !== null) {
+                                        label += context.parsed.y.toFixed(1) + '°C';
+                                    }
+                                    return label;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+
+            console.log("Avant New Chart SeasonalAvgCtx");
+            var seasonalAvgCtx = document.getElementById('SeasonalTempChart').getContext('2d');
+            seasonalAvgChart = new Chart(seasonalAvgCtx, {
+                type: 'bar',
+                data: {
+                    labels: [],
+                    datasets: [
+                        {
+                            label: 'Average Temperature',
+                            data: [],
+                            backgroundColor: 'blue'
+                        },
+                        {
+                            label: 'Maximum Temperature',
+                            data: [],
+                            backgroundColor: 'red'
+                        },
+                        {
+                            label: 'Minimum Temperature',
+                            data: [],
+                            backgroundColor: 'green'
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        x: {
+                            display: true,
+                            title: {
+                                display: true,
+                                text: 'Season'
+                            }
+                        },
+                        y: {
+                            display: true,
+                            title: {
+                                display: true,
+                                text: 'Temperature'
+                            }
+                        }
+                    },
+                    plugins: {
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    var label = context.dataset.label || '';
+                                    if (label) {
+                                        label += ': ';
+                                    }
+                                    if (context.parsed.y !== null) {
+                                        label += context.parsed.y.toFixed(1) + '°C';
+                                    }
+                                    return label;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+
+
             // Add the event listener to the formtemp submission in weathergraphs.js
             document.getElementById('formtemp').addEventListener('submit', function (event) {
                 event.preventDefault(); // Prevent default form submission behavior
@@ -393,6 +574,8 @@
 
                             // Update the first chart (Daily Temperatures Graph)
                             updateDailyTempGraph(
+                                responseData.start_date,
+                                responseData.end_date,
                                 responseData.dates,
                                 responseData.averages,
                                 responseData.maximums,
@@ -409,6 +592,19 @@
                                 responseData.monthlyAvgData
                             );
 
+                            // Update the Third Chart (Yearly Temperatures Graph)
+                            UpdateYearlyTempGraph(
+                                responseData.yearlyAvgLabels, // Fix typo from 'reponseData' to 'responseData'
+                                responseData.yearlyAvgData
+                            );
+
+                            // Update the Fourth Chart (Seasonal Temperatures Graph)
+                            UpdateSeasonalTempGraph(
+                                responseData.seasonalAvgLabels, // Fix typo from 'reponseData' to 'responseData'
+                                responseData.seasonalAvgData
+                            );
+
+
                         } catch (error) {
                             console.log("Response Data:", response);
                             console.error("Error parsing JSON response:", error);
@@ -424,6 +620,39 @@
                     }
                 });
             });
+        });
+
+        /**
+         * Function: toggleGraphVisibility
+         * Purpose: Controls the visibility of each graph container based on the state of the associated checkboxes.
+         * 
+         * This function checks the state of each checkbox ('by_day', 'by_month', 'by_year', 'by_season').
+         * For each graph type:
+         *    - If the checkbox is checked, it displays the corresponding graph container by setting 'display' to 'block'.
+         *    - If the checkbox is unchecked, it hides the graph container by setting 'display' to 'none'.
+         * 
+         * This allows users to selectively show or hide graphs based on the chosen period type.
+         */
+        function toggleGraphVisibility() {
+            // Get the checkbox elements
+            const byDay = document.querySelector('input[name="by_day"]');
+            const byMonth = document.querySelector('input[name="by_month"]');
+            const byYear = document.querySelector('input[name="by_year"]');
+            const bySeason = document.querySelector('input[name="by_season"]');
+
+            // Toggle visibility of entire graph-container divs based on checkbox states
+            document.getElementById('DailyTempContainer').style.display = byDay.checked ? 'block' : 'none';
+            document.getElementById('MonthlyTempContainer').style.display = byMonth.checked ? 'block' : 'none';
+            document.getElementById('YearlyTempContainer').style.display = byYear.checked ? 'block' : 'none';
+            document.getElementById('SeasonalTempContainer').style.display = bySeason.checked ? 'block' : 'none';
+        }
+
+        // Call the function initially to set up the display based on the default checkbox values
+        toggleGraphVisibility();
+
+        // Optional: Add an event listener for each checkbox for additional flexibility
+        document.querySelectorAll('.checkbox-group input[type="checkbox"]').forEach(checkbox => {
+            checkbox.addEventListener('change', toggleGraphVisibility);
         });
 
     </script>
