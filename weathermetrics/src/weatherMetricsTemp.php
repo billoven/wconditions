@@ -19,26 +19,29 @@
 
         <!-- Graph containers -->
         <div class="graph-container" id="DailyTempContainer">
-            <h3>Daily Temperatures Graph</h2>
+            <h3 style="display: flex; align-items: center; justify-content: space-between;">
+                Daily Temperatures Graph
+                <button id="resetZoom" class="btn btn-outline-primary btn-sm">Reset Zoom</button>
+            </h3>
             <div id="DailyTempGraphContainer">
-                <canvas id="DailyTempChart" width="1024" height="500"></canvas>  
+                <canvas id="DailyTempChart" width="1024" height="500"></canvas>
             </div>
             <div id="DailyTempSummary"></div> <!-- Container for Daily Temp Summary -->
         </div>
         <div class="graph-container" id="MonthlyTempContainer">
-            <h3>Monthly Temperatures Graph</h2>
+            <h3>Monthly Temperatures Graph</h3>
             <div id="MonthlyTempGraphContainer">
                 <canvas id="MonthlyTempChart" width="1024" height="400"></canvas> 
             </div>
         </div>
         <div class="graph-container" id="YearlyTempContainer">
-            <h3>Yearly Temperatures Graph</h2>
+            <h3>Yearly Temperatures Graph</h3>
             <div id="YearlyTempGraphContainer">
                 <canvas id="YearlyTempChart" width="1024" height="400"></canvas> 
             </div>
         </div>
         <div class="graph-container" id="SeasonalTempContainer">
-            <h3>Seasonal Temperatures Graph</h2>
+            <h3>Seasonal Temperatures Graph</h3>
             <div id="SeasonalTempGraphContainer">
                 <canvas id="SeasonalTempChart" width="1024" height="400"></canvas> 
             </div>
@@ -49,6 +52,7 @@
         console.log("Debut Script");
 
         $(document).ready(function () {
+        
             // Function to calculate statistics with debugging information
             function calculateStatistics(data) {
                 // Convert all string values to numbers
@@ -359,11 +363,30 @@
                                     return label;
                                 }
                             }
+                        },
+                        zoom: { // Nouvelle section ajoutée
+                            zoom: {
+                                wheel: {
+                                    enabled: true // Active le zoom avec la molette
+                                },
+                                drag: {
+                                    enabled: true, // Permet le zoom en cliquant-glissant
+                                    backgroundColor: 'rgba(0,0,0,0.1)'
+                                },
+                                pinch: {
+                                    enabled: true // Active le zoom par pincement sur mobile
+                                },
+                                mode: 'x', // Zoom uniquement sur l'axe X
+                            },
+                            pan: {
+                                enabled: true, // Active le panoramique
+                                mode: 'x', // Pan uniquement sur l'axe X
+                            }
                         }
                     }
                 }
             });
-
+            
    
             console.log("Avant New Chart MonthlyAvgCtx");
             var monthlyAvgCtx = document.getElementById('MonthlyTempChart').getContext('2d');
@@ -548,7 +571,11 @@
                 }
             });
 
-
+            // Add the event listener for resetting zoom
+            document.getElementById('resetZoom').addEventListener('click', function () {
+                temperatureChart.resetZoom();
+            });
+            
             // Add the event listener to the formtemp submission in weathergraphs.js
             document.getElementById('formtemp').addEventListener('submit', function (event) {
                 event.preventDefault(); // Prevent default form submission behavior
