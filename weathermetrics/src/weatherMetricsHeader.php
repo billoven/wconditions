@@ -293,7 +293,7 @@
                         <a href="weatherMetricsRain.php" class="nav-link btn btn-light fs-6 text-dark" role="button">Rainfall</a>
                     </li>
                     <li class="nav-item">
-                        <a href="#" class="nav-link btn btn-light fs-6 text-dark" role="button">Pressure</a>
+                        <a href="weatherMetricsPressure.php" class="nav-link btn btn-light fs-6 text-dark" role="button">Pressure</a>
                     </li>
                     <li class="nav-item">
                         <a href="weatherMetricsComp.php" class="nav-link btn btn-light fs-6 text-dark" role="button">Comparison</a>
