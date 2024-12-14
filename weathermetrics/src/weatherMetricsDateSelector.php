@@ -9,33 +9,30 @@
   
   <!-- Selection Type Dropdown for different range options -->
   <select id="rangeType" class="form-select form-select-sm" style="width: 130px;">
-    <option value="dates">Date Range</option>
-    <option value="months">Month Range</option>
-    <option value="years">Year Range</option>
-    <option value="seasons">Season</option>
+      <option value="dates" selected>Date Range</option>
+      <option value="months">Month Range</option>
+      <option value="years">Year Range</option>
+      <option value="seasons">Season</option>
   </select>
 
   <!-- Date Range Picker Input with Clear Button -->
   <div id="dateRangePickerContainer" class="d-flex align-items-center" style="gap: 8px;">
     <input id="dateRangePicker" class="form-control form-control-sm" style="width: 180px;" placeholder="Select date range">
-    <button id="clearDateRange" class="btn btn-sm btn-outline-secondary">Clear</button>
   </div>
 
-  <!-- Month Range Fields with Clear Button -->
+  <!-- Month Range Fields -->
   <div id="monthRangeFields" class="d-flex d-none" style="gap: 8px;">
     <input id="monthFrom" class="form-control form-control-sm" style="width: 100px;" placeholder="From Month">
     <input id="monthTo" class="form-control form-control-sm" style="width: 100px;" placeholder="To Month">
-    <button id="clearMonthRange" class="btn btn-sm btn-outline-secondary">Clear</button>
   </div>
 
-  <!-- Year Range Fields with Clear Button -->
+  <!-- Year Range Fields -->
   <div id="yearRangeFields" class="d-flex d-none" style="gap: 8px;">
     <select id="yearFrom" class="form-select form-select-sm" style="width: 100px;"></select>
     <select id="yearTo" class="form-select form-select-sm" style="width: 100px;"></select>
-    <button id="clearYearRange" class="btn btn-sm btn-outline-secondary">Clear</button>
   </div>
 
-  <!-- Season Selection Fields with Clear Button -->
+  <!-- Season Selection Fields -->
   <div id="seasonFields" class="d-flex d-none" style="gap: 8px;">
     <select id="seasonSelect" class="form-select form-select-sm" style="width: 100px;">
       <option value="spring">Spring</option>
@@ -44,8 +41,12 @@
       <option value="winter">Winter</option>
     </select>
     <select id="seasonYear" class="form-select form-select-sm" style="width: 100px;"></select>
-    <button id="clearSeason" class="btn btn-sm btn-outline-secondary">Clear</button>
   </div>
+
+  <!-- Add type="button" to prevent it from behaving as a submit button -->
+  <button id="clearAll" type="button" class="btn btn-sm btn-outline-secondary">Clear All</button>
+
+
   <!-- Checkbox options for graph type selection -->
   <div class="checkbox-group">
       <label>
@@ -94,7 +95,7 @@
 
   // Function to populate year dropdowns dynamically with years from 2016 to current year
   function populateYearOptions(selectElement) {
-    for (let year = 2016; year <= currentYear; year++) {
+    for (let year = currentYear; year >= 2016; year--) {
       const option = document.createElement('option');
       option.value = year;
       option.text = year;
@@ -102,23 +103,24 @@
     }
   }
 
+
   // Function to update hidden start_date and end_date fields based on current selection
   function updateDateRange() {
     const selectedRange = rangeType.value;  // Get the selected range type
     let startDate = '';
     let endDate = '';
 
-  // Calculate start and end dates based on range type
-  if (selectedRange === 'dates') {
-    const selectedDates = dateRangePicker.selectedDates;
-    if (selectedDates.length === 2) {
-      // Get the start and end dates without time zone adjustments
-      // toISOString() converts the date to a string using the UTC time zone, which may cause the date to shift by one day, depending on your local time zone. By using 
-      //     getFullYear(), getMonth(), and getDate(), 
-      //     you're working directly with the raw date values, avoiding any time zone-related shifts.
-      startDate = `${selectedDates[0].getFullYear()}-${String(selectedDates[0].getMonth() + 1).padStart(2, '0')}-${String(selectedDates[0].getDate()).padStart(2, '0')}`;
-      endDate = `${selectedDates[1].getFullYear()}-${String(selectedDates[1].getMonth() + 1).padStart(2, '0')}-${String(selectedDates[1].getDate()).padStart(2, '0')}`;
-    }
+    // Calculate start and end dates based on range type
+    if (selectedRange === 'dates') {
+      const selectedDates = dateRangePicker.selectedDates;
+      if (selectedDates.length === 2) {
+        // Get the start and end dates without time zone adjustments
+        // toISOString() converts the date to a string using the UTC time zone, which may cause the date to shift by one day, depending on your local time zone. By using 
+        //     getFullYear(), getMonth(), and getDate(), 
+        //     you're working directly with the raw date values, avoiding any time zone-related shifts.
+        startDate = `${selectedDates[0].getFullYear()}-${String(selectedDates[0].getMonth() + 1).padStart(2, '0')}-${String(selectedDates[0].getDate()).padStart(2, '0')}`;
+        endDate = `${selectedDates[1].getFullYear()}-${String(selectedDates[1].getMonth() + 1).padStart(2, '0')}-${String(selectedDates[1].getDate()).padStart(2, '0')}`;
+      }
     } else if (selectedRange === 'months') {
       const fromMonth = monthFrom.selectedDates[0];
       const toMonth = monthTo.selectedDates[0];
@@ -142,15 +144,33 @@
       }
     } else if (selectedRange === 'seasons') {
       const season = document.getElementById("seasonSelect").value;
-      const seasonYear = document.getElementById("seasonYear").value;
+      const seasonYear = parseInt(document.getElementById("seasonYear").value, 10); // Parse as an integer
       if (season && seasonYear) {
-        // Determine start and end dates for the selected season
-        switch (season) {
-          case 'spring': startDate = `${seasonYear}-03-01`; endDate = `${seasonYear}-05-31`; break;
-          case 'summer': startDate = `${seasonYear}-06-01`; endDate = `${seasonYear}-08-31`; break;
-          case 'autumn': startDate = `${seasonYear}-09-01`; endDate = `${seasonYear}-11-30`; break;
-          case 'winter': startDate = `${seasonYear - 1}-12-01`; endDate = `${seasonYear}-02-28`; break;
-        }
+          // Function to check if a year is a leap year
+          const isLeapYear = (year) => {
+              return (year % 4 === 0 && year % 100 !== 0) || (year % 400 === 0);
+          };
+
+          // Determine start and end dates for the selected season
+          switch (season) {
+              case 'spring':
+                  startDate = `${seasonYear}-03-01`;
+                  endDate = `${seasonYear}-05-31`;
+                  break;
+              case 'summer':
+                  startDate = `${seasonYear}-06-01`;
+                  endDate = `${seasonYear}-08-31`;
+                  break;
+              case 'autumn':
+                  startDate = `${seasonYear}-09-01`;
+                  endDate = `${seasonYear}-11-30`;
+                  break;
+              case 'winter':
+                  startDate = `${seasonYear - 1}-12-01`;
+                  // Check if the winter end date should be February 28 or 29
+                  endDate = isLeapYear(seasonYear) ? `${seasonYear}-02-29` : `${seasonYear}-02-28`;
+                  break;
+          }
       }
     }
 
@@ -159,11 +179,41 @@
     document.getElementById('end_date').value = endDate;
   }
 
-  // Clear buttons functionality for each type of input field
-  document.getElementById("clearDateRange").addEventListener("click", () => { dateRangePicker.clear(); updateDateRange(); });
-  document.getElementById("clearMonthRange").addEventListener("click", () => { monthFrom.clear(); monthTo.clear(); updateDateRange(); });
-  document.getElementById("clearYearRange").addEventListener("click", () => { document.getElementById("yearFrom").selectedIndex = 0; document.getElementById("yearTo").selectedIndex = 0; updateDateRange(); });
-  document.getElementById("clearSeason").addEventListener("click", () => { document.getElementById("seasonSelect").selectedIndex = 0; document.getElementById("seasonYear").selectedIndex = 0; updateDateRange(); });
+  document.getElementById("clearAll").addEventListener("click", () => {
+    // Reset the rangeType to "dates"
+    const rangeType = document.getElementById("rangeType");
+    rangeType.value = "dates";
+
+    // Reset input fields for all ranges
+    document.getElementById("dateRangePicker").value = ""; // Clear date range
+    document.getElementById("monthFrom").value = "";       // Clear "From Month"
+    document.getElementById("monthTo").value = "";         // Clear "To Month"
+    document.getElementById("yearFrom").selectedIndex = 0; // Reset "From Year"
+    document.getElementById("yearTo").selectedIndex = 0;   // Reset "To Year"
+    document.getElementById("seasonSelect").selectedIndex = 0; // Reset season dropdown
+    document.getElementById("seasonYear").selectedIndex = 0;   // Reset season year dropdown
+
+    // Clear hidden fields for start and end dates
+    document.getElementById("start_date").value = "";
+    document.getElementById("end_date").value = "";
+
+    // Update visible sections to match "dates" as the default
+    updateVisibleFields("dates");
+  });
+
+    // Helper function to show/hide input fields based on the selected range type
+    function updateVisibleFields(selectedType) {
+      document.getElementById("dateRangePickerContainer").classList.toggle("d-none", selectedType !== "dates");
+      document.getElementById("monthRangeFields").classList.toggle("d-none", selectedType !== "months");
+      document.getElementById("yearRangeFields").classList.toggle("d-none", selectedType !== "years");
+      document.getElementById("seasonFields").classList.toggle("d-none", selectedType !== "seasons");
+    }
+
+    // Automatically update visible fields when the rangeType changes
+    document.getElementById("rangeType").addEventListener("change", (event) => {
+      updateVisibleFields(event.target.value);
+    });
+
 
   // Update field visibility based on selected range type (dates, months, years, or seasons)
   function updateFieldVisibility() {
@@ -183,10 +233,10 @@
     updateDateRange(); // Update hidden fields each time range type changes
   }
 
-  // Populate year dropdowns on page load
-  populateYearOptions(document.getElementById("yearFrom"));
-  populateYearOptions(document.getElementById("yearTo"));
-  populateYearOptions(document.getElementById("seasonYear"));
+  // Populate year dropdowns on page load with the current year as the default
+  populateYearOptions(document.getElementById('yearFrom'));
+  populateYearOptions(document.getElementById('yearTo'));
+  populateYearOptions(document.getElementById('seasonYear'));
 
   // Event listeners for updates when user selects different range options or changes input values
   rangeType.addEventListener("change", updateFieldVisibility);
