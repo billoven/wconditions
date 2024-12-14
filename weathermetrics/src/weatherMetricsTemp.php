@@ -192,6 +192,10 @@
                 var maximums = monthlyAvgData.map(data => parseFloat(data.max));
                 var minimums = monthlyAvgData.map(data => parseFloat(data.min));
 
+                // Construct the period title based on start_date and end_date
+                const periodTitle = `Period: From ${start_date} To ${end_date}`;
+                monthlyAvgChart.options.plugins.title.text = periodTitle;
+
                 // Update the existing chart instance (monthlyAvgChart) with new data
                 monthlyAvgChart.data.labels = labels;
                 monthlyAvgChart.data.datasets[0].data = averages;
@@ -209,6 +213,10 @@
                 var maximums = yearlyAvgData.map(data => parseFloat(data.max));
                 var minimums = yearlyAvgData.map(data => parseFloat(data.min));
 
+                // Construct the period title based on start_date and end_date
+                const periodTitle = `Period: From ${start_date} To ${end_date}`;
+                yearlyAvgChart.options.plugins.title.text = periodTitle;
+
                 // Update the existing chart instance (monthlyAvgChart) with new data
                 yearlyAvgChart.data.labels = labels;
                 yearlyAvgChart.data.datasets[0].data = averages;
@@ -225,6 +233,10 @@
                 var averages = seasonalAvgData.map(data => parseFloat(data.avg));
                 var maximums = seasonalAvgData.map(data => parseFloat(data.max));
                 var minimums = seasonalAvgData.map(data => parseFloat(data.min));
+
+                // Construct the period title based on start_date and end_date
+                const periodTitle = `Period: From ${start_date} To ${end_date}`;
+                seasonalAvgChart.options.plugins.title.text = periodTitle;
 
                 // Update the existing chart instance (seasonalAvgChart) with new data
                 seasonalAvgChart.data.labels = labels;
@@ -341,7 +353,7 @@
                             display: true,
                             text: "",  // Use the period title here
                             font: {
-                                size: 16,
+                                size: 14,
                                 weight: 'bold'
                             },
                             padding: {
@@ -431,6 +443,19 @@
                         }
                     },
                     plugins: {
+                        title: {
+                            display: true,
+                            text: "",  // Use the period title here
+                            font: {
+                                size: 14,
+                                weight: 'bold'
+                            },
+                            padding: {
+                                top: 10,
+                                bottom: 10
+                            },
+                            color: '#333' // Optional color customization
+                        },
                         tooltip: {
                             callbacks: {
                                 label: function(context) {
@@ -492,6 +517,19 @@
                         }
                     },
                     plugins: {
+                        title: {
+                            display: true,
+                            text: "",  // Use the period title here
+                            font: {
+                                size: 14,
+                                weight: 'bold'
+                            },
+                            padding: {
+                                top: 10,
+                                bottom: 10
+                            },
+                            color: '#333' // Optional color customization
+                        },
                         tooltip: {
                             callbacks: {
                                 label: function(context) {
@@ -553,6 +591,19 @@
                         }
                     },
                     plugins: {
+                        title: {
+                            display: true,
+                            text: "",  // Use the period title here
+                            font: {
+                                size: 14,
+                                weight: 'bold'
+                            },
+                            padding: {
+                                top: 10,
+                                bottom: 10
+                            },
+                            color: '#333' // Optional color customization
+                        },
                         tooltip: {
                             callbacks: {
                                 label: function(context) {
@@ -598,6 +649,8 @@
                             var responseData = JSON.parse(response);
 
                             console.log("responseData:", responseData);
+                            start_date = responseData.start_date;
+                            end_date = responseData.end_date;
 
                             // Update the first chart (Daily Temperatures Graph)
                             updateDailyTempGraph(

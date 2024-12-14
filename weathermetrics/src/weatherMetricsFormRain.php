@@ -190,6 +190,8 @@
 
     // Return the JSON response with the necessary data for each graph
     $responseData = array(
+        'start_date' => $start_date,
+        'end_date' => $end_date,
         'dates' => $dates,
         'AvgPrecipitationSums' => $AvgPrecipitationSums,
         'precipitations' => $precipitations,

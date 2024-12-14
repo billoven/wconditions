@@ -21,26 +21,26 @@
                 </div>
             </div>
         </form>
-        <div class="graph-container">
+        <div class="graph-container" id="precipitationContainer">
             <h3>Daily rain fall and cumulative of the period</h3>
             <div id="precipitationGraphContainer">
                 <canvas id="precipitationChart" width="1024" height="400"></canvas>
     	    </div>
         </div>
 
-        <div class="graph-container">
+        <div class="graph-container" id="precipitationContainerByMonth">
             <h3>Rain fall of the period by month</h3>
             <div id="precipitationGraphContainerByMonth">
                 <canvas id="precipitationChartByMonth" width="1024" height="400"></canvas>
     	    </div>
         </div>
-        <div class="graph-container">
+        <div class="graph-container" id="precipitationContainerByYear">
             <h3>Rain fall of the period by year</h3>
             <div id="precipitationGraphContainerByYear">
                 <canvas id="precipitationChartByYear" width="1024" height="400"></canvas>
     	    </div>
         </div>
-        <div class="graph-container">
+        <div class="graph-container" id="precipitationContainerBySeason">
             <h3>Rain fall of the period by season</h3>
             <div id="precipitationGraphContainerBySeason">
                 <canvas id="precipitationChartBySeason" width="1024" height="400"></canvas>
@@ -56,6 +56,11 @@
                 precipitationChart.data.labels = dates;
                 precipitationChart.data.datasets[0].data = rainfall;
                 precipitationChart.data.datasets[1].data = cumulativePrecipitations;
+
+                // Construct the period title based on start_date and end_date
+                const periodTitle = `Period: From ${start_date} To ${end_date}`;
+                precipitationChart.options.plugins.title.text = periodTitle;
+
                 precipitationChart.update();
             }
 
@@ -87,6 +92,10 @@
 
                 console.log("Processed rainfall data for chart:", rainfallValues);
 
+                // Construct the period title based on start_date and end_date
+                const periodTitle = `Period: From ${start_date} To ${end_date}`;
+                monthlyPrecipitationChart.options.plugins.title.text = periodTitle;
+
                 monthlyPrecipitationChart.data.labels = dates;
                 monthlyPrecipitationChart.data.datasets[0].data = rainfallValues;
                 monthlyPrecipitationChart.update();
@@ -105,6 +114,10 @@
                 const rainfallValues = rainfall.map(item => item.YearlyRainFall || 0);
 
                 console.log("Processed rainfall data for chart:", rainfallValues);
+
+                // Construct the period title based on start_date and end_date
+                const periodTitle = `Period: From ${start_date} To ${end_date}`;
+                yearlyPrecipitationChart.options.plugins.title.text = periodTitle;
 
                 // Update the graph data
                 yearlyPrecipitationChart.data.labels = dates;
@@ -125,6 +138,10 @@
                 const rainfallValues = rainfall.map(item => item.SeasonalRainFall || 0);
 
                 console.log("Processed rainfall data for chart:", rainfallValues);
+
+                // Construct the period title based on start_date and end_date
+                const periodTitle = `Period: From ${start_date} To ${end_date}`;
+                seasonalPrecipitationChart.options.plugins.title.text = periodTitle;
 
                 // Update the graph data
                 seasonalPrecipitationChart.data.labels = seasons;
@@ -175,6 +192,21 @@
                             position: 'right',
                             title: { display: true, text: 'Cumulative Precipitation (mm)' }
                         }
+                    },
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: "",  // Use the period title here
+                            font: {
+                                size: 14,
+                                weight: 'bold'
+                            },
+                            padding: {
+                                top: 10,
+                                bottom: 10
+                            },
+                            color: '#333' // Optional color customization
+                        }
                     }
                 }
             });
@@ -199,6 +231,21 @@
                     scales: {
                         x: { title: { display: true, text: 'Month' } },
                         y: { title: { display: true, text: 'Precipitation (mm)' } }
+                    },
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: "",  // Use the period title here
+                            font: {
+                                size: 14,
+                                weight: 'bold'
+                            },
+                            padding: {
+                                top: 10,
+                                bottom: 10
+                            },
+                            color: '#333' // Optional color customization
+                        }
                     }
                 }
             });
@@ -223,6 +270,21 @@
                     scales: {
                         x: { title: { display: true, text: 'Year' } },
                         y: { title: { display: true, text: 'Precipitation (mm)' } }
+                    },
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: "",  // Use the period title here
+                            font: {
+                                size: 14,
+                                weight: 'bold'
+                            },
+                            padding: {
+                                top: 10,
+                                bottom: 10
+                            },
+                            color: '#333' // Optional color customization
+                        }
                     }
                 }
             });
@@ -247,6 +309,21 @@
                     scales: {
                         x: { title: { display: true, text: 'Season' } },
                         y: { title: { display: true, text: 'Precipitation (mm)' } }
+                    },
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: "",  // Use the period title here
+                            font: {
+                                size: 14,
+                                weight: 'bold'
+                            },
+                            padding: {
+                                top: 10,
+                                bottom: 10
+                            },
+                            color: '#333' // Optional color customization
+                        }
                     }
                 }
             });
@@ -267,6 +344,9 @@
                     success: function (response) {
                         try {
                             var responseData = JSON.parse(response);
+
+                            start_date = responseData.start_date;
+                            end_date = responseData.end_date;
 
                             // Update precipitation charts
                             updatePrecipitationGraph(responseData.dates, responseData.precipitations, responseData.cumulativePrecipitations);
@@ -304,10 +384,10 @@
             const bySeason = document.querySelector('input[name="by_season"]');
 
             // Toggle visibility of entire graph-container divs based on checkbox states
-            document.getElementById('precipitationGraphContainer').style.display = byDay.checked ? 'block' : 'none';
-            document.getElementById('precipitationGraphContainerByMonth').style.display = byMonth.checked ? 'block' : 'none';
-            document.getElementById('precipitationGraphContainerByYear').style.display = byYear.checked ? 'block' : 'none';
-            document.getElementById('precipitationGraphContainerBySeason').style.display = bySeason.checked ? 'block' : 'none';
+            document.getElementById('precipitationContainer').style.display = byDay.checked ? 'block' : 'none';
+            document.getElementById('precipitationContainerByMonth').style.display = byMonth.checked ? 'block' : 'none';
+            document.getElementById('precipitationContainerByYear').style.display = byYear.checked ? 'block' : 'none';
+            document.getElementById('precipitationContainerBySeason').style.display = bySeason.checked ? 'block' : 'none';
         }
 
         // Call the function initially to set up the display based on the default checkbox values
