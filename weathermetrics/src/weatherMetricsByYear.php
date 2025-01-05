@@ -116,10 +116,11 @@
                     'Value' => $value,
                     'Date' => isset($results[$dateKey]) ? $results[$dateKey] : null,
                 ];
-            } elseif (!str_contains($key, 'Date_')) {
+            } elseif (strpos($key, 'Date_') === false) {
                 // Ajouter les autres clés telles quelles
                 $restructured[$year][$key] = $value;
             }
+            
         }
 
         return $restructured; // Retourner le tableau restructuré complet
