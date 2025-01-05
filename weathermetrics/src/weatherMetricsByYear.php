@@ -321,7 +321,12 @@
 
                     // Calculate and display variation if applicable
                     if (isset($normalsData[$metricKey]) && is_scalar($normalsData[$metricKey])) {
-                        $variation = $showVariation ? round((($value - $normalsData[$metricKey]) / $normalsData[$metricKey]) * 100, 1) : null;
+                        if ($normalsData[$metricKey] != 0) { // Avoid division by zero
+                            $variation = $showVariation ? round((($value - $normalsData[$metricKey]) / $normalsData[$metricKey]) * 100, 1) : null;
+                        } else {
+                            $variation = null; // Set variation to null if normal is 0
+                        }
+
                         if ($showVariation && $variation !== null) {
                             echo " <span class='variation'>(" . ($variation > 0 ? '+' : '') . "{$variation}%)</span>";
                             echo calculateVariationIcon($variation);
