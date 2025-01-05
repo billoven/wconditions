@@ -14,7 +14,7 @@
     
     if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
-        $configFilePath = '/etc/weathermetrics/db_config.php';
+        $configFilePath = '/etc/wconditions/db_config.php';
 
         // Check if the file exists
         if (file_exists($configFilePath)) {

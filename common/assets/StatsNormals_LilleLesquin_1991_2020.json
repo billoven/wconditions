@@ -12,7 +12,7 @@
         "Max_TempLow": "Highest daily low temperature record with the dates",
         "Max_TempAvg": "Highest daily average temperature record with the dates",
         "Min_TempAvg": "Lowest daily average temperature record with the dates",
-        "Avg_Days_TempLow_-5": "Annual average days with minimum temperature <= -5\u00b0C by year",
+        "Avg_Days_TempLow_minus5": "Annual average days with minimum temperature <= -5\u00b0C by year",
         "Avg_Days_TempLow_0": "Annual average days with minimum temperature <= 0\u00b0C by year",
         "Avg_Days_TempLow_0_5": "Annual average days with minimum temperature > 0\u00b0C and <= 5\u00b0C by year",
         "Avg_Days_TempLow_5_10": "Annual average days with minimum temperature > 5\u00b0C and <= 10\u00b0C by year",
@@ -88,7 +88,7 @@
             "Value": "-11.1"
         }
     ],
-    "Avg_Days_TempLow_-5": 5,
+    "Avg_Days_TempLow_minus5": 5,
     "Avg_Days_TempLow_0": 37,
     "Avg_Days_TempLow_0_5": 85,
     "Avg_Days_TempLow_5_10": 106,

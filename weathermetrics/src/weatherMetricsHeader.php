@@ -9,6 +9,7 @@
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
     <script src="scripts/weatherMetrics.js"></script>
     <link rel="stylesheet" href="styles/styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
@@ -70,6 +71,64 @@
             }
         } 	
         /* ============ small devices .end// ============ */
+        .metrics-table {
+            width: 90%;
+            border-collapse: collapse;
+            margin: 20px auto; /* Center the table horizontally */
+            font-size: 16px;
+            text-align: left;
+        }
+        .metrics-table th, .metrics-table td {
+            border: 1px solid #ddd;
+            padding: 8px;
+        }
+        .metrics-table th {
+            background-color: #f4f4f4;
+            font-weight: bold;
+        }
+        .metrics-header {
+            background-color: #e0e0e0;
+        }
+        .normals-header {
+            background-color: #d9edf7;
+        }
+        .year-header {
+            background-color: #f9f9f9;
+        }
+        .metrics-cell {
+            background-color: #e0e0e0;
+            font-weight: bold;
+        }
+        .normals-cell {
+            background-color: #d9edf7;
+        }
+        .data-cell {
+            background-color: #f9f9f9;
+        }
+        .variation {
+            font-size: 0.9em;
+            color: #333;
+        }
+        .icon-up {
+            color: darkgreen;
+            font-weight: bold;
+        }
+        .icon-up-oblique {
+            color: green;
+            font-weight: bold;
+        }
+        .icon-horizontal {
+            color: blue;
+            font-weight: bold;
+        }
+        .icon-down {
+            color: darkred;
+            font-weight: bold;
+        }
+        .icon-down-oblique {
+            color: orange;
+            font-weight: bold;
+        }
     </style>
 
 
@@ -299,7 +358,7 @@
                         <a href="weatherMetricsComp.php" class="nav-link btn btn-light fs-6 text-dark" role="button">Comparison</a>
                     </li>
                     <li class="nav-item">
-                        <a href="weatherMetricsByYear.php" class="nav-link btn btn-light fs-6 text-dark" role="button">Climatologic</a>
+                        <a href="weatherMetricsByYear.php" class="nav-link btn btn-light fs-6 text-dark" role="button">Climate-Stats</a>
                     </li>
                     <!-- Add more navigation links as needed -->
                 </ul>
