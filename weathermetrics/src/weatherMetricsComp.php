@@ -9,8 +9,8 @@
     <?php include 'alertBox.php'; ?>
      
     <div class="container" id="SectionComparison">
-      <h2>Compare Two Periods</h2>           
-      <form id="formcomp" method="POST" action="weatherMetricsFormComp.php">
+        <h5 class="mb-4">Compare 2 periods : <?php global $selectedStation; echo $selectedStation?></h5>
+        <form id="formcomp" method="POST" action="weatherMetricsFormComp.php">
                 <label for="start_date_1">Start Date (Period 1):</label>      
                 <input type="date" name="start_date_1" required pattern="\d{4}-\d{2}-\d{2}" value="<?php echo isset($_POST['start_date_1']) ? $_POST['start_date_1'] : ''; ?>">
                 

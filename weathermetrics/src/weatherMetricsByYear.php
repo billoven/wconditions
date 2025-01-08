@@ -170,7 +170,7 @@
 ?>
 
 <div class="container mt-5">
-    <h2 class="mb-4">Climate Statistics by Year</h2>
+    <h5 class="mb-4">Climate Statistics by Year : <?php global $selectedStation; echo $selectedStation?></h5>
     <form method="GET" action="#statistics" id="year-form">
         <!-- Add a hidden input field to store the selectedDb value -->
         <input type="hidden" name="selectedDb" value="<?php echo isset($_GET['selectedDb']) ? htmlspecialchars($_GET['selectedDb']) : 'db1'; ?>">

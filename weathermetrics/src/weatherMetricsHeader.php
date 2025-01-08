@@ -13,7 +13,6 @@
     <script src="scripts/weatherMetrics.js"></script>
     <link rel="stylesheet" href="styles/styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
-
     
     <style>
         .table th:first-child,
@@ -52,15 +51,30 @@
             .dropdown-menu li{
                 position: relative;
             }
-            .dropdown-menu .submenu{ 
-                display: none;
+
+            /* Align main dropdown menu to the left of the button */
+            .dropleft .dropdown-menu {
+                right: 100%; /* Position on the left of the button */
+                top: 0; /* Align with the top of the button */
+                transform: translateX(-10px); /* Optional offset for spacing */
+          }
+
+            /* Submenu alignment */
+            .dropleft .submenu-left {
                 position: absolute;
-                left:100%; top:-7px;
+                left: -100%; /* Place submenu to the left of the parent */
+                top: 0;
             }
-            .dropdown-menu .submenu-left{         //window.location.href = window.location.href;
-            .dropdown-submenu .dropdown-menu {
-               width: auto;
+
+            /* Ensure submenu displays on hover */
+            .dropdown-submenu:hover .dropdown-menu {
+                display: block;
+                min-width: auto;
+                max-width: 300px; /* Ajustez cette valeur si nécessaire */
+                width: auto;
+                white-space: nowrap;             
             }
+
         }	
         /* ============ desktop view .end// ============ */
 
@@ -129,11 +143,37 @@
             color: orange;
             font-weight: bold;
         }
+        .navbar-custom {
+            background-color: #ffffff;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        .navbar-brand {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #5a189a;
+        }
+        .navbar-brand span {
+            color: #4a90e2;
+        }
+        .dropdown-menu {
+            min-width: 200px;
+        }
+        .dropdown-header {
+            font-weight: bold;
+        }
+        .navbar .form-select {
+            max-width: 250px;
+            margin-left: 1rem;
+        }
+        .navbar-text {
+            font-size: 0.9rem;
+            color: #6c757d;
+        }
     </style>
 
 
 </head>
-<body class="p-3 m-0 border-0 bd-example m-0 border-0">
+<body class="p-3 m-0 border-0 bd-example">
  
  <script>
     // Function to change the selected normals
@@ -153,8 +193,9 @@
 
         // Log the stored selected Normals and City
         const storedCity = getCookie('selectedNormalsCity');
-        console.log("Normals City Stored:", storedCity);
         const storedNormals = getCookie('selectedNormals');
+
+        console.log("Normals City Stored:", storedCity);
         console.log("Normals Period Stored:", storedNormals);
 
         // Update the text of the "Select Normals" button with the abbreviated city name and period
@@ -203,6 +244,11 @@
     </script>
 
     <?php
+
+        ini_set('display_errors', 1);
+        ini_set('display_startup_errors', 1);
+        error_reporting(E_ALL);
+
         // Read a Normals stats json file associated to a City
         function readNormalsJsonFile($city, $period) {
             $filename = "./normals/StatsNormals_" . str_replace(' ', '', $city) . "_" . $period . ".json";
@@ -254,6 +300,7 @@
             //echo "TableDwc          : " . $dbConfig['tabledwc'] . "<br>";
             //echo "DefaultNormals    : " . $dbConfig['DefaultNormals'] . "<br>";
             //echo "DefaultNormalsCity: " . $dbConfig['DefaultNormalsCity'] . "<br>";
+            //echo "NormalsDB         : " . $dbConfig['NormalsDB'] . "<br>";
             ?>
             <script>
                 // Retrieve the value of the selectedNormalsCity cookie
@@ -279,6 +326,7 @@
             // Retrieve the city and period values from the cookie
             $selectedCity = $_COOKIE['selectedNormalsCity'] ?? $dbConfig['DefaultNormalsCity'];
             $selectedPeriod = $_COOKIE['selectedNormals'] ?? $dbConfig['DefaultNormals'];
+            $selectedStation = $_COOKIE['selectedStation'] ?? $dbConfig['weatherStation'];
 
             // Display the cookie values
             //echo "Cookie NormalsCity: " . $selectedCity . "<br>";
@@ -292,24 +340,34 @@
             while ($row = $yearResult->fetch_assoc()) {
                 $years[] = $row['Year'];
             }
+
+            // Close the database connection
+            $conn->close();
+
+            $dbConfig = $dbConfigs[$selectedDb];
+            $conndbnorm = new mysqli($dbConfig['host'], $dbConfig['username'], $dbConfig['password'], $dbConfig['NormalsDB']);
+            if ($conndbnorm->connect_error) {
+                die("Normals Database Connection failed: " . $conndbnorm->connect_error);
+            }
+    
         
             // TableNormals name for the selected Normals period
-            $selectedPeriodTable = "Normals_" . $selectedPeriod;
+            $selectedPeriodNormalsTable = $selectedCity."_Normals_" . $selectedPeriod;
 
             // SQL query to check if the table exists
-            $sql = "SHOW TABLES LIKE '" . $selectedPeriodTable . "'";
-            $result = $conn->query($sql);
+            $sql = "SHOW TABLES LIKE '" . $selectedPeriodNormalsTable . "'";
+            $result = $conndbnorm->query($sql);
 
             // If the table exists, initialize $TableNormals variable
             if ($result->num_rows > 0) {
-                $TableNormals = $selectedPeriodTable;
+                $TableNormals = $selectedPeriodNormalsTable;
             } else {
                 // If the table doesn't exist, handle the error accordingly
                 echo "Error: Normals table for the selected period does not exist.";
             }
 
-            // Close the database connection
-            $conn->close();
+            // Close the Normals database connection
+            $conndbnorm->close();
         }
 
         // Read Normals Json File of Stats for a city
@@ -328,20 +386,23 @@
 
 
     <!-- Navigation bar -->
-    <nav class="navbar navbar-expand-md navbar-dark">
-        <div class="container">
-            <div class="navbar-brand-wrapper">
-                <a class="navbar-brand" href="#">
-                    <img src="images/WeatherCondtions.png" alt="Logo" width="90" height="50" class="d-inline-block align-top">
-                </a>
-                <div class="release-container" id="version-image-container">
-                    <!-- Release version will be inserted here as an image -->
-                </div>
+    <nav class="navbar navbar-expand-lg navbar-custom px-3">
+        <div class="container-fluid">
+            <!-- Logo and Title -->
+            <a class="navbar-brand d-flex align-items-center" href="#">
+                <i class="bi bi-cloud-sun-fill" style="font-size: 1.8rem; color: #4a90e2; margin-right: 0.5rem;"></i>
+                Weather <span>Conditions</span>
+            </a>
+            <div class="release-container" id="version-image-container">
+                <!-- Release version will be inserted here as an image -->
             </div>
+
             <!-- Navbar toggle button for small screens -->
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
+
+
             <div class="collapse navbar-collapse justify-content-center" id="navbarNav">
                 <!-- Navigation links -->
                 <ul class="navbar-nav">
@@ -363,42 +424,43 @@
                     <!-- Add more navigation links as needed -->
                 </ul>
                  <!-- Dropdowns for Normals, database, selections -->
+                <!-- Default dropleft button -->
                 <div class="ms-auto d-flex">
-                    <div class="dropdown me-3">
+                    <div class="btn-group dropleft me-2"> <!-- dropleft added here -->
                         <!-- Normals selection dropdown toggle button -->
                         <button class="btn btn-secondary btn-sm dropdown-toggle" type="button" id="dropdownNormalsButton" data-bs-toggle="dropdown" aria-expanded="false">
                             Select Normals
                         </button>
-                    
-                        <!-- Normals selection options --> 
-                        <ul class="dropdown-menu dropdown-menu-right" id="normals-selector" aria-labelledby="dropdownNormalsButton">
 
-                        <?php
-                            // Read the JSON file
-                            $jsonData = file_get_contents('normals/NormalsFilesList.json');
+                        <!-- Normals selection options -->
+                        <ul class="dropdown-menu" id="normals-selector" aria-labelledby="dropdownNormalsButton">
+                            <?php
+                                // Read the JSON file
+                                $jsonData = file_get_contents('normals/NormalsFilesList.json');
 
-                            // Parse JSON data
-                            $data = json_decode($jsonData, true);
+                                // Parse JSON data
+                                $data = json_decode($jsonData, true);
 
-                            // Iterate over WeatherStations
-                            foreach ($data['WeatherStations'] as $weatherStation => $periods) {
-                                // Output the dropdown submenu for each WeatherStation
-                                echo '<li class="dropdown-submenu">';
-                                echo '<a class="dropdown-item dropdown-toggle" href="#">' . $weatherStation . '</a>';
-                                echo '<ul class="submenu submenu-left dropdown-menu">';
-                                
-                                // Output the Normals Files for the WeatherStation
-                                foreach ($periods as $period) {
-                                    echo '<li><a class="dropdown-item" href="#" onclick="changeNormals(\'' . $weatherStation . '\', \'' . $period . '\')">' . str_replace('_', '-', $period) . '</a></li>';
+                                // Iterate over WeatherStations
+                                foreach ($data['WeatherStations'] as $weatherStation => $periods) {
+                                    // Output the dropdown submenu for each WeatherStation
+                                    echo '<li class="dropdown-submenu">';
+                                    echo '<a class="dropdown-item dropdown-toggle" href="#">' . $weatherStation . '</a>';
+                                    echo '<ul class="submenu submenu-left dropdown-menu">';
+                                    
+                                    // Output the Normals Files for the WeatherStation
+                                    foreach ($periods as $period) {
+                                        echo '<li><a class="dropdown-item" href="#" onclick="changeNormals(\'' . $weatherStation . '\', \'' . $period . '\')">' . str_replace('_', '-', $period) . '</a></li>';
+                                    }
+                                    
+                                    echo '</ul>';
+                                    echo '</li>';
                                 }
-                                
-                                echo '</ul>';
-                                echo '</li>';
-                            }
-                        ?>
+                            ?>
                         </ul>
                     </div>
                 </div>
+
 
                 <!-- JavaScript to handle the dropdown -->
                 <script>
@@ -430,7 +492,7 @@
                     });
                 });
                 </script>
-                <div class="dropdown me-3">
+                <div class="dropdown me-2">
                     <!-- Database selection dropdown toggle button -->
                     <button class="btn btn-secondary btn-sm dropdown-toggle" type="button" id="dropdownDbButton" data-bs-toggle="dropdown" aria-expanded="false">  
                         <?php 
@@ -438,18 +500,18 @@
                             echo $dbConfig['weatherStation']; 
                         ?>
                     </button>
+                    <!-- Database selection options -->
+                    <ul class="dropdown-menu" id="db-selector" aria-labelledby="dropdownDbButton">
+                        <?php foreach ($dbConfigs as $dbid => $dbConfig): ?>
+                        <?php 
+                            // Check if this is the currently selected database and set the class accordingly
+                            $isActive = ($selectedDb == $dbid) ? 'active' : ''; 
+                            // $selectedDb = $_COOKIE['selectedDb'] ?? ''; // Utilise la valeur du cookie, ou une chaîne vide par défaut
 
-                        <!-- Database selection options -->
-                        <ul class="dropdown-menu" id="db-selector" aria-labelledby="dropdownDbButton">
-                            <?php foreach ($dbConfigs as $dbid => $dbConfig): ?>
-                            <?php 
-                                // Check if this is the currently selected database and set the class accordingly
-                                $isActive = ($selectedDbCookie == $dbid) ? 'active' : ''; 
-                            ?>
-                            <li><a class="dropdown-item <?php echo $isActive; ?>" href="#" onclick="changeDb('<?php echo $dbid; ?>','<?php echo $dbConfig['weatherStation']; ?>')"><?php echo $dbConfig['weatherStation']; ?></a></li>
-                            <?php endforeach; ?>
-                        </ul>
-                    </div>
+                        ?>
+                        <li><a class="dropdown-item <?php echo $isActive; ?>" href="#" onclick="changeDb('<?php echo $dbid; ?>','<?php echo $dbConfig['weatherStation']; ?>')"><?php echo $dbConfig['weatherStation']; ?></a></li>
+                        <?php endforeach; ?>
+                    </ul>
                  </div>
             </div>
         </div>

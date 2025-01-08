@@ -9,6 +9,7 @@
   
     <!-- Weather Metrics Section -->
     <div class="container" id="WeatherMetrics">
+        <h5 class="mb-4">Temperatures : <?php global $selectedStation; echo $selectedStation?></h5>
         <form id="formtemp" class="form-group" method="POST" action="weatherMetricsFormTemp.php">
             <div class="form-row">
                 <div class="form-group">

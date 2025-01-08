@@ -172,7 +172,7 @@ def write_to_json(data, filename):
         'Max_TempLow': 'Highest daily low temperature record with the dates',
         'Max_TempAvg': 'Highest daily average temperature record with the dates',
         'Min_TempAvg': 'Lowest daily average temperature record with the dates',
-        'Avg_Days_TempLow_-5': 'Annual average days with minimum temperature <= -5°C by year',
+        'Avg_Days_TempLow_minus5': 'Annual average days with minimum temperature <= -5°C by year',
         'Avg_Days_TempLow_0': 'Annual average days with minimum temperature <= 0°C by year',
         'Avg_Days_TempLow_0_5': 'Annual average days with minimum temperature > 0°C and <= 5°C by year',
         'Avg_Days_TempLow_5_10': 'Annual average days with minimum temperature > 5°C and <= 10°C by year',
@@ -310,7 +310,7 @@ def generate_climate_stats(year_start, year_end, host, user, password, database,
     climate_stats['Min_TempAvg'] = find_min_with_dates(data, 'TempAvg')
 
     # Number of days with TempLow <= -5° by year
-    climate_stats['Avg_Days_TempLow_-5'] = calculate_average_days_temp_low(data, (float('-inf'), -5))
+    climate_stats['Avg_Days_TempLow_minus5'] = calculate_average_days_temp_low(data, (float('-inf'), -5))
     
     # Number of days with TempLow <= 0 by year
     climate_stats['Avg_Days_TempLow_0'] = calculate_average_days_temp_low(data, (float('-inf'), 0))

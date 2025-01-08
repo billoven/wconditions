@@ -39,11 +39,13 @@ body {
     margin: 0;
     padding: 0;
     font-family: Arial, sans-serif;
-    background-color: transparent;
-    background-image: url('../images/cloud.jpg');
+    background-color: #f1e5e5ef; /* Light gray background color */
+    /* Uncomment below line if you want to use an image */
+    /* background-image: url('../images/cloud.jpg'); */
     background-size: cover;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
 }
-
 /* Container styles */
 .container {
     max-width: 1024px;

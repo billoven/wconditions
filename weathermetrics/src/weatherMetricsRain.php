@@ -10,6 +10,7 @@
      
     <!-- Section 1 and First Form -->
     <div class="container" id="Section1">
+    <h5 class="mb-4">Cumulative Rainfall : <?php global $selectedStation; echo $selectedStation?></h5>
         <form id="formrain" class="form-group" method="POST" action="weatherMetricsFormRain.php">
             <div class="form-row">
                 <div class="form-group">
