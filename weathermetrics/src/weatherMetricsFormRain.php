@@ -23,6 +23,11 @@
         // Retrieve the DB value from the cookie
         $selectedDb = $_COOKIE['selectedDb'] ?? "db1";
 
+        // Retrieve the city and period values from the cookie
+        $selectedCity = $_COOKIE['selectedNormalsCity'] ?? $dbConfig['DefaultNormalsCity'];
+        $selectedPeriod = $_COOKIE['selectedNormals'] ?? $dbConfig['DefaultNormals'];
+        $selectedStation = $_COOKIE['selectedStation'] ?? $dbConfig['weatherStation'];
+
         // Database configuration
         if (isset($dbConfigs[$selectedDb])) {
             $dbConfig = $dbConfigs[$selectedDb];
@@ -37,12 +42,10 @@
 
         // Use placeholders for the table names
         $tabledwc = $dbConfig['tabledwc'];
-
-        // Retrieve the city and period values from the cookie
-        $selectedPeriod = $_COOKIE['selectedNormals'] ?? $dbConfig['DefaultNormals'];
-
-        // TableNormals name for the selected Normals period
-        $selectedPeriodTable = "Normals_" . $selectedPeriod;
+     
+        // Build TableNormals name for the selected Normals period
+        // <City location>_Normals_<ThirtyYearsPeriod> ex: "ParisMontsouris_Normals_1991_2020"
+        $selectedPeriodNormalsTable = $dbConfig['NormalsDB'].".".$selectedCity."_Normals_" . $selectedPeriod;
 
         // Fetch data for the selected date range from the database
         $sql = "SELECT 
@@ -59,11 +62,11 @@
                     NORM.DayOfYear, 
                     NORM.AvgPrecipitationSum as NormAvgPrecipSum 
                 FROM $tabledwc DWC 
-                JOIN $selectedPeriodTable NORM 
+                JOIN $selectedPeriodNormalsTable NORM 
                 ON DATE_FORMAT(DWC.WC_Date, '%m-%d') = NORM.DayOfYear 
                 WHERE DWC.WC_Date 
                 BETWEEN '$start_date' AND '$end_date'" ;
-        
+   
         $result1 = $conn->query($sql1);
 	
         $dates = [];
@@ -71,6 +74,8 @@
         $cumulativePrecipitations = [];
         $AvgPrecipitationSums = [] ;
         $cumulativeSum = 0;
+        $cumulativeNormalPrecipitations = [];
+        $cumulativeNormal = 0;
 
         while ($row = $result->fetch_assoc()) {
             $dates[] = $row['WC_Date'];
@@ -82,6 +87,9 @@
 
         while ($row1 = $result1->fetch_assoc()) {
             $AvgPrecipitationSums[] = $row1['NormAvgPrecipSum'];
+
+            $cumulativeNormal += $row1['NormAvgPrecipSum'];
+            $cumulativeNormalPrecipitations[] = $cumulativeNormal;
         }        
 
         // Fetch monthly average temperatures for the given period
@@ -178,9 +186,9 @@
         }
 
         // Debugging output
-        error_log("Processed seasonal labels: " . print_r($seasonalAvgLabels, true));
-        error_log("Processed seasonal rainfall data: " . print_r($seasonalAvgData, true));
-
+        //error_log("Processed seasonal labels: " . print_r($seasonalAvgLabels, true));
+        //error_log("Processed seasonal rainfall data: " . print_r($seasonalAvgData, true));
+        //error_log("cumulativeNormalPrecipitations " . print_r($cumulativeNormalPrecipitations, true)); // Vérifiez les logs du serveur
 
         // Close the database connection
         $conn->close();
@@ -196,6 +204,7 @@
         'AvgPrecipitationSums' => $AvgPrecipitationSums,
         'precipitations' => $precipitations,
         'cumulativePrecipitations' => $cumulativePrecipitations,
+        'cumulativeNormalPrecipitations' => $cumulativeNormalPrecipitations,
         'monthlyAvgLabels' => $monthlyAvgLabels,
         'monthlyAvgData' => $monthlyAvgData,
         'yearlyAvgLabels' => $yearlyAvgLabels,

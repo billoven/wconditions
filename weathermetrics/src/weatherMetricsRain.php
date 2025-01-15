@@ -53,10 +53,12 @@
             var precipitationChart, monthlyPrecipitationChart;
 
             // Function to update the daily precipitation graph
-            function updatePrecipitationGraph(dates, rainfall, cumulativePrecipitations) {
+            function updatePrecipitationGraph(dates, rainfall, cumulativePrecipitations, cumulativeNormalPrecipitations) {
+                console.log("Updating precipitation graph with:", dates, cumulativeNormalPrecipitations );
                 precipitationChart.data.labels = dates;
                 precipitationChart.data.datasets[0].data = rainfall;
                 precipitationChart.data.datasets[1].data = cumulativePrecipitations;
+                precipitationChart.data.datasets[2].data = cumulativeNormalPrecipitations;
 
                 // Construct the period title based on start_date and end_date
                 const periodTitle = `Period: From ${start_date} To ${end_date}`;
@@ -180,6 +182,18 @@
                             fill: false,
                             yAxisID: 'cumulative-y-axis',
                             pointRadius: 0,
+                        },
+                        {
+                            label: 'Cumulative Normals Precipitation (mm)',
+                            label: '<?php global $selectedPeriod, $selectedCity; echo substr($selectedCity, 0, 2) . "-" . $selectedPeriod; ?> Cum. Norm. Precip.',
+                            data: [],
+                            type: 'line',
+                            borderColor: 'red',
+                            borderWidth: 2,
+                            fill: false,
+                            yAxisID: 'cumulative-y-axis',
+                            pointRadius: 0,
+                            borderDash: [5, 5] // [longueur du tiret, longueur de l'espace]
                         }
                     ]
                 },
@@ -350,7 +364,7 @@
                             end_date = responseData.end_date;
 
                             // Update precipitation charts
-                            updatePrecipitationGraph(responseData.dates, responseData.precipitations, responseData.cumulativePrecipitations);
+                            updatePrecipitationGraph(responseData.dates, responseData.precipitations, responseData.cumulativePrecipitations, responseData.cumulativeNormalPrecipitations);
                             updateMonthlyPrecipitationGraph(responseData.monthlyAvgLabels, responseData.monthlyAvgData);
                             updateYearlyPrecipitationGraph(responseData.yearlyAvgLabels, responseData.yearlyAvgData);
                             updateSeasonalPrecipitationGraph(responseData.seasonalAvgLabels, responseData.seasonalAvgData);

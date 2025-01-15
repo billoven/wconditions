@@ -26,9 +26,14 @@
         $by_month = isset($_POST['by_month']) ? true : false;
         $by_year = isset($_POST['by_year']) ? true : false;
         $by_season = isset($_POST['by_season']) ? true : false;
-        
+ 
         // Retrieve the DB value from the cookie
         $selectedDb = $_COOKIE['selectedDb'] ?? "db1";
+
+        // Retrieve the city and period values from the cookie
+        $selectedCity = $_COOKIE['selectedNormalsCity'] ?? $dbConfig['DefaultNormalsCity'];
+        $selectedPeriod = $_COOKIE['selectedNormals'] ?? $dbConfig['DefaultNormals'];
+        $selectedStation = $_COOKIE['selectedStation'] ?? $dbConfig['weatherStation'];
 
         // Database configuration
         if (isset($dbConfigs[$selectedDb])) {
@@ -45,11 +50,9 @@
         // Use placeholders for the table names
         $tabledwc = $dbConfig['tabledwc'];
 
-        // Retrieve the city and period values from the cookie
-        $selectedPeriod = $_COOKIE['selectedNormals'] ?? $dbConfig['DefaultNormals'];
-
-        // TableNormals name for the selected Normals period
-        $selectedPeriodTable = "Normals_" . $selectedPeriod;
+        // Build TableNormals name for the selected Normals period
+        // <City location>_Normals_<ThirtyYearsPeriod> ex: "ParisMontsouris_Normals_1991_2020"
+        $selectedPeriodNormalsTable = $dbConfig['NormalsDB'].".".$selectedCity."_Normals_" . $selectedPeriod;
 
         // Fetch data for the selected date range from the database
         $sql = "SELECT 
@@ -71,7 +74,7 @@
                     NORM.AvgPressureHigh as NormAvgPressureHigh, 
                     NORM.AvgPressureLow as NormAvgPressureLow 
                 FROM $tabledwc DWC 
-                JOIN $selectedPeriodTable NORM 
+                JOIN $selectedPeriodNormalsTable NORM 
                 ON DATE_FORMAT(DWC.WC_Date, '%m-%d') = NORM.DayOfYear 
                 WHERE DWC.WC_Date 
                 BETWEEN '$start_date' AND '$end_date'" ;

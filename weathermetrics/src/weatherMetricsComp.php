@@ -5,8 +5,6 @@
     ini_set('display_errors', 1);
     error_reporting(E_ALL);
 ?>
-
-    <?php include 'alertBox.php'; ?>
      
     <div class="container" id="SectionComparison">
         <h5 class="mb-4">Compare 2 periods : <?php global $selectedStation; echo $selectedStation?></h5>

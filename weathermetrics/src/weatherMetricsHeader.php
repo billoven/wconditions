@@ -175,7 +175,8 @@
 </head>
 <body class="p-3 m-0 border-0 bd-example">
  
- <script>
+    <?php include 'alertBox.php'; ?>
+    <script>
     // Function to change the selected normals
     function changeNormals(city, selectedPeriod) {
         // Check if the site is using HTTPS
@@ -183,12 +184,12 @@
 
         // Store the selected Period in a cookie if it is not empty
         if (selectedPeriod) {
-            document.cookie = `selectedNormals=${selectedPeriod}; path=/; SameSite=None;${isSecure ? ' Secure;' : ''}`;
+            document.cookie = `selectedNormals=${selectedPeriod}; path=/; SameSite=Lax;${isSecure ? ' Secure;' : ''}`;
         }
 
         // Store the selected City in a cookie if it is not empty
         if (city) {
-            document.cookie = `selectedNormalsCity=${city}; path=/; SameSite=None;${isSecure ? ' Secure;' : ''}`;
+            document.cookie = `selectedNormalsCity=${city}; path=/; SameSite=Lax;${isSecure ? ' Secure;' : ''}`;
         }
 
         // Log the stored selected Normals and City
@@ -226,8 +227,8 @@
         const isSecure = location.protocol === 'https:';
 
         // Store the selected database in a cookie
-        document.cookie = `selectedDb=${dbid}; path=/; SameSite=None;${isSecure ? ' Secure;' : ''}`;
-        document.cookie = `selectedStation=${station}; path=/; SameSite=None;${isSecure ? ' Secure;' : ''}`;
+        document.cookie = `selectedDb=${dbid}; path=/; SameSite=Lax;${isSecure ? ' Secure;' : ''}`;
+        document.cookie = `selectedStation=${station}; path=/; SameSite=Lax;${isSecure ? ' Secure;' : ''}`;
 
         // Update the text of the "Select Db" button with the station name 
         $('#dropdownDbButton').text(station);
@@ -239,151 +240,19 @@
         // Using window.location.href to reload the page
         location.reload();
     }
-
-
     </script>
-
     <?php
 
         ini_set('display_errors', 1);
         ini_set('display_startup_errors', 1);
         error_reporting(E_ALL);
 
-        // Read a Normals stats json file associated to a City
-        function readNormalsJsonFile($city, $period) {
-            $filename = "./normals/StatsNormals_" . str_replace(' ', '', $city) . "_" . $period . ".json";
-            
-            if(file_exists($filename)) {
-                $json_data = file_get_contents($filename);
-                $data = json_decode($json_data, true);
-                
-                if($data === null) {
-                    // JSON decoding failed
-                    return null;
-                } else {
-                    // JSON decoding successful
-                    //echo "Normals Json Filename read: [$filename]";
-                    return $data;
-                }
-            } else {
-                // File does not exist
-                return null;
-            }
-        }
+        // Make various "standard" initialization for all page with this standard header like:
+        // - Various parameters for accessing to the weatherStation DataBase
+        // - Various paramenters for acessing to the selected Climate Normals data
+        require('weatherMetricsInit.php');
 
-        // Set the selectedDb cookie to "db1" if it hasn't been set
-        if (!isset($_COOKIE['selectedDb'])) {
-            setcookie('selectedDb', 'db1', 0, '/');
-        }
-
-        // Retrieve the DB value from the cookie
-        $selectedDb = $_COOKIE['selectedDb'] ?? "db1";
-
-        // Able to use $selectedDb in PHP code
-        //echo "SelectedDB received from Cookie: " . htmlspecialchars($selectedDb) . "<BR>";
-
-        // Database configuration
-        require_once('/etc/wconditions/db_config.php'); // Adjust the path accordingly
-
-        if (isset($dbConfigs[$selectedDb])) {
-            $dbConfig = $dbConfigs[$selectedDb];
-            $conn = new mysqli($dbConfig['host'], $dbConfig['username'], $dbConfig['password'], $dbConfig['database']);
-            if ($conn->connect_error) {
-                die("Database Connection failed: " . $conn->connect_error);
-            }
-
-            // Echo the host, username, and database
-            //echo "Weather Station   : " . $dbConfig['weatherStation'] . "<br>";
-            //echo "Host              : " . $dbConfig['host'] . "<br>";
-            //echo "Username          : " . $dbConfig['username'] . "<br>";
-            //echo "Database          : " . $dbConfig['database'] . "<br>";
-            //echo "TableDwc          : " . $dbConfig['tabledwc'] . "<br>";
-            //echo "DefaultNormals    : " . $dbConfig['DefaultNormals'] . "<br>";
-            //echo "DefaultNormalsCity: " . $dbConfig['DefaultNormalsCity'] . "<br>";
-            //echo "NormalsDB         : " . $dbConfig['NormalsDB'] . "<br>";
-            ?>
-            <script>
-                // Retrieve the value of the selectedNormalsCity cookie
-                const selectedNormalsCity = getCookie('selectedNormalsCity');
-
-                // Check if the selectedNormalsCity cookie is not set
-                if (!selectedNormalsCity) {
-                    // If the cookie is not set, set it to the default value from $dbConfig
-                    document.cookie = `selectedNormalsCity=<?php echo $dbConfig['DefaultNormalsCity']; ?>; path=/; SameSite=None`;
-                }
-                // Check if the selectedNormals cookie exists
-                const selectedNormalsCookie = getCookie('selectedNormals');
-
-                // If the selectedNormals cookie doesn't exist, set it to the default value from PHP
-                if (!selectedNormalsCookie) {
-                    const defaultNormals = "<?php echo $dbConfig['DefaultNormals']; ?>";
-                    document.cookie = `selectedNormals=${defaultNormals}; path=/; SameSite=None`;
-                }
-            
-            </script>
-            <?php
-
-            // Retrieve the city and period values from the cookie
-            $selectedCity = $_COOKIE['selectedNormalsCity'] ?? $dbConfig['DefaultNormalsCity'];
-            $selectedPeriod = $_COOKIE['selectedNormals'] ?? $dbConfig['DefaultNormals'];
-            $selectedStation = $_COOKIE['selectedStation'] ?? $dbConfig['weatherStation'];
-
-            // Display the cookie values
-            //echo "Cookie NormalsCity: " . $selectedCity . "<br>";
-            //echo "Cookie Selected NormalsPeriod: " . $selectedPeriod . "<br>";
-            //echo "Cookie Selected DB: " . $selectedDb . "<br>";
-
-            // Fetch available years from the database
-            $years = array();
-            $yearQuery = "SELECT DISTINCT YEAR(WC_Date) AS Year FROM DayWeatherConditions ORDER by Year DESC";
-            $yearResult = $conn->query($yearQuery);
-            while ($row = $yearResult->fetch_assoc()) {
-                $years[] = $row['Year'];
-            }
-
-            // Close the database connection
-            $conn->close();
-
-            $dbConfig = $dbConfigs[$selectedDb];
-            $conndbnorm = new mysqli($dbConfig['host'], $dbConfig['username'], $dbConfig['password'], $dbConfig['NormalsDB']);
-            if ($conndbnorm->connect_error) {
-                die("Normals Database Connection failed: " . $conndbnorm->connect_error);
-            }
-    
-        
-            // TableNormals name for the selected Normals period
-            $selectedPeriodNormalsTable = $selectedCity."_Normals_" . $selectedPeriod;
-
-            // SQL query to check if the table exists
-            $sql = "SHOW TABLES LIKE '" . $selectedPeriodNormalsTable . "'";
-            $result = $conndbnorm->query($sql);
-
-            // If the table exists, initialize $TableNormals variable
-            if ($result->num_rows > 0) {
-                $TableNormals = $selectedPeriodNormalsTable;
-            } else {
-                // If the table doesn't exist, handle the error accordingly
-                echo "Error: Normals table for the selected period does not exist.";
-            }
-
-            // Close the Normals database connection
-            $conndbnorm->close();
-        }
-
-        // Read Normals Json File of Stats for a city
-        $normalsData = readNormalsJsonFile($selectedCity, $selectedPeriod);
-
-        if ($normalsData !== null) {
-            // Normals data loaded successfully
-            //echo json_encode($normalsData, JSON_PRETTY_PRINT);
-        } else {
-            // Failed to load normals data
-            echo "Failed to load normals data for $selectedCity - $selectedPeriod.";
-        }
-
-  
     ?>
-
 
     <!-- Navigation bar -->
     <nav class="navbar navbar-expand-lg navbar-custom px-3">
@@ -461,7 +330,6 @@
                     </div>
                 </div>
 
-
                 <!-- JavaScript to handle the dropdown -->
                 <script>
                 // JavaScript to handle the dropdown
@@ -516,7 +384,6 @@
             </div>
         </div>
     </nav>
-
 
     <!-- Script section for JavaScript code -->
     <script>     
