@@ -1,56 +1,101 @@
 <?php
     // Common Header for all the weatherMetrics files
     include "weatherMetricsHeader.php";
+    include 'alertBox.php';
 
-    ini_set('display_errors', 1);
-    error_reporting(E_ALL);
+    //ini_set('display_errors', 1);
+    //error_reporting(E_ALL);
 ?>
-    <?php include 'alertBox.php'; ?>
-  
-    <!-- Weather Metrics Section -->
-    <div class="container" id="WeatherMetrics">
-        <h5 class="mb-4">Temperatures : <?php global $selectedStation; echo $selectedStation?></h5>
-        <form id="formtemp" class="form-group" method="POST" action="weatherMetricsFormTemp.php">
-            <div class="form-row">
-                <div class="form-group">
-                    <?php include 'weatherMetricsDateSelector.php'; ?> 
+<style>
+    .table-container {
+        max-height: 300px; /* Limiter la hauteur à environ 10 lignes (ajustez selon vos besoins) */
+        overflow-y: auto;  /* Activer le défilement vertical */
+        border: 1px solid #dee2e6; /* Optionnel : ajoute une bordure pour délimiter la table */
+    }
+
+    .table {
+        margin-bottom: 0; /* Évite les marges inutiles sous la table */
+    }
+    .sticky-header thead th {
+        position: sticky;
+        top: 0; /* Fixes the header to the top of the container */
+        z-index: 2; /* Ensures the header stays above the table rows */
+        background-color: #f8f9fa; /* Matches the table header background */
+    }
+</style>
+
+<?php
+function generateWeatherMetricsSection($title, $idPrefix, $includeDailySummary = false) {
+    ?>
+
+    <!-- Graph containers -->
+    <div class="graph-container mt-4" id="<?php echo $idPrefix; ?>Container">
+        <h3 style="display: flex; align-items: center; justify-content: space-between;">
+            <?php echo $title; ?>
+            <?php if ($idPrefix === 'DailyTemp') { ?>
+                <button id="resetZoom" class="btn btn-outline-primary btn-sm">Reset Zoom</button>
+            <?php } ?>
+        </h3>
+        <ul class="nav nav-tabs" id="<?php echo $idPrefix; ?>Tabs" role="tablist">
+            <li class="nav-item">
+                <a class="nav-link active" id="<?php echo $idPrefix; ?>-graph-tab" data-bs-toggle="tab" 
+                   href="#<?php echo $idPrefix; ?>-graph" role="tab" 
+                   aria-controls="<?php echo $idPrefix; ?>-graph" aria-selected="true">Graph</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" id="<?php echo $idPrefix; ?>-table-tab" data-bs-toggle="tab" 
+                   href="#<?php echo $idPrefix; ?>-table" role="tab" 
+                   aria-controls="<?php echo $idPrefix; ?>-table" aria-selected="false">Table</a>
+            </li>
+        </ul>
+        <div class="tab-content mt-3" id="<?php echo $idPrefix; ?>TabContent">
+            <div class="tab-pane fade show active" id="<?php echo $idPrefix; ?>-graph" role="tabpanel" 
+                 aria-labelledby="<?php echo $idPrefix; ?>-graph-tab">
+                <canvas id="<?php echo $idPrefix; ?>Chart" width="1024" height="500"></canvas>
+            </div>
+            <div class="tab-pane fade" id="<?php echo $idPrefix; ?>-table" role="tabpanel" 
+                 aria-labelledby="<?php echo $idPrefix; ?>-table-tab">
+                <div class="table-container">
+                    <table class="table table-striped table-bordered sticky-header">
+                        <thead>
+                            <!-- Le contenu du header de table sera inséré dynamiquement -->
+                        </thead>
+                        <tbody>
+                            <!-- Le contenu sera inséré dynamiquement -->
+                        </tbody>
+                    </table>
                 </div>
             </div>
-        </form>
+            <?php if ($includeDailySummary) { ?>
+                <div id="<?php echo $idPrefix; ?>Summary"></div>
+            <?php } ?>
+        </div>
+    </div>
+    <?php
+}
+?>
 
-        <!-- Graph containers -->
-        <div class="graph-container" id="DailyTempContainer">
-            <h3 style="display: flex; align-items: center; justify-content: space-between;">
-                Daily Temperatures Graph
-                <button id="resetZoom" class="btn btn-outline-primary btn-sm">Reset Zoom</button>
-            </h3>
-            <div id="DailyTempGraphContainer">
-                <canvas id="DailyTempChart" width="1024" height="500"></canvas>
-            </div>
-            <div id="DailyTempSummary"></div> <!-- Container for Daily Temp Summary -->
-        </div>
-        <div class="graph-container" id="MonthlyTempContainer">
-            <h3>Monthly Temperatures Graph</h3>
-            <div id="MonthlyTempGraphContainer">
-                <canvas id="MonthlyTempChart" width="1024" height="400"></canvas> 
-            </div>
-        </div>
-        <div class="graph-container" id="YearlyTempContainer">
-            <h3>Yearly Temperatures Graph</h3>
-            <div id="YearlyTempGraphContainer">
-                <canvas id="YearlyTempChart" width="1024" height="400"></canvas> 
-            </div>
-        </div>
-        <div class="graph-container" id="SeasonalTempContainer">
-            <h3>Seasonal Temperatures Graph</h3>
-            <div id="SeasonalTempGraphContainer">
-                <canvas id="SeasonalTempChart" width="1024" height="400"></canvas> 
-            </div>
-        </div>
-    </div>   
-    <script>
 
-        console.log("Debut Script");
+<!-- Weather Metrics Section -->
+<div class="container" id="WeatherMetrics">
+    <h5 class="mb-4">Temperatures : <?php global $selectedStation; echo $selectedStation; ?></h5>
+    <form id="formtemp" class="form-group" method="POST" action="weatherMetricsFormTemp.php">
+        <div class="form-group">
+            <?php include 'weatherMetricsDateSelector.php'; ?>
+        </div>
+    </form>
+
+    <?php
+    // Génération des sections avec la fonction générique
+    generateWeatherMetricsSection('Daily Temperatures', 'DailyTemp', true);
+    generateWeatherMetricsSection('Monthly Temperatures', 'MonthlyTemp');
+    generateWeatherMetricsSection('Yearly Temperatures', 'YearlyTemp');
+    generateWeatherMetricsSection('Seasonal Temperatures', 'SeasonalTemp');
+    ?>
+</div>
+
+<script>
+    console.log("Debut Script");
 
         $(document).ready(function () {
         
@@ -134,7 +179,7 @@
                     tbody.appendChild(dataRow);
                 });
 
-                // Display normals
+                // Display normalsstrtolower
                 const normalsRow = document.createElement('tr');
                 normalsRow.innerHTML = `
                     <td><strong>Average normal temperatures for the period</strong></td>
@@ -149,6 +194,90 @@
                 summaryContainer.appendChild(table);
             }
 
+            // ============== Update Daily Temperature Table =============
+            /**
+             * Updates a weather data table dynamically with headers and data.
+             * 
+             * @param {string} period - The ID of the table (e.g., "SeasonalTemp").
+             * @param {Array<string>} dates - An array of date labels for the rows (e.g., ["Spring 2024", "Summer 2024"]).
+             * @param {Object} dataColumns - An object where keys are column names and values are arrays of data 
+             *                               (e.g., { "Average": [15.5, 25.3], "Max": [20.3, 30.5], "Min": [10.2, 18.3] }).
+             * @param {Array<string>} columnsHeaders - An array of column headers for the table (e.g., ["Period", "Mean temperature", "Min temperature", "Max temperature"]).
+             * 
+             * The function:
+             * 1. Dynamically generates the <thead> section with the provided headers.
+             * 2. Populates the <tbody> with rows, each containing a date and corresponding data for the columns.
+             * 3. Handles missing data by displaying "N/A" for undefined values.
+             */
+            function updateWeatherTable(period, dates, dataColumns, columnsHeaders) {
+                // Select the table element based on the period
+                const table = document.querySelector(`#${period}-table`);
+
+                // Check if the table exists in the DOM
+                if (!table) {
+                    console.error(`Table not found for period: ${period}`);
+                    return;
+                }
+
+                // Select or create the table header
+                let tableHeader = table.querySelector("thead");
+                if (!tableHeader) {
+                    tableHeader = document.createElement("thead");
+                    table.appendChild(tableHeader);
+                }
+
+                // Clear the current content of the table header
+                tableHeader.innerHTML = "";
+
+                // Create a header row <tr>
+                const headerRow = document.createElement("tr");
+
+                // Loop through the columnsHeaders array to create <th> elements
+                for (const header of columnsHeaders) {
+                    const headerCell = document.createElement("th");
+                    headerCell.textContent = header;
+                    headerRow.appendChild(headerCell);
+                }
+
+                // Append the header row to the table header
+                tableHeader.appendChild(headerRow);
+
+                // Select the table body
+                let tableBody = table.querySelector("tbody");
+
+                // Check if the table body exists; create it if it doesn't
+                if (!tableBody) {
+                    tableBody = document.createElement("tbody");
+                    table.appendChild(tableBody);
+                }
+
+                // Clear the current content of the table body
+                tableBody.innerHTML = "";
+
+                // Loop through the dates array to create new rows
+                for (let i = 0; i < dates.length; i++) {
+                    // Create a new table row <tr>
+                    const row = document.createElement("tr");
+
+                    // Add a <td> cell for the date
+                    const dateCell = document.createElement("td");
+                    dateCell.textContent = dates[i];
+                    row.appendChild(dateCell);
+
+                    // Dynamically add <td> cells for each data column
+                    for (const columnData of Object.values(dataColumns)) {
+                        const cell = document.createElement("td");
+                        // Check if the data exists for the current index; if not, use "N/A"
+                        cell.textContent = columnData[i] !== undefined ? `${columnData[i]}°C` : "N/A";
+                        row.appendChild(cell);
+                    }
+
+                    // Append the row to the table body
+                    tableBody.appendChild(row);
+                }
+            }
+
+
 
             // Define the temperatureChart variable outside the function
             var temperatureChart;
@@ -157,8 +286,9 @@
             var seasonalAvgChart;
 
             // Function to update the daily temperatures graph
-            function updateDailyTempGraph(start_date,end_date,dates, averages, maximums, minimums, AvgTempAvgs, AvgTempHighs, AvgTempLows, movingAverages) {
+            function updateDailyTemp(start_date,end_date,dates, averages, maximums, minimums, AvgTempAvgs, AvgTempHighs, AvgTempLows, movingAverages) {
               
+                // ============== Update Daily Temperature Graph =============
                 // Construct the period title based on start_date and end_date
                 const periodTitle = `Period: From ${start_date} To ${end_date}`;
 
@@ -175,12 +305,30 @@
                 temperatureChart.options.plugins.title.text = periodTitle;  // Set title text here
                 temperatureChart.update();  // Update chart to apply new title
 
-                // Update the summary
+                // ============== Update Daily Temperature Table =============
+                // Call the function to update the table
+                // Titres pour les colonnes de la table
+                const columnsHeaders = [
+                    "Day", 
+                    "Daily Mean temperature", 
+                    "Daily Max temperature", 
+                    "Daily Min temperature"
+                ];
+
+                // Appel de la fonction
+                updateWeatherTable("DailyTemp", dates, {
+                    "Average": averages,
+                    "Max": maximums,
+                    "Min": minimums
+                }, columnsHeaders);
+
+                // ============== Update Daily Temperature Metrics Summary =============
                 const normals = {
                     avg: calculateStatistics(AvgTempAvgs).avg,
                     max: calculateStatistics(AvgTempHighs).avg,
                     min: calculateStatistics(AvgTempLows).avg
                 };
+
                 updateSummary('DailyTempSummary', temperatureChart.data.datasets, normals);
             }
 
@@ -203,7 +351,25 @@
                 monthlyAvgChart.data.datasets[1].data = maximums;
                 monthlyAvgChart.data.datasets[2].data = minimums;
                 monthlyAvgChart.update();
-            }  
+
+                // ============== Update Monthly Temperature Table =============
+                // Sélectionnez le <tbody> de la table
+                // Call the function to update the table
+                const columnsHeaders = [
+                    "Month", 
+                    "Monthly Avg of Daily Mean Temps", 
+                    "Monthly Avg of Daily Max Temps", 
+                    "Monthly Avg of Daily Min Temps"
+                ];
+
+                // Appel de la fonction
+                updateWeatherTable("MonthlyTemp", labels, {
+                    "Average": averages,
+                    "Max": maximums,
+                    "Min": minimums
+                }, columnsHeaders);
+
+            }
 
             function UpdateYearlyTempGraph(labels, yearlyAvgData) {
                 console.log("Year labels:", labels);
@@ -224,13 +390,30 @@
                 yearlyAvgChart.data.datasets[1].data = maximums;
                 yearlyAvgChart.data.datasets[2].data = minimums;
                 yearlyAvgChart.update();
+
+                // ============== Update Yearly Temperature Table =============
+                // Sélectionnez le <tbody> de la table
+                // Call the function to update the table
+                const columnsHeaders = [
+                    "Year", 
+                    "Yearly Avg of Daily Mean Temps", 
+                    "Yearly Avg of Daily Max Temps", 
+                    "Yearly Avg of Daily Min Temps"
+                ];
+
+                // Appel de la fonction
+                updateWeatherTable("YearlyTemp", labels, {
+                    "Average": averages,
+                    "Max": maximums,
+                    "Min": minimums
+                }, columnsHeaders);         
             }
 
             function UpdateSeasonalTempGraph(labels, seasonalAvgData) {
                 console.log("labels:", labels);
                 console.log("seasonalAvgData:", seasonalAvgData);
                 // Update the existing chart instance (seasonalAvgChart) with new data
-                // Extract separate arrays for averages, maximums, and minimums from monthlyAvgData
+                // Extract separate arrays for averages, maximums, and minimums from seasonalAvgData
                 var averages = seasonalAvgData.map(data => parseFloat(data.avg));
                 var maximums = seasonalAvgData.map(data => parseFloat(data.max));
                 var minimums = seasonalAvgData.map(data => parseFloat(data.min));
@@ -245,6 +428,24 @@
                 seasonalAvgChart.data.datasets[1].data = maximums;
                 seasonalAvgChart.data.datasets[2].data = minimums;
                 seasonalAvgChart.update();
+
+
+                // ============== Update Seasonal Temperature Table =============
+                // Sélectionnez le <tbody> de la table
+                // Call the function to update the table
+                const columnsHeaders = [
+                    "Season", 
+                    "Seasonal Avg of Daily Mean Temps", 
+                    "Seasonal Avg of Daily Max Temps", 
+                    "Seasonal Avg of Daily Min Temps"
+                ];
+
+                // Appel de la fonction
+                updateWeatherTable("SeasonalTemp", labels, {
+                    "Average": averages,
+                    "Max": maximums,
+                    "Min": minimums
+                }, columnsHeaders);     
             }
 
             // Helper function to format the date range as 'from: MM-DD-YYYY to MM-DD-YYYY'
@@ -654,7 +855,7 @@
                             end_date = responseData.end_date;
 
                             // Update the first chart (Daily Temperatures Graph)
-                            updateDailyTempGraph(
+                            updateDailyTemp(
                                 responseData.start_date,
                                 responseData.end_date,
                                 responseData.dates,
