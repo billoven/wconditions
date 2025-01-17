@@ -126,9 +126,9 @@
         while ($row = $monthlyAvgResult->fetch_assoc()) {
             $monthlyAvgLabels[] = $row['Month'];
             $monthlyAvgData[] = [
-                'avg' => $row['AvgTemp'],
-                'max' => $row['MaxTemp'],
-                'min' => $row['MinTemp']
+                'avg' => round($row['AvgTemp'], 1),
+                'max' => round($row['MaxTemp'], 1),
+                'min' => round($row['MinTemp'], 1)
             ];
         }
 
@@ -155,9 +155,9 @@
             while ($row = $yearlyAvgResult->fetch_assoc()) {
                 $yearlyAvgLabels[] = $row['Year'];
                 $yearlyAvgData[] = [
-                    'avg' => $row['AvgTemp'],
-                    'max' => $row['MaxTemp'],
-                    'min' => $row['MinTemp']
+                    'avg' => round($row['AvgTemp'], 1),
+                    'max' => round($row['MaxTemp'], 1),
+                    'min' => round($row['MinTemp'], 1)
                 ];
             }
         //}
@@ -199,9 +199,9 @@
             while ($row = $seasonalAvgResult->fetch_assoc()) {
                 $seasonalAvgLabels[] = $row['Season'];
                 $seasonalAvgData[] = [
-                    'avg' => $row['AvgTemp'],
-                    'max' => $row['MaxTemp'],
-                    'min' => $row['MinTemp']
+                    'avg' => round($row['AvgTemp'], 1),
+                    'max' => round($row['MaxTemp'], 1),
+                    'min' => round($row['MinTemp'], 1)
                 ];
             }
 

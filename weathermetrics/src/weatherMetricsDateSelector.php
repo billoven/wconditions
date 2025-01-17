@@ -3,9 +3,21 @@
 <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/plugins/monthSelect/index.js"></script>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/plugins/monthSelect/style.css">
+<style>
+    .checkbox-group {
+        display: grid;
+        grid-template-columns: 1fr 1fr; /* 2 colonnes de même largeur */
+        gap: 5px; /* Espace entre les cases à cocher */
+    }
+
+    .checkbox-item {
+        display: flex;
+        align-items: center;
+    }
+</style>
 
 <!-- Date Range Selector Component -->
-<div class="container d-flex align-items-center flex-nowrap" id="dateRangeSelector" style="gap: 8px;">
+<div class="container d-flex align-items-center flex-nowrap" id="dateRangeSelector" style="gap: 5px;">
   
   <!-- Selection Type Dropdown for different range options -->
   <select id="rangeType" class="form-select form-select-sm" style="width: 130px;">
@@ -16,7 +28,7 @@
   </select>
 
   <!-- Date Range Picker Input with Clear Button -->
-  <div id="dateRangePickerContainer" class="d-flex align-items-center" style="gap: 8px;">
+  <div id="dateRangePickerContainer" class="d-flex align-items-center" style="gap: 5px;">
     <input id="dateRangePicker" class="form-control form-control-sm" style="width: 180px;" placeholder="Select date range">
   </div>
 
@@ -46,21 +58,28 @@
   <!-- Add type="button" to prevent it from behaving as a submit button -->
   <button id="clearAll" type="button" class="btn btn-sm btn-outline-secondary">Clear All</button>
 
-
   <!-- Checkbox options for graph type selection -->
   <div class="checkbox-group">
-      <label>
-          <input type="checkbox" name="by_day" value="true" checked onclick="toggleGraphVisibility()"> By Day
-      </label>
-      <label>
-          <input type="checkbox" name="by_month" value="true" onclick="toggleGraphVisibility()"> By Month
-      </label>
-      <label>
-          <input type="checkbox" name="by_year" value="true" onclick="toggleGraphVisibility()"> By Year
-      </label>
-      <label>
-          <input type="checkbox" name="by_season" value="true" onclick="toggleGraphVisibility()"> By Season
-      </label>
+      <div class="checkbox-item">
+          <label>
+              <input type="checkbox" name="by_day" value="true" checked onclick="toggleGraphVisibility()"> By Day
+          </label>
+      </div>
+      <div class="checkbox-item">
+          <label>
+              <input type="checkbox" name="by_month" value="true" onclick="toggleGraphVisibility()"> By Month
+          </label>
+      </div>
+      <div class="checkbox-item">
+          <label>
+              <input type="checkbox" name="by_year" value="true" onclick="toggleGraphVisibility()"> By Year
+          </label>
+      </div>
+      <div class="checkbox-item">
+          <label>
+              <input type="checkbox" name="by_season" value="true" onclick="toggleGraphVisibility()"> By Season
+          </label>
+      </div>
   </div>
   <!-- Hidden fields for start and end dates to be sent to the backend -->
   <input type="hidden" id="start_date" name="start_date">
