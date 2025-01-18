@@ -243,9 +243,8 @@
     </script>
     <?php
 
-        ini_set('display_errors', 1);
-        ini_set('display_startup_errors', 1);
-        error_reporting(E_ALL);
+        //ini_set('display_errors', 1);
+        //error_reporting(E_ALL);
 
         // Make various "standard" initialization for all page with this standard header like:
         // - Various parameters for accessing to the weatherStation DataBase

@@ -13,10 +13,6 @@
  * The script sets cookies, performs database operations, and handles JSON file loading for dynamic page content rendering.
  */
 
-    //ini_set('display_errors', 1);
-    //ini_set('display_startup_errors', 1);
-    //error_reporting(E_ALL);
-
     // Constante définissant le chemin de base pour les fichiers JSON
     define('NORMALS_JSON_PATH', './normals/');
     
