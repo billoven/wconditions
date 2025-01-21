@@ -3,25 +3,43 @@
     include "weatherMetricsHeader.php";
     include 'alertBox.php';
 
-    //ini_set('display_errors', 1);
-    //error_reporting(E_ALL);
+    ini_set('display_errors', 1);
+    error_reporting(E_ALL);
+
+    //phpinfo();
 ?>
 <style>
+
+    .small {
+        font-size: 0.85rem;
+        color: #868B94;
+    }
+
+    /* Images */
+    img {
+        object-fit: contain;
+        display: block;
+    }
+
+    /* Table Styling */
     .table-container {
-        max-height: 300px; /* Limiter la hauteur à environ 10 lignes (ajustez selon vos besoins) */
-        overflow-y: auto;  /* Activer le défilement vertical */
-        border: 1px solid #dee2e6; /* Optionnel : ajoute une bordure pour délimiter la table */
+        max-height: 300px; /* Limit height for scrolling */
+        overflow-y: auto;  /* Enable vertical scrolling */
+        border: 1px solid #dee2e6; /* Add a subtle border */
     }
 
     .table {
-        margin-bottom: 0; /* Évite les marges inutiles sous la table */
+        margin-bottom: 0; /* Remove unnecessary bottom margin */
     }
+
+    /* Sticky Table Header */
     .sticky-header thead th {
         position: sticky;
-        top: 0; /* Fixes the header to the top of the container */
-        z-index: 2; /* Ensures the header stays above the table rows */
-        background-color: #f8f9fa; /* Matches the table header background */
+        top: 0; /* Fix header to the top */
+        z-index: 2; /* Ensure header is above rows */
+        background-color: #f8f9fa; /* Match header background */
     }
+
 </style>
 
 <?php
@@ -74,7 +92,6 @@ function generateWeatherMetricsSection($title, $idPrefix, $includeDailySummary =
     <?php
 }
 ?>
-
 
 <!-- Weather Metrics Section -->
 <div class="container" id="WeatherMetrics">
@@ -276,8 +293,6 @@ function generateWeatherMetricsSection($title, $idPrefix, $includeDailySummary =
                     tableBody.appendChild(row);
                 }
             }
-
-
 
             // Define the temperatureChart variable outside the function
             var temperatureChart;
