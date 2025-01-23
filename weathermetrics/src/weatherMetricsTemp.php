@@ -95,7 +95,12 @@ function generateWeatherMetricsSection($title, $idPrefix, $includeDailySummary =
 
 <!-- Weather Metrics Section -->
 <div class="container" id="WeatherMetrics">
-    <h5 class="mb-4">Temperatures : <?php global $selectedStation; echo $selectedStation; ?></h5>
+    <div class="d-flex align-items-center justify-content-between">
+        <!-- Titre avec la température -->
+        <h5 class="mb-0">Temperatures : <?php global $selectedStation; echo $selectedStation; ?></h5>
+        <!-- Normals avec une taille de police réduite -->
+        <p style="font-size: 0.7rem; margin: 0;"><em>Normals: <?php global $selectedCity, $selectedPeriod; echo "$selectedCity - $selectedPeriod"; ?></em></p>
+    </div>
     <form id="formtemp" class="form-group" method="POST" action="weatherMetricsFormTemp.php">
         <div class="form-group">
             <?php include 'weatherMetricsDateSelector.php'; ?>

@@ -20,21 +20,6 @@
         position: sticky;
         left: 0;
         }
-        #version-image-container {
-            display: flex;
-            justify-content: center;
-            margin-top: 5px; /* Adjust the margin as needed */
-        }
-        #version-image {
-            width: auto; /* Maintain aspect ratio */
-            height: 20px; /* Adjust the height as needed */
-        }
-        .release-container {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            margin-top: 5px; /* Adjust as needed */
-        }
 
         /* ============ desktop view necessary for normals selection with sub-menu ============ */
         @media all and (min-width: 992px) {
@@ -43,32 +28,15 @@
                 position: relative;
             }
 
-            /* Align main dropdown menu to the left of the button */
-            .dropleft .dropdown-menu {
-                right: 100%; /* Position on the left of the button */
-                top: 0; /* Align with the top of the button */
-                transform: translateX(-10px); /* Optional offset for spacing */
-          }
-
-            /* Submenu alignment */
-            .dropleft .submenu-left {
-                position: absolute;
-                left: -100%; /* Place submenu to the left of the parent */
-                top: 0;
-            }
-
             /* Ensure submenu displays on hover */
             .dropdown-submenu:hover .dropdown-menu {
                 display: block;
                 min-width: auto;
-                max-width: 300px; /* Ajustez cette valeur si nécessaire */
                 width: auto;
                 white-space: nowrap;             
             }
 
         }	
-        /* ============ desktop view .end// ============ */
-
         /* ============ small devices ============ */ 
         @media (max-width: 991px) {
             .dropdown-menu .dropdown-menu{
@@ -148,7 +116,16 @@
         }
         .dropdown-menu {
             min-width: 180px;
-            background-color:rgb(157, 161, 165) ;
+            background-color:rgb(161, 205, 249) ;
+            border-radius: 8px; /* Smooth corners */
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); /* Soft shadow for depth */
+        }
+
+        .dropdown-item.active {
+            background-color: #007bff; /* Couleur de fond */
+            color: #fff; /* Couleur du texte */
+            font-weight: bold; /* Texte en gras */
+        }
         }
         .dropdown-header {
             font-weight: bold;
@@ -183,8 +160,73 @@
         .container-fluid {
             /* Ajustez cette valeur selon le besoin */
         }
-</style>
 
+        /* Dropdown Buttons */
+        .btn-group .btn {
+            font-size: 0.9rem; /* Slightly smaller font size */
+            padding: 0.4rem 0.8rem; /* Better padding for compact design */
+            border-radius: 20px; /* Rounded buttons for a modern look */
+        }
+
+        /* Dropdown Items */
+        .dropdown-item {
+            padding: 0.5rem 1rem; /* Better spacing */
+            font-size: 0.85rem; /* Slightly smaller font */
+            color: #333; /* Neutral text color */
+        }
+
+        .dropdown-item:hover {
+            background-color: #f0f8ff; /* Subtle hover effect */
+            color: #007bff; /* Highlight text */
+        }
+
+        /* Positionner les sous-menus sur la gauche */
+        .dropdown-submenu .dropdown-menu {
+            left: auto; /* Annule l'alignement par défaut */
+            right: 100%; /* Positionne le sous-menu à gauche */
+            top: 0;
+            margin-right: 0.1rem; /* Ajoute un petit décalage pour la visibilité */
+            border-radius: 8px; /* Arrondit les coins pour un style moderne */
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Ajoute une ombre subtile */
+        }
+
+        /* Ajout de l'indicateur de sous-menu (flèche) à gauche */
+        .dropdown-submenu > a::after {
+            float: left; /* Positionne la flèche à gauche */
+            margin-right: 8px; /* Espace entre la flèche et le texte */
+            margin-left: 0; /* Supprime l'espacement à gauche si nécessaire */
+            font-size: 0.7rem;
+            color: #666; /* Couleur neutre pour la flèche */
+        }
+
+        /* Survol : flèche change de couleur */
+        .dropdown-submenu > a:hover::after {
+            color: #007bff; /* Flèche en bleu survolé */
+        }
+
+        /* Sous-menu visible uniquement au survol */
+        .dropdown-submenu:hover > .dropdown-menu {
+            display: block;
+        }
+
+        .btn-primary {
+            background-color: #007bff !important; /* Bootstrap Primary Blue */
+            border-color: #007bff !important;
+        }
+
+        /* Repositionner et centrer la flèche de l'indicateur pour les menus dropleft */
+        .dropdown-toggle-left::after {
+            float: left; /* Place la flèche à gauche */
+            margin-right: 0.2rem; /* Ajoute un espace entre la flèche et le texte */
+            margin-left: 0; /* Supprime tout espace inutile */
+            transform: rotate(90deg); /* Oriente la flèche vers la gauche */
+            display: inline-block; /* Maintient la cohérence avec le texte */
+            /*vertical-align: middle; /* Centre la flèche verticalement par rapport au texte */
+            position: relative; /* Permet d'ajuster sa position */
+            top: 0.6rem; /* Ajuste légèrement la flèche verticalement */
+            font-size: 0.8rem; /* Ajuste la taille si nécessaire */
+        }
+</style>
 
 </head>
 <body class="p-3 m-0 border-0 bd-example">
@@ -257,8 +299,8 @@
     </script>
     <?php
 
-        ini_set('display_errors', 1);
-        error_reporting(E_ALL);
+        //ini_set('display_errors', 1);
+        //error_reporting(E_ALL);
 
         // Make various "standard" initialization for all page with this standard header like:
         // - Various parameters for accessing to the weatherStation DataBase
@@ -271,9 +313,14 @@
     <div class="container-fluid" style="padding: 1px;">
         <nav class="navbar navbar-expand-lg navbar-custom px-3 mb-1">
             <!-- Logo and Title -->
-            <a class="navbar-brand d-flex align-items-center" href="#">
+            <a class="navbar-brand d-flex align-items-center" href="#" style="text-decoration: none;">
+                <!-- Logo -->
                 <i class="bi bi-cloud-sun-fill" style="font-size: 1.8rem; color: #4a90e2; margin-right: 0.5rem;"></i>
-                Weather <span>Conditions</span>
+                <!-- Title -->
+                <div style="line-height: 1;">
+                    <span style="display: block; font-size: 1.2rem; font-weight: bold;">Weather</span>
+                    <span style="display: block; font-size: 1rem; font-weight: bold;">Conditions</span>
+                </div>
             </a>
             <div class="release-container" id="version-image-container">
                 <!-- Release version will be inserted here as an image -->
@@ -302,42 +349,67 @@
                     </li>
                     <!-- Add more navigation links as needed -->
                 </ul>
-                 <!-- Dropdowns for Normals, database, selections -->
-                <!-- Default dropleft button -->
-                <div class="ms-auto d-flex">
-                    <div class="btn-group dropleft me-2"> <!-- dropleft added here -->
-                        <!-- Normals selection dropdown toggle button -->
-                        <button class="btn btn-secondary btn-sm dropdown-toggle" type="button" id="dropdownNormalsButton" data-bs-toggle="dropdown" aria-expanded="false">
-                            Select Normals
-                        </button>
-
-                        <!-- Normals selection options -->
-                        <ul class="dropdown-menu" id="normals-selector" aria-labelledby="dropdownNormalsButton">
-                            <?php
-                                // Read the JSON file
-                                $jsonData = file_get_contents('normals/NormalsFilesList.json');
-
-                                // Parse JSON data
-                                $data = json_decode($jsonData, true);
-
-                                // Iterate over WeatherStations
-                                foreach ($data['WeatherStations'] as $weatherStation => $periods) {
-                                    // Output the dropdown submenu for each WeatherStation
-                                    echo '<li class="dropdown-submenu">';
-                                    echo '<a class="dropdown-item dropdown-toggle" href="#">' . $weatherStation . '</a>';
-                                    echo '<ul class="submenu submenu-left dropdown-menu">';
-                                    
-                                    // Output the Normals Files for the WeatherStation
-                                    foreach ($periods as $period) {
-                                        echo '<li><a class="dropdown-item" href="#" onclick="changeNormals(\'' . $weatherStation . '\', \'' . $period . '\')">' . str_replace('_', '-', $period) . '</a></li>';
-                                    }
-                                    
-                                    echo '</ul>';
-                                    echo '</li>';
-                                }
+                <!-- Dropdowns for Normals, Database, and Selections -->
+                <!-- Modern Dropdowns for Weather Station and Normals -->
+                <div class="ms-auto d-flex align-items-center">
+                    <!-- Weather Station Dropdown -->
+                    <div class="btn-group me-2">
+                        <button class="btn btn-primary btn-sm dropdown-toggle" type="button" id="dropdownDbButton" data-bs-toggle="dropdown" aria-expanded="false">
+                            <?php 
+                                // Display the name of the currently selected weather station
+                                echo $dbConfig['weatherStation']; 
                             ?>
+                        </button>
+                        
+                        <!-- Dropdown menu for weather station selection -->
+                        <ul class="dropdown-menu dropdown-menu-end" id="db-selector" aria-labelledby="dropdownDbButton">
+                            <!-- Header for the dropdown -->
+                            <h6 class="dropdown-header text-center fw-bold">Weather Station</h6>
+                            
+                            <?php foreach ($dbConfigs as $dbid => $dbConfig): 
+                                // Determine if this is the currently selected weather station
+                                $isActive = ($selectedDb == $dbid) ? 'active' : '';
+                            ?> 
+                                <!-- Dropdown item for each weather station -->
+                                <li>
+                                    <a 
+                                        class="dropdown-item <?php echo $isActive; ?>" 
+                                        href="#" 
+                                        onclick="changeDb('<?php echo $dbid; ?>','<?php echo $dbConfig['weatherStation']; ?>')">
+                                        <?php echo $dbConfig['weatherStation']; ?>
+                                    </a>
+                                </li>
+                            <?php endforeach; ?>    
                         </ul>
                     </div>
+                </div>
+
+                <!-- Normals Selection Dropdown -->
+                <div class="btn-group">
+                    <button class="btn btn-primary btn-sm dropdown-toggle" type="button" id="dropdownNormalsButton" data-bs-toggle="dropdown" aria-expanded="false">
+                        Select Normals
+                    </button>
+
+                    <ul class="dropdown-menu dropdown-menu-end" id="normals-selector" aria-labelledby="dropdownNormalsButton">
+                        <?php
+                            // Parse the JSON file for normals
+                            $jsonData = file_get_contents('normals/NormalsFilesList.json');
+                            $data = json_decode($jsonData, true);
+                            echo '<h6 class="dropdown-header" style="text-align: center; font-weight: bold;">Normals Location</h6>';
+                            foreach ($data['WeatherStations'] as $weatherStation => $periods) {
+                                echo '<li class="dropdown-submenu">';
+                                echo '<a class="dropdown-item dropdown-toggle" href="#">'.$weatherStation.'</a>';
+                                // Align the submenu to the right
+                                echo '<ul class="submenu dropdown-menu dropdown-menu-end">';
+                                echo '<h6 class="dropdown-header" style="text-align: center; font-weight: bold;">Normals period</h6>';
+                                foreach (array_reverse($periods) as $period) {
+                                    echo '<li><a class="dropdown-item" href="#" onclick="changeNormals(\'' . $weatherStation . '\', \'' . $period . '\')">' . str_replace('_', '-', $period) . '</a></li>';
+                                }
+                                echo '</ul>';
+                                echo '</li>';
+                            }
+                        ?>
+                    </ul>
                 </div>
 
                 <!-- JavaScript to handle the dropdown -->
@@ -370,27 +442,7 @@
                     });
                 });
                 </script>
-                <div class="dropdown me-2">
-                    <!-- Database selection dropdown toggle button -->
-                    <button class="btn btn-secondary btn-sm dropdown-toggle" type="button" id="dropdownDbButton" data-bs-toggle="dropdown" aria-expanded="false">  
-                        <?php 
-                            // Display default weatherStation name
-                            echo $dbConfig['weatherStation']; 
-                        ?>
-                    </button>
-                    <!-- Database selection options -->
-                    <ul class="dropdown-menu" id="db-selector" aria-labelledby="dropdownDbButton">
-                        <?php foreach ($dbConfigs as $dbid => $dbConfig): ?>
-                        <?php 
-                            // Check if this is the currently selected database and set the class accordingly
-                            $isActive = ($selectedDb == $dbid) ? 'active' : ''; 
-                            // $selectedDb = $_COOKIE['selectedDb'] ?? ''; // Utilise la valeur du cookie, ou une chaîne vide par défaut
 
-                        ?>
-                        <li><a class="dropdown-item <?php echo $isActive; ?>" href="#" onclick="changeDb('<?php echo $dbid; ?>','<?php echo $dbConfig['weatherStation']; ?>')"><?php echo $dbConfig['weatherStation']; ?></a></li>
-                        <?php endforeach; ?>
-                    </ul>
-                 </div>
             </div>   
         </nav>
     </div>
@@ -479,8 +531,8 @@
                         safeUpdate('live-temp', `${parseFloat(data.temp).toFixed(1)}°C` || "--°C");
                         safeUpdate('live-windchill', `${parseFloat(data.windChill).toFixed(1)}°C` || "--°C");
                         safeUpdate('live-humidity', `${Math.round(data.humidity)}%` || "--%");
-                        safeUpdate('live-rain-rate', `${parseFloat(data.precipRate).toFixed(2)} mm/h` || "-- mm/h");
-                        safeUpdate('live-rain-cumul', `${parseFloat(data.precipTotal).toFixed(2)} mm` || "-- mm");
+                        safeUpdate('live-rain-rate', `${parseFloat(data.precipRate).toFixed(1)} mm/h` || "-- mm/h");
+                        safeUpdate('live-rain-cumul', `${parseFloat(data.precipTotal).toFixed(1)} mm` || "-- mm");
                         safeUpdate('live-pressure', `${Math.round(data.pressure)} hPa` || "-- hPa");
                         safeUpdate('live-wind', `${Math.round(data.windSpeed)} km/h` || "-- km/h");
                     }
@@ -544,37 +596,22 @@
                     })
                     .catch(error => {
                         console.error('Error fetching release version:', error);
+                        return '---'; // Fallback text in case of an error
                     });
             }
 
-            // Function to create an image from a string
-            function createImageFromString(versionString) {
-                // Create a canvas element
-                const canvas = document.createElement('canvas');
-                const context = canvas.getContext('2d');
-
-                // Set the canvas dimensions
-                const text = `v${versionString}`;
-                context.font = '20px Verdana';
-                const textWidth = context.measureText(text).width;
-                canvas.width = textWidth + 20; // add some padding
-                canvas.height = 40; // height of the text
-
-                // Draw the text onto the canvas
-                context.font = '20px Verdana';
-                context.fillStyle = 'blue';
-                context.fillText(text,10,30); // draw the text with some padding
-
-                // Create an image element
-                const img = new Image();
-                img.src = canvas.toDataURL();
-                img.id = 'version-image';
-
-                // Append the image to the container
-                document.getElementById('version-image-container').appendChild(img);
-            }
-
-            // Fetch release version and generate image
-            fetchReleaseVersion().then(createImageFromString);
+            // Fetch release version and insert it into the container
+            fetchReleaseVersion().then(versionString => {
+                if (versionString) {
+                    const container = document.getElementById('version-image-container');
+                    container.textContent = `v${versionString}`;
+                    container.style.fontSize = '10px'; // Set text size
+                    container.style.color = 'blue'; // Set text color
+                    container.style.fontFamily = 'Verdana, sans-serif'; // Set font
+                    container.style.padding = '5px'; // Optional: Add some padding
+                }
+            });
         });
-    </script>
+
+
+     </script>
