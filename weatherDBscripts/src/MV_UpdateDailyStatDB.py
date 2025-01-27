@@ -3,6 +3,10 @@
 from __future__ import print_function
 import json
 import sys
+from astral import LocationInfo
+from astral.sun import sun
+from datetime import date
+import pytz
 
 import urllib.request, urllib.error
 # https://pypi.org/project/easydict/ Access easily to Dictionnary values
@@ -51,165 +55,181 @@ class DayWeatherConditions:
             }]
         }
         """
- 
-    def __init__(self, stationID, mysqlHost, mysqlDBname,user,dbpassword):
-        self.stationID = stationID
-        self.mysqlHost = mysqlHost
-        self.mysqlDBname = mysqlDBname
-        self.user = user
-        self.dbpassword = dbpassword
+    def __init__(self, config):
+        # Assuming 'config' is a dictionary containing all necessary configuration parameters
+        self.stationID = config['weatherStation']
+        self.mysqlHost = config['host']
+        self.mysqlDBname = config['database']
+        self.user = config['username']
+        self.dbpassword = config['password']
+        self.longitude = config['longitude']
+        self.latitude = config['latitude']
+        self.timezone = config['timezone']
+        self.tabledwc = config['tabledwc']
+        self.tablewc = config['tablewc']
 
-    def GetDayWCFromDB(self,user,dbpassword,Date):
-        # ----------------------------------------------------------------
-        # 
-        # SELECT ROUND(AVG(WC_temp),1),
-        #        MAX(WC_temp),
-        #        MIN(WC_Temp)
-        #  FROM `WeatherConditions` WHERE DATE(WC_Datetime) = '2021-10-15' 
-        # Connect to the database
+    def GetDayWCFromDB(self, DateDash):
+        # Access the instance variables like self.user, self.dbpassword, etc.
+        # Use self.mysqlHost, self.mysqlDBname, self.user, self.dbpassword to interact with DB
         connection = pymysql.connect(host=self.mysqlHost,
-                            user=user,
-                            password=dbpassword,
-                            db=self.mysqlDBname,
-                            charset='utf8mb4',
-                            cursorclass=pymysql.cursors.DictCursor,
-                            autocommit=True)
+                                     user=self.user,
+                                     password=self.dbpassword,
+                                     db=self.mysqlDBname,
+                                     charset='utf8mb4',
+                                     cursorclass=pymysql.cursors.DictCursor,
+                                     autocommit=True)
         try:
             with connection.cursor() as cursor:
 
-                # Read a single record
-                sql = """SELECT 
-                ROUND(AVG(WC_temp),1) as WC_TempAvg, 
-                MAX(WC_temp) as WC_TempHigh, 
-                MIN(WC_temp) as WC_TempLow,
-                ROUND(AVG(WC_dewpt),1) as WC_DewPointAvg,
-                MAX(WC_dewpt) as WC_DewPointHigh,
-                MIN(WC_dewpt) as WC_DewPointLow,
-                ROUND(AVG(WC_humidity),0) as WC_HumidityAvg,
-                MAX(WC_humidity) as WC_HumidityHigh,
-                MIN(WC_humidity) as WC_HumidityLow,
-                ROUND(AVG(WC_pressure),1) as WC_PressureAvg,
-                ROUND(MAX(WC_pressure),1) as WC_PressureHigh,
-                ROUND(MIN(WC_pressure),1) as WC_PressureLow,
-                MAX(WC_windSpeed) as WC_WindSpeedMax,
-                MAX(WC_windGust) as WC_GustSpeedMax,
-                ROUND(MAX(WC_precipTotal),1) as WC_PrecipitationSum
-                FROM `WeatherConditions` WHERE DATE(WC_Datetime) = %s"""
-                
-                cursor.execute(sql, Date)
-                #cursor.execute(sql)
-                result = cursor.fetchone()
-                print (result)
-                        
+                # Create a LocationInfo object with the city's name and country
+                # Example: classastral.LocationInfo(name: str = 'Greenwich', region: str = 'England', timezone: str = 'Europe/London', latitude: float = 51.4733, longitude: float = -0.0008333)
+                city = LocationInfo(name=self.stationID, region="France", timezone=self.timezone, latitude=self.latitude, longitude=self.longitude)
+
+                # Get the current date (replace Date with the appropriate variable)
+                current_date = datetime.strptime(DateDash, "%Y-%m-%d")
+
+                # Calculate sunrise and sunset times for the given date
+                s = sun(city.observer, date=current_date)
+
+                # Extract sunrise and sunset times (these are in UTC)
+                sunrise_utc = s['sunrise']
+                sunset_utc = s['sunset']
+
+                # Convert to timezone (if required)
+                tz = pytz.timezone(self.timezone)
+                sunrise_local = sunrise_utc.astimezone(tz)
+                sunset_local = sunset_utc.astimezone(tz)
+
+                # Convert local sunrise and sunset times to string format for SQL query
+                sunrise_str = sunrise_local.strftime("%Y-%m-%d %H:%M:%S")
+                sunset_str = sunset_local.strftime("%Y-%m-%d %H:%M:%S")
+
+                # Calcul de la durée du jour
+                day_duration = sunset_local - sunrise_local
+
+                # Convertir la durée en heures, minutes et secondes
+                hours, remainder = divmod(day_duration.seconds, 3600)
+                minutes, seconds = divmod(remainder, 60)
+
+                # Afficher les résultats
+                print(f"Lever du soleil (local): {sunrise_str}")
+                print(f"Coucher du soleil (local): {sunset_str}")
+                print(f"Durée du jour : {hours} heures, {minutes} minutes et {seconds} secondes")
+
+                # Query for all-day weather data
+                sql_all_day = f"""SELECT 
+                        ROUND(AVG(WC_temp),1) as WC_TempAvg, 
+                        MAX(WC_temp) as WC_TempHigh, 
+                        MIN(WC_temp) as WC_TempLow,
+                        ROUND(AVG(WC_dewpt),1) as WC_DewPointAvg,
+                        MAX(WC_dewpt) as WC_DewPointHigh,
+                        MIN(WC_dewpt) as WC_DewPointLow,
+                        ROUND(AVG(WC_humidity),0) as WC_HumidityAvg,
+                        MAX(WC_humidity) as WC_HumidityHigh,
+                        MIN(WC_humidity) as WC_HumidityLow,
+                        ROUND(AVG(WC_pressure),1) as WC_PressureAvg,
+                        ROUND(MAX(WC_pressure),1) as WC_PressureHigh,
+                        ROUND(MIN(WC_pressure),1) as WC_PressureLow,
+                        MAX(WC_windSpeed) as WC_WindSpeedMax,
+                        MAX(WC_windGust) as WC_GustSpeedMax,
+                        ROUND(MAX(WC_precipTotal),1) as WC_PrecipitationSum
+                        FROM `{self.tablewc}`
+                        WHERE DATE(WC_Datetime) = '{DateDash}'"""
+
+                cursor.execute(sql_all_day)
+                result_all_day = cursor.fetchone()
+
+                # Query for solar radiation data
+                sql_solar_radiation = f"""SELECT 
+                        ROUND(AVG(WC_SolarRadiation),1) as WC_SolarRadiationAvg
+                        FROM `{self.tablewc}`
+                        WHERE DATE(WC_Datetime) = %s
+                        AND WC_Datetime BETWEEN %s AND %s"""
+
+                cursor.execute(sql_solar_radiation, (DateDash, sunrise_str, sunset_str))
+                result_solar = cursor.fetchone()
+
+                # Merge results
+                if result_solar and 'WC_SolarRadiationAvg' in result_solar:
+                    result_all_day['WC_SolarRadiationAvg'] = result_solar['WC_SolarRadiationAvg']
+                else:
+                    result_all_day['WC_SolarRadiationAvg'] = None
+
         finally:
             connection.close()
 
-        return result
-
-    def InsertDayWeatherCondtions(self,user,dbpassword,date,wc):
+        return result_all_day
         
-        # Connect to the database
-        connection = pymysql.connect(host=self.mysqlHost,
-                            user=user,
-                            password=dbpassword,
-                            db=self.mysqlDBname,
-                            charset='utf8mb4',
-                            cursorclass=pymysql.cursors.DictCursor,
-                            autocommit=True)
-        try:
-            with connection.cursor() as cursor:
+    # Method to fetch the columns of the table dynamically based on self.tabledwc
+    def GetTableColumns(self, connection):
+        with connection.cursor() as cursor:
+            # Use the table name from the instance variable self.tabledwc
+            sql = f"DESCRIBE `{self.tabledwc}`"
+            cursor.execute(sql)
+            # Extract the column names from the DESCRIBE query result
+            columns = [row['Field'] for row in cursor.fetchall()]
+        return columns
 
-                # Read a single record
-                sql = "SELECT * FROM `DayWeatherConditions` WHERE `WC_Date`=%s"
-                cursor.execute(sql, date)
+    # Method to insert or update weather conditions
+    def InsertDayWeatherConditions(self, wc, date, fields=None, noexecute=False):
+        # Connect to the MySQL database
+        connection = pymysql.connect(host=self.mysqlHost,
+                                     user=self.user,
+                                     password=self.dbpassword,
+                                     db=self.mysqlDBname,
+                                     charset='utf8mb4',
+                                     cursorclass=pymysql.cursors.DictCursor,
+                                     autocommit=True)
+        try:
+            # Retrieve all valid column names from the table
+            valid_columns = self.GetTableColumns(connection)
+
+            # Validate the provided fields against the valid column names
+            if fields:
+                invalid_fields = [field for field in fields if f"{field}" not in valid_columns]
+                if invalid_fields:
+                    raise ValueError(f"Invalid fields: {', '.join(invalid_fields)}")
+
+            with connection.cursor() as cursor:
+                # Check if a record already exists for the given date
+                sql = f"SELECT * FROM `{self.tabledwc}` WHERE `WC_Date`=%s"
+                cursor.execute(sql, (date,))
                 result = cursor.fetchone()
 
                 if result is None:
-                    # Insert a new record
-                    sql = """INSERT INTO DayWeatherConditions (
-                        WC_Date,
-                        WC_TempAvg, 
-                        WC_TempHigh, 
-                        WC_TempLow,
-                        WC_DewPointAvg,
-                        WC_DewPointHigh,
-                        WC_DewPointLow,
-                        WC_HumidityAvg,
-                        WC_HumidityHigh,
-                        WC_HumidityLow,
-                        WC_PressureAvg,
-                        WC_PressureHigh,
-                        WC_PressureLow,
-                        WC_WindSpeedMax,
-                        WC_GustSpeedMax,
-                        WC_PrecipitationSum
-                        ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"""
-                    
-                    cursor.execute(sql,
-                        (
-                            date,
-                            wc['WC_TempAvg'],
-                            wc['WC_TempHigh'],
-                            wc['WC_TempLow'],
-                            wc['WC_DewPointAvg'],
-                            wc['WC_DewPointHigh'],
-                            wc['WC_DewPointLow'],
-                            wc['WC_HumidityAvg'],
-                            wc['WC_HumidityHigh'],
-                            wc['WC_HumidityLow'],
-                            wc['WC_PressureAvg'],
-                            wc['WC_PressureHigh'],
-                            wc['WC_PressureLow'],
-                            wc['WC_WindSpeedMax'],
-                            wc['WC_GustSpeedMax'],
-                            wc['WC_PrecipitationSum'])
-                        )
+                    # Generate the SQL for INSERT
+                    columns = [f"{key}" for key in wc.keys()]
+                    values = [wc[key] for key in wc.keys()]
+                    sql = f"""INSERT INTO `{self.tabledwc}` ({', '.join(columns)}) 
+                            VALUES ({', '.join(['%s'] * len(values))})"""
+                    if noexecute:
+                        print("[DEBUG] SQL for INSERT:", sql)
+                        print("[DEBUG] Values:", tuple(values))
+                    else:
+                        cursor.execute(sql, tuple(values))
                 else:
+                    # Generate the SQL for UPDATE
+                    if fields:
+                        columns = [f"{field}" for field in fields]
+                        values = [wc[field] for field in fields]
+                    else:
+                        # If no fields are specified, update all fields in `wc`
+                        columns = [f"{key}" for key in wc.keys()]
+                        values = [wc[key] for key in wc.keys()]
+                    set_clause = ", ".join([f"{col} = %s" for col in columns])
+                    sql = f"""UPDATE `{self.tabledwc}` SET {set_clause} WHERE WC_Date = %s"""
+                    if noexecute:
+                        print("[DEBUG] SQL for UPDATE:", sql)
+                        print("[DEBUG] Values:", tuple(values + [date]))
+                    else:
+                        cursor.execute(sql, tuple(values + [date]))
 
-                    # Update existing record
-                    sql = """UPDATE DayWeatherConditions SET 
-                            WC_Date = %s,
-                            WC_TempAvg = %s, 
-                            WC_TempHigh = %s, 
-                            WC_TempLow = %s,
-                            WC_DewPointAvg = %s,
-                            WC_DewPointHigh = %s,
-                            WC_DewPointLow = %s,
-                            WC_HumidityAvg = %s,
-                            WC_HumidityHigh = %s,
-                            WC_HumidityLow = %s,
-                            WC_PressureAvg = %s,
-                            WC_PressureHigh = %s,
-                            WC_PressureLow = %s,
-                            WC_WindSpeedMax = %s,
-                            WC_GustSpeedMax = %s,
-                            WC_PrecipitationSum = %s
-                            WHERE WC_Date = %s"""
-
-                    cursor.execute(sql,
-                        (date,
-                        wc['WC_TempAvg'],
-                        wc['WC_TempHigh'],
-                        wc['WC_TempLow'],
-                        wc['WC_DewPointAvg'],
-                        wc['WC_DewPointHigh'],
-                        wc['WC_DewPointLow'],
-                        wc['WC_HumidityAvg'],
-                        wc['WC_HumidityHigh'],
-                        wc['WC_HumidityLow'],
-                        wc['WC_PressureAvg'],
-                        wc['WC_PressureHigh'],
-                        wc['WC_PressureLow'],
-                        wc['WC_WindSpeedMax'],
-                        wc['WC_GustSpeedMax'],
-                        wc['WC_PrecipitationSum'],
-                        date))
-            
-                    # connection is not autocommit by default. So you must commit to save
-                    # your changes.
+                # Commit the changes if not in noexecute mode
+                if not noexecute:
                     connection.commit()
-                    print(cursor.rowcount, "record(s) affected") 
+                    print(cursor.rowcount, "record(s) affected")
         finally:
+            # Close the database connection
             connection.close()
 
         return
@@ -234,12 +254,12 @@ class DayWeatherConditions:
         print("Vitesse du Vent Maxi: ",wc['WC_WindSpeedMax']," Km/h",sep="")
         print("Vitesse Rafale Maxi : ",wc['WC_GustSpeedMax']," Km/h",sep="")
         print("Précipiation jour   : ",wc['WC_PrecipitationSum']," mm",sep="")
+        print("Radiation Sol. Moy  : ",wc['WC_SolarRadiationAvg']," w/m2",sep="")
         print("-----------------------------------------")
  
         return
 
 # ------------------------------------------------------------
-# https://gist.github.com/monkut/e60eea811ef085a6540f
 # Check if the format of the date given in Arguments is valid
 # ------------------------------------------------------------
 def valid_date_type(arg_date_str):
@@ -254,24 +274,23 @@ def valid_date_type(arg_date_str):
 # Arguments management
 # ------------------------------------------------------------------------------
 def getArgs(argv=None):
-
-
-    parser = argparse.ArgumentParser(formatter_class=argparse.RawDescriptionHelpFormatter,
-    description='''\
-        Update MYSQL DB DayWeatherConditions table with Current conditions
-        extracted from WeatherConditions table.
+    parser = argparse.ArgumentParser(
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        description='''\
+            Update MYSQL DB DayWeatherConditions table with Current conditions
+            extracted from WeatherConditions table.
             --------------------------------------------------------
-             ''',
-    epilog='''
-    --------------------------------------------------------------''')
+        ''',
+        epilog='''--------------------------------------------------------------'''
+    )
 
-    # Use here to check the date a type function
+    # Gestion des dates
     parser.add_argument('-SD', '--startdate',
                         dest='startdate',
                         type=valid_date_type,
                         default=None,
                         required=True,
-                        help='start date in format "YYYY-MM-DD"')
+                        help='Start date in format "YYYY-MM-DD"')
     parser.add_argument('-ED', '--enddate',
                         dest='enddate',
                         type=valid_date_type,
@@ -279,82 +298,98 @@ def getArgs(argv=None):
                         required=True,
                         help='End date in format "YYYY-MM-DD"')
 
-    parser.add_argument('-p', '--password',
-                        dest='dbpassword',
-                        default=None,
+    # Chemin vers le fichier JSON de configuration
+    parser.add_argument('-c', '--config',
+                        dest='config_path',
                         required=True,
-                        help='Mysql admin user password')
+                        help='Path to the JSON configuration file')
 
-
-    parser.add_argument('-d', '--display', action = "store_true",
-                        help='Only Display Current Conditions')
-
+    # Station sélectionnée (Bethune ou Villebon)
     group = parser.add_mutually_exclusive_group(required=True)
-    group.add_argument("-Y", "--yesterday", action="store_true", required=False, help="Process Yesterday's data")
-    group.add_argument("-T", "--today", action="store_true", required=False, help="Process Today's data")
-    group.add_argument("-D", "--delta", action="store_true", required=False, help="Process range of dates")
+    group.add_argument("-B", "--Bethune", action="store_true", help="Bethune WeatherUnderground station")
+    group.add_argument("-V", "--Villebon", action="store_true", help="Villebon WeatherUnderground station")
+
+    # Argument for the fields to be updated (optional), separated by commas
+    parser.add_argument("-f", "--fields", type=str, help="Restrictive list of database fields to be updated, separated by commas, ex: WC_TempAvg,WC_TempHigh,WC_PressureAvg. Default all fields.")    
     
-    group = parser.add_mutually_exclusive_group(required=True)
-    group.add_argument("-B", "--Bethune", action="store_true", required=False, help="Bethune WeatherUnderground station")
-    group.add_argument("-V", "--Villebon", action="store_true", required=False, help="Villebon WeatherUnderground station")
+    # Optional argument to enable debug mode (no execution)
+    parser.add_argument('--noexecute', action='store_true', help="If set, no SQL command will be executed, only printed for debugging.")
 
+    # Options supplémentaires
+    parser.add_argument('-d', '--display', action="store_true",
+                        help='Only display current conditions')
 
     parser.add_argument('--version', action='version', version='[%(prog)20s] 2.0')
-   
+
     return parser.parse_args(argv)
 
+# ------------------------------------------------------------------------------
+# Chargement des configurations JSON
+# ------------------------------------------------------------------------------
+def load_db_config(config_path, station_key):
+    with open(config_path, 'r') as file:
+        config = json.load(file)
+        if station_key in config['dbConfigs']:
+            return config['dbConfigs'][station_key]
+        else:
+            raise ValueError(f"Station key '{station_key}' not found in configuration file.")
+
+# ------------------------------------------------------------------------------
+# Main script
+# ------------------------------------------------------------------------------
 if __name__ == "__main__":
+    args = getArgs()
 
-    argvals = None             # init argv in case not testing
+    # Déterminer la station sélectionnée
+    station_key = 'db1' if args.Villebon else 'db2'
 
-    args = getArgs(argvals)
+    # Charger la configuration depuis le fichier JSON
+    db_config = load_db_config(args.config_path, station_key)
 
-    print ('display is ',args.display)
-    print ('dbpassword is ',args.dbpassword)
-    print ('Start Date is ',args.startdate)
-    print ('End Date is ',args.enddate)
+    print(f"Using configuration for station: {db_config['weatherStation']}")
 
-    # Get current date, then yesterday, put it at format YYYY-MM-DD
-    Aujourdhui = date.today()
-    Hier = Aujourdhui-timedelta(1)
-    #dashyesterday = Hier.strftime("%Y-%m-%d")
-    print("Yesterday's date:", Hier)
-    
+    # If fields to update are specified in --fields option, convert to a list
+    fields_to_update = args.fields.split(',') if args.fields else None
+
+    # Déterminer les dates
+    today = date.today()
+    yesterday = today - timedelta(days=1)
+
     start_date = args.startdate
     end_date = args.enddate
-    dbpassword = args.dbpassword
     delta = timedelta(days=1)
 
-    # if -Y process only Yesterday: Start and end date are equal to yesterday
-    if args.yesterday:
-        start_date = Hier
-        end_date = Hier
+    # Determine the current date and time
+    today = datetime.combine(date.today(), datetime.min.time())  # Convert to datetime at midnight
 
-    if args.today:
-        start_date = Aujourdhui
-        end_date = Aujourdhui
-          
+    # Validate that the date range does not exceed the current day
+    if start_date > today or end_date > today:
+        raise ValueError(f"Date range cannot exceed the current date ({today}). "
+                        f"Provided: start_date={start_date}, end_date={end_date}")
 
-    # Create new WeatherConditions instance for ILEDEFRA131 weather station
-    # ----------------------------------------------------------------------
+    # Validate that start_date is not after end_date
+    if start_date > end_date:
+        raise ValueError(f"Start date ({start_date}) cannot be after end date ({end_date}).")
+
+    
+    print(f"Processing weather data from {start_date} to {end_date}...")
+   
+    # Traitement des données
     while start_date <= end_date:
-  
-        DateDash=start_date.strftime("%Y-%m-%d")
+        DateDash = start_date.strftime("%Y-%m-%d")
 
-        print ("== Process with :",DateDash)
+        print(f"== Processing data for: {DateDash} ==")
 
-        if args.Bethune:
-            wc=DayWeatherConditions('IBTHUN1', '192.168.17.10', 'BethuneWeatherReport','admin',args.dbpassword)
-        if args.Villebon:
-            wc=DayWeatherConditions('IVILLE402', '192.168.17.10', 'VillebonWeatherReport','admin',args.dbpassword)
+        # Création de l'instance DayWeatherConditions avec les configurations JSON
+        wc = DayWeatherConditions(db_config)
 
-        wcID=wc.GetDayWCFromDB('admin',args.dbpassword,DateDash)
+        wcID = wc.GetDayWCFromDB(DateDash)
+
         if wcID is not None:
             if args.display:
-                wc.DisplayWeatherConditions(wcID,DateDash)
+                wc.DisplayWeatherConditions(wcID, DateDash)
             else:
-                wc.InsertDayWeatherCondtions('admin',args.dbpassword,DateDash,wcID)         
+                wc.InsertDayWeatherConditions(wcID, DateDash, fields=fields_to_update, noexecute=args.noexecute)
 
-        print (wcID)
+        print(wcID)
         start_date += delta
-
