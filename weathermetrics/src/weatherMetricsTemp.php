@@ -330,16 +330,22 @@ function generateWeatherMetricsSection($title, $idPrefix, $includeDailySummary =
                 // Titres pour les colonnes de la table
                 const columnsHeaders = [
                     "Day", 
-                    "Daily Mean temperature", 
-                    "Daily Max temperature", 
-                    "Daily Min temperature"
+                    "Mean",
+                    "Normal Mean",
+                    "Max", 
+                    "Normal Max",
+                    "Min",
+                    "Normal Min"
                 ];
 
                 // Appel de la fonction
                 updateWeatherTable("DailyTemp", dates, {
                     "Average": averages,
+                    "NormAvg": AvgTempAvgs,
                     "Max": maximums,
-                    "Min": minimums
+                    "NormMax": AvgTempHighs,
+                    "Min": minimums,
+                    "NormMin": AvgTempLows
                 }, columnsHeaders);
 
                 // ============== Update Daily Temperature Metrics Summary =============

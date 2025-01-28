@@ -3,18 +3,19 @@
 # Database connection parameters
 DB_USER="admin"
 DB_HOSTNAME="192.168.17.10"
-# DB_PASSWORD="your_password"
+#DB_PASSWORD=""
 DB_NAME="VillebonWeatherReport"
+DEST_DBNAME="ClimateNormals"
 
 # Table names
-SOURCE_TABLE="ParisMontsourisDayWeatherConditions"
-DEST_TABLE="Normals_1921_1960"
+SOURCE_TABLE="DayWeatherConditions"
+DEST_TABLE="VillebonSurYvette_Normals_2016_2024"
 
 # MySQL command to execute SQL statements
-MYSQL_CMD="mysql -u$DB_USER -p -h$DB_HOSTNAME -D$DB_NAME -e"
+MYSQL_CMD="mysql -u$DB_USER -p -h$DB_HOSTNAME -e"
 
 # SQL statements to create and populate the new table
-SQL_CREATE_TABLE="CREATE TABLE $DB_NAME.$DEST_TABLE (
+SQL_CREATE_TABLE="CREATE TABLE $DEST_DBNAME.$DEST_TABLE (
     DayOfYear           VARCHAR(5)   NOT NULL PRIMARY KEY,
     AvgTempAvg          DECIMAL(3,1) NULL,
     AvgTempHigh         DECIMAL(3,1) NULL,
@@ -61,7 +62,7 @@ SQL_CREATE_TABLE="CREATE TABLE $DB_NAME.$DEST_TABLE (
     MaxPrecipitationSum DECIMAL(4,1) NULL
 );"
 
-SQL_INSERT_DATA="INSERT INTO $DB_NAME.$DEST_TABLE (DayOfYear, AvgTempAvg, AvgTempHigh, AvgTempLow, MinTempAvg, MaxTempAvg, MinTempHigh, MaxTempHigh, MinTempLow, MaxTempLow,
+SQL_INSERT_DATA="INSERT INTO $DEST_DBNAME.$DEST_TABLE (DayOfYear, AvgTempAvg, AvgTempHigh, AvgTempLow, MinTempAvg, MaxTempAvg, MinTempHigh, MaxTempHigh, MinTempLow, MaxTempLow,
     AvgDewPointAvg, AvgDewPointHigh, AvgDewPointLow, MinDewPointAvg, MaxDewPointAvg, MinDewPointHigh, MaxDewPointHigh, MinDewPointLow, MaxDewPointLow,
     AvgHumidityAvg, AvgHumidityHigh, AvgHumidityLow, MinHumidityAvg, MaxHumidityAvg, MinHumidityHigh, MaxHumidityHigh, MinHumidityLow, MaxHumidityLow,
     AvgPressureAvg, AvgPressureHigh, AvgPressureLow, MinPressureAvg, MaxPressureAvg, MinPressureHigh, MaxPressureHigh, MinPressureLow, MaxPressureLow,
@@ -114,7 +115,7 @@ SELECT
 FROM
     $DB_NAME.$SOURCE_TABLE
 WHERE
-    WC_Date BETWEEN '1921-01-01' AND '1960-12-31'
+    WC_Date BETWEEN '2016-01-01' AND '2024-12-31'
 GROUP BY
     DayOfYear;"
 
@@ -127,8 +128,8 @@ else
 fi
 
 if $MYSQL_CMD "$SQL_INSERT_DATA"; then
-    echo "Table $DEST_TABLE populated with averages, minimum, and maximum values."
+    echo "Table $DEST_DBNAME.$DEST_TABLE populated with averages, minimum, and maximum values."
 else
-    echo "Error populating table $DEST_TABLE."
+    echo "Error populating table $DEST_DBNAME.$DEST_TABLE."
     exit 1
 fi
