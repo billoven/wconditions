@@ -195,17 +195,22 @@ class DayWeatherConditions:
                 sql = f"SELECT * FROM `{self.tabledwc}` WHERE `WC_Date`=%s"
                 cursor.execute(sql, (date,))
                 result = cursor.fetchone()
-
+              
                 if result is None:
-                    # Generate the SQL for INSERT
-                    columns = [f"{key}" for key in wc.keys()]
-                    values = [wc[key] for key in wc.keys()]
+                    # Ensure that WC_Date is included in the columns and values for the INSERT statement
+                    columns = ["WC_Date"] + [f"{key}" for key in wc.keys()]
+                    values = [date] + [wc[key] for key in wc.keys()]
+
+                    # Construct the SQL query for inserting a new record
                     sql = f"""INSERT INTO `{self.tabledwc}` ({', '.join(columns)}) 
                             VALUES ({', '.join(['%s'] * len(values))})"""
+                    
                     if noexecute:
+                        # Debug mode: Print the SQL query and values instead of executing it
                         print("[DEBUG] SQL for INSERT:", sql)
                         print("[DEBUG] Values:", tuple(values))
                     else:
+                        # Execute the SQL query with the provided values
                         cursor.execute(sql, tuple(values))
                 else:
                     # Generate the SQL for UPDATE
