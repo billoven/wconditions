@@ -114,6 +114,12 @@
         .navbar-brand span {
             color: #4a90e2;
         }
+        .navbar-nav .nav-link.active {
+            /* text-decoration: underline; /* Underline the active link */
+            font-weight: bold; /* Make it bold */
+            color: #007bff !important; /* Bootstrap primary blue */
+            /* border-bottom: 2px solid #007bff; /* Optional: Add a bottom border */
+        }
         .dropdown-menu {
             min-width: 180px;
             background-color:rgb(161, 205, 249) ;
@@ -307,6 +313,8 @@
         // - Various paramenters for acessing to the selected Climate Normals data
         require('weatherMetricsInit.php');
 
+        $current_page = basename($_SERVER['PHP_SELF']); // Get the current page filename
+
     ?>
 
     <!-- Navigation bar -->  
@@ -323,7 +331,7 @@
                 </div>
             </a>
             <div class="release-container" id="version-image-container">
-                <!-- Release version will be inserted here as an image -->
+                <!-- Release version will be inserted here as a text x.y.z -->
             </div>
             <!-- Navbar toggle button for small screens -->
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
@@ -333,21 +341,20 @@
                 <!-- Navigation links -->
                 <ul class="navbar-nav">
                     <li class="nav-item">
-                        <a href="weatherMetricsTemp.php" class="nav-link btn btn-light fs-6 text-dark" role="button">Temperatures</a>
+                        <a href="weatherMetricsTemp.php" class="nav-link btn btn-light fs-6 text-dark <?= ($current_page == 'weatherMetricsTemp.php') ? 'active' : '' ?>" role="button">Temperatures</a>
                     </li>
                     <li class="nav-item">
-                        <a href="weatherMetricsRain.php" class="nav-link btn btn-light fs-6 text-dark" role="button">Rainfall</a>
+                        <a href="weatherMetricsRain.php" class="nav-link btn btn-light fs-6 text-dark <?= ($current_page == 'weatherMetricsRain.php') ? 'active' : '' ?>" role="button">Rainfall</a>
                     </li>
                     <li class="nav-item">
-                        <a href="weatherMetricsPressure.php" class="nav-link btn btn-light fs-6 text-dark" role="button">Pressure</a>
+                        <a href="weatherMetricsPressure.php" class="nav-link btn btn-light fs-6 text-dark <?= ($current_page == 'weatherMetricsPressure.php') ? 'active' : '' ?>" role="button">Pressure</a>
                     </li>
                     <li class="nav-item">
-                        <a href="weatherMetricsComp.php" class="nav-link btn btn-light fs-6 text-dark" role="button">Comparison</a>
+                        <a href="weatherMetricsComp.php" class="nav-link btn btn-light fs-6 text-dark <?= ($current_page == 'weatherMetricsComp.php') ? 'active' : '' ?>" role="button">Comparison</a>
                     </li>
                     <li class="nav-item">
-                        <a href="weatherMetricsByYear.php" class="nav-link btn btn-light fs-6 text-dark" role="button">Climate-Stats</a>
+                        <a href="weatherMetricsByYear.php" class="nav-link btn btn-light fs-6 text-dark <?= ($current_page == 'weatherMetricsByYear.php') ? 'active' : '' ?>" role="button">Climate-Stats</a>
                     </li>
-                    <!-- Add more navigation links as needed -->
                 </ul>
                 <!-- Dropdowns for Normals, Database, and Selections -->
                 <!-- Modern Dropdowns for Weather Station and Normals -->
@@ -596,7 +603,7 @@
                     })
                     .catch(error => {
                         console.error('Error fetching release version:', error);
-                        return '---'; // Fallback text in case of an error
+                        return ''; // Fallback text in case of an error
                     });
             }
 
@@ -604,7 +611,7 @@
             fetchReleaseVersion().then(versionString => {
                 if (versionString) {
                     const container = document.getElementById('version-image-container');
-                    container.textContent = `v${versionString}`;
+                    container.textContent = `${versionString}`;
                     container.style.fontSize = '10px'; // Set text size
                     container.style.color = 'blue'; // Set text color
                     container.style.fontFamily = 'Verdana, sans-serif'; // Set font

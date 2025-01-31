@@ -121,7 +121,7 @@ GROUP BY
 
 # Execute SQL statements with error handling
 if $MYSQL_CMD "$SQL_CREATE_TABLE"; then
-    echo "Table $DEST_TABLE created."
+    echo "Table $DEST_DBNAME. $DEST_TABLE created."
 else
     echo "Error creating table $DEST_TABLE."
     exit 1

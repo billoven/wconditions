@@ -159,7 +159,7 @@
             $season = '';
 
             if ($month == 12) {
-                $season = "Winter " . $year + 1; // December belongs to the next year's winter
+                $season = "Winter " . ($year + 1); // Now correctly outputs "Winter 2025"
             } elseif (in_array($month, [1, 2])) {
                 $season = "Winter " . $year;
             } elseif (in_array($month, [3, 4, 5])) {
