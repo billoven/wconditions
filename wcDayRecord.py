@@ -7,7 +7,7 @@ def fetch_weather_data(date=None, period=None):
     try:
         connection = pymysql.connect(host='192.168.17.10',
                                      user='admin',
-                                     password='Z0uZ0u0!',
+                                     password='xxxxxx',
                                      database='VillebonWeatherReport',
                                      cursorclass=pymysql.cursors.DictCursor)
 
