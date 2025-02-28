@@ -144,22 +144,30 @@ $selectedPeriod = $_COOKIE['selectedNormals'] ?? $dbConfig['DefaultNormals'];
 $normalsTable = $dbConfig['NormalsDB'] . "." . $selectedCity . "_Normals_" . $selectedPeriod;
 
 // Define the weather metrics based on the selected type
-$metrics = match ($metric) {
-    'Temperature' => [
-        'AVG(d.WC_TempAvg) AS avg_temp',
-        'AVG(d.WC_TempHigh) AS max_temp',
-        'AVG(d.WC_TempLow) AS min_temp'
-    ],
-    'Rainfall' => [
-        'SUM(WC_PrecipitationSum) AS total_precipitation'
-    ],
-    'Pressure' => [
-        'AVG(WC_PressureAvg) AS avg_pressure',
-        'AVG(WC_PressureHigh) AS max_pressure',
-        'AVG(WC_PressureLow) AS min_pressure'
-    ],
-    default => die("Invalid metric type selected.")
-};
+// Define the weather metrics based on the selected metric
+switch ($metric) {
+    case 'Temperature':
+        $metrics = [
+            'AVG(d.WC_TempAvg) AS avg_temp',
+            'AVG(d.WC_TempHigh) AS max_temp',
+            'AVG(d.WC_TempLow) AS min_temp'
+        ];
+        break;
+    case 'Rainfall':
+        $metrics = [
+            'SUM(WC_PrecipitationSum) AS total_precipitation'
+        ];
+        break;
+    case 'Pressure':
+        $metrics = [
+            'AVG(WC_PressureAvg) AS avg_pressure',
+            'AVG(WC_PressureHigh) AS max_pressure',
+            'AVG(WC_PressureLow) AS min_pressure'
+        ];
+        break;
+    default:
+        die("Invalid metric type selected.");
+}
 
 // Define the corresponding normal weather metrics based on the selected metric
 switch ($metric) {
@@ -186,6 +194,7 @@ switch ($metric) {
     default:
         die("Invalid metric type selected.");
 }
+
 
 // Initialize weather data retrieval for different time groupings
 $groupByOptions = ['by_day', 'by_month', 'by_year', 'by_season'];
