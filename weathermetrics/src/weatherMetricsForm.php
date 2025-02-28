@@ -1,100 +1,37 @@
 <?php
-// Class to handle weather data retrieval and processing
-class WeatherData {
-    // private PDO $db; // Database connection
-    private mysqli $db; // Base de données avec mysqli
-    private string $groupBy; // Grouping criteria (day, month, year, season)
-    private string $startDate; // Start date for data retrieval
-    private string $endDate; // End date for data retrieval
-    private array $metrics; // Weather metrics to retrieve
-    private array $normalMetrics; // Normalized weather metrics for comparison
-    private string $normalsTable; // Table containing normal weather values
 
-    // Constructor initializes the class with database connection and parameters
-    //public function __construct(PDO $db, string $groupBy, string $startDate, string $endDate, array $metrics, array $normalMetrics, string $normalsTable) {
-    //    $this->db = $db;
-    //    $this->groupBy = $groupBy;
-    //    $this->startDate = $startDate;
-    //    $this->endDate = $endDate;
-    //    $this->metrics = $metrics;
-    //    $this->normalMetrics = $normalMetrics;
-    //    $this->normalsTable = $normalsTable;
-    //}
-    public function __construct(mysqli $db, string $groupBy, string $startDate, string $endDate, array $metrics, array $normalMetrics, string $normalsTable) {
-        $this->db = $db;
-        $this->groupBy = $groupBy;
-        $this->startDate = $startDate;
-        $this->endDate = $endDate;
-        $this->metrics = $metrics;
-        $this->normalMetrics = $normalMetrics;
-        $this->normalsTable = $normalsTable;
-    }
+// Function to get grouped weather data
+function getGroupedData($db, $groupBy, $startDate, $endDate, $metrics, $normalMetrics, $normalsTable) {
+    // Determine the grouping column based on the $groupBy value
+    $groupColumn = getGroupColumn($groupBy);
     
+    // Format the metrics for SQL query
+    $metricsColumns = implode(", ", $metrics);
+    $normalMetricsColumns = implode(", ", $normalMetrics);
 
-    // Retrieves grouped weather data from the database
-    //public function getGroupedData(): array {
-    //    $groupColumn = $this->getGroupColumn(); // Determine grouping column
-    //    $metricsColumns = implode(", ", $this->metrics); // Format selected metrics
-    //    $normalMetricsColumns = implode(", ", $this->normalMetrics); // Format normal metrics
-    
-        // SQL query to retrieve data with optional left join to normal values
-    //    $query = "SELECT $groupColumn AS label, $metricsColumns, $normalMetricsColumns
-    //              FROM DayWeatherConditions d
-    //              LEFT JOIN $this->normalsTable n 
-    //              ON DATE_FORMAT(d.WC_Date, '%m-%d') = n.DayOfYear
-    //              WHERE d.WC_Date BETWEEN :startDate AND :endDate 
-    //              GROUP BY label ORDER BY MIN(d.WC_Date)";
-    //
-    //    $stmt = $this->db->prepare($query);
-    //    $stmt->bindParam(':startDate', $this->startDate);
-    //    $stmt->bindParam(':endDate', $this->endDate);
-    //    //print_r($query);
-    //    $stmt->execute();
-    
-        // Fetch all results and round numerical values to 1 decimal place
-    //    $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
-    //    return array_map(function ($row) {
-    //        foreach ($row as $key => $value) {
-    //            if (is_numeric($value)) {
-    //                $row[$key] = round($value, 1);
-    //            }
-    //        }
-    //        return $row;
-    //    }, $results);
-    //}
- 
-    public function getGroupedData(): array {
-        $groupColumn = $this->getGroupColumn(); // Déterminer la colonne de regroupement
-        $metricsColumns = implode(", ", $this->metrics); // Formater les métriques sélectionnées
-        $normalMetricsColumns = implode(", ", $this->normalMetrics); // Formater les métriques normales
-     
-        // Requête SQL pour récupérer les données avec une jointure gauche sur les valeurs normales
-        $query = "SELECT $groupColumn AS label, $metricsColumns, $normalMetricsColumns
-                  FROM DayWeatherConditions d
-                  LEFT JOIN $this->normalsTable n 
-                  ON DATE_FORMAT(d.WC_Date, '%m-%d') = n.DayOfYear
-                  WHERE d.WC_Date BETWEEN ? AND ? 
-                  GROUP BY label ORDER BY MIN(d.WC_Date)";
-     
-        // Préparation de la requête avec mysqli
-        $stmt = $this->db->prepare($query);
-        if ($stmt === false) {
-            die('Erreur de préparation de la requête : ' . $this->db->error);
-        }
-    
-        // Lier les paramètres
-        $stmt->bind_param('ss', $this->startDate, $this->endDate); // 'ss' pour deux chaînes de caractères
-        
-        // Exécuter la requête
+    // SQL query to retrieve the grouped data
+    $query = "SELECT $groupColumn AS label, $metricsColumns, $normalMetricsColumns
+              FROM DayWeatherConditions d
+              LEFT JOIN $normalsTable n 
+              ON DATE_FORMAT(d.WC_Date, '%m-%d') = n.DayOfYear
+              WHERE d.WC_Date BETWEEN ? AND ? 
+              GROUP BY label ORDER BY MIN(d.WC_Date)";
+
+    // Prepare the SQL statement
+    if ($stmt = $db->prepare($query)) {
+        // Bind parameters
+        $stmt->bind_param('ss', $startDate, $endDate);
+
+        // Execute the query
         $stmt->execute();
-     
-        // Récupérer les résultats
+
+        // Fetch the results
         $results = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
-    
-        // Fermer la déclaration préparée
+
+        // Close the prepared statement
         $stmt->close();
-     
-        // Arrondir les valeurs numériques à 1 décimale
+
+        // Round numerical values to 1 decimal place
         return array_map(function ($row) {
             foreach ($row as $key => $value) {
                 if (is_numeric($value)) {
@@ -103,66 +40,70 @@ class WeatherData {
             }
             return $row;
         }, $results);
-    }
-        
-
-    // Returns the grouped data as a JSON string
-    public function getGroupedDataAsJson(): string {
-        return json_encode($this->getGroupedData(), JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
-    }
-
-    // Determines the SQL column to use for grouping data
-    private function getGroupColumn(): string {
-        return match ($this->groupBy) {
-            'by_day' => 'DATE(WC_Date)',
-            'by_month' => 'DATE_FORMAT(WC_Date, "%Y-%m")',
-            'by_year' => 'YEAR(WC_Date)',
-            'by_season' => "CONCAT(
-                                CASE 
-                                    WHEN MONTH(WC_Date) IN (12, 1, 2) THEN 'Winter'
-                                    WHEN MONTH(WC_Date) IN (3, 4, 5) THEN 'Spring'
-                                    WHEN MONTH(WC_Date) IN (6, 7, 8) THEN 'Summer'
-                                    WHEN MONTH(WC_Date) IN (9, 10, 11) THEN 'Autumn'
-                                END,
-                                ' ',
-                                CASE 
-                                    WHEN MONTH(WC_Date) = 12 THEN YEAR(WC_Date) + 1
-                                    ELSE YEAR(WC_Date)
-                                END
-                            )",
-            default => 'DATE(WC_Date)',
-        };
-    }
-    
-    // Calculates a moving average for a given dataset
-    public function calculateMovingAverage(array $data, int $windowSize): array {
-        $movingAverages = [];
-        $dataSize = count($data);
-    
-        for ($i = 0; $i < $dataSize; $i++) {
-            $startIndex = max(0, $i - $windowSize + 1);
-            $window = array_slice($data, $startIndex, $i - $startIndex + 1);
-            $average = array_sum($window) / count($window);
-            $movingAverages[] = round($average, 1); // Round to 1 decimal place
-        }
-    
-        return $movingAverages;
-    }
-    
-    // Retrieves a moving average of daily temperatures
-    public function getMovingAverageByDay(int $windowSize): array {
-        $data = $this->getGroupedData();
-        if (empty($data)) {
-            return [];
-        }
-    
-        $avgTemps = array_column($data, 'avg_temp');
-        $labels = array_column($data, 'label');
-        $movingAverages = $this->calculateMovingAverage($avgTemps, $windowSize);
-    
-        return array_map(null, $movingAverages);
+    } else {
+        die('Error preparing statement: ' . $db->error);
     }
 }
+
+// Function to get the grouping column based on the $groupBy value
+function getGroupColumn($groupBy) {
+    switch ($groupBy) {
+        case 'by_day':
+            return 'DATE(WC_Date)';
+        case 'by_month':
+            return 'DATE_FORMAT(WC_Date, "%Y-%m")';
+        case 'by_year':
+            return 'YEAR(WC_Date)';
+        case 'by_season':
+            return "CONCAT(
+                        CASE 
+                            WHEN MONTH(WC_Date) IN (12, 1, 2) THEN 'Winter'
+                            WHEN MONTH(WC_Date) IN (3, 4, 5) THEN 'Spring'
+                            WHEN MONTH(WC_Date) IN (6, 7, 8) THEN 'Summer'
+                            WHEN MONTH(WC_Date) IN (9, 10, 11) THEN 'Autumn'
+                        END,
+                        ' ',
+                        CASE 
+                            WHEN MONTH(WC_Date) = 12 THEN YEAR(WC_Date) + 1
+                            ELSE YEAR(WC_Date)
+                        END
+                    )";
+        default:
+            return 'DATE(WC_Date)';
+    }
+}
+
+// Function to calculate moving average
+function calculateMovingAverage($data, $windowSize) {
+    $movingAverages = [];
+    $dataSize = count($data);
+
+    for ($i = 0; $i < $dataSize; $i++) {
+        $startIndex = max(0, $i - $windowSize + 1);
+        $window = array_slice($data, $startIndex, $i - $startIndex + 1);
+        $average = array_sum($window) / count($window);
+        $movingAverages[] = round($average, 1); // Round to 1 decimal place
+    }
+
+    return $movingAverages;
+}
+
+// Function to get moving average of daily temperatures
+function getMovingAverageByDay($db, $groupBy, $startDate, $endDate, $metrics, $normalMetrics, $normalsTable, $windowSize) {
+    $data = getGroupedData($db, $groupBy, $startDate, $endDate, $metrics, $normalMetrics, $normalsTable);
+    if (empty($data)) {
+        return [];
+    }
+
+    // Extract the 'avg_temp' values from the data
+    $avgTemps = array_column($data, 'avg_temp');
+    
+    // Calculate the moving averages
+    $movingAverages = calculateMovingAverage($avgTemps, $windowSize);
+
+    return array_map(null, $movingAverages);
+}
+
 
 // Fetch parameters from POST/GET requests or set default values
 $start_date = $_POST['start_date'] ?? '2025-01-25';
@@ -182,14 +123,6 @@ if (!isset($dbConfigs[$selectedDb])) {
     die("Database configuration not found.");
 }
 
-// Establish database connection using configuration settings
-//$dbConfig = $dbConfigs[$selectedDb];
-//$pdo = new PDO(
-//    "mysql:host={$dbConfig['host']};dbname={$dbConfig['database']};charset=utf8",
-//    $dbConfig['username'],
-//    $dbConfig['password'],
-//    [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]
-//);
 // Establish database connection using mysqli
 $dbConfig = $dbConfigs[$selectedDb];
 $db = new mysqli(
@@ -199,11 +132,11 @@ $db = new mysqli(
     $dbConfig['database']
 );
 
+
 // Check if the connection failed
 if ($db->connect_error) {
     die("Connection failed: " . $db->connect_error);
 }
-
 
 // Fetch city and period for normal data from cookies or default values
 $selectedCity = $_COOKIE['selectedNormalsCity'] ?? $dbConfig['DefaultNormalsCity'];
@@ -228,40 +161,49 @@ $metrics = match ($metric) {
     default => die("Invalid metric type selected.")
 };
 
-// Define the corresponding normal weather metrics
-$normalMetrics = match ($metric) {
-    'Temperature' => [
-        'AVG(n.AvgTempAvg) AS normal_avg_temp',
-        'MAX(n.AvgTempHigh) AS normal_max_temp',
-        'MIN(n.AvgTempLow) AS normal_min_temp'
-    ],
-    'Rainfall' => [
-        'SUM(AvgPrecipitationSum) AS normal_total_precipitation',
-        'MAX(MaxPrecipitationSum) AS normal_max_precipitation'
-    ],
-    'Pressure' => [
-        'AVG(n.AvgPressureAvg) AS normal_avg_pressure',
-        'MAX(n.AvgPressureHigh) AS normal_max_pressure',
-        'MIN(n.AvgPressureLow) AS normal_min_pressure'
-    ],
-    default => die("Invalid metric type selected.")
-};
+// Define the corresponding normal weather metrics based on the selected metric
+switch ($metric) {
+    case 'Temperature':
+        $normalMetrics = [
+            'AVG(n.AvgTempAvg) AS normal_avg_temp',
+            'MAX(n.AvgTempHigh) AS normal_max_temp',
+            'MIN(n.AvgTempLow) AS normal_min_temp'
+        ];
+        break;
+    case 'Rainfall':
+        $normalMetrics = [
+            'SUM(AvgPrecipitationSum) AS normal_total_precipitation',
+            'MAX(MaxPrecipitationSum) AS normal_max_precipitation'
+        ];
+        break;
+    case 'Pressure':
+        $normalMetrics = [
+            'AVG(n.AvgPressureAvg) AS normal_avg_pressure',
+            'MAX(n.AvgPressureHigh) AS normal_max_pressure',
+            'MIN(n.AvgPressureLow) AS normal_min_pressure'
+        ];
+        break;
+    default:
+        die("Invalid metric type selected.");
+}
 
 // Initialize weather data retrieval for different time groupings
 $groupByOptions = ['by_day', 'by_month', 'by_year', 'by_season'];
-$weatherDataObjects = [];  
 $weatherDataArrays = [];
 
 foreach ($groupByOptions as $groupBy) {
-    //$weatherData = new WeatherData($pdo, $groupBy, $start_date, $end_date, $metrics, $normalMetrics, $normalsTable);
-    // Now pass the $db object to the WeatherData class
-    $weatherData = new WeatherData($db, $groupBy, $start_date, $end_date, $metrics, $normalMetrics, $normalsTable);
-    $weatherDataObjects[$groupBy] = $weatherData;
-    $weatherDataArrays[$groupBy] = $weatherData->getGroupedData();
+    // Fetch grouped data using procedural function
+    $groupedData = getGroupedData($db, $groupBy, $start_date, $end_date, $metrics, $normalMetrics, $normalsTable);
+    $weatherDataArrays[$groupBy] = $groupedData;
 }
 
 // Compute 7-day moving average for daily temperatures
-$movingAvgData = isset($weatherDataObjects['by_day']) ? $weatherDataObjects['by_day']->getMovingAverageByDay(7) : [];
+$movingAvgData = isset($weatherDataArrays['by_day']) ? calculateMovingAverage(array_column($weatherDataArrays['by_day'], 'avg_temp'), 7) : [];
+
+// Close the database connection
+$db->close();
+
+
 
 //print_r($weatherDataArrays);
 //echo json_encode($weatherDataJsons, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
@@ -363,7 +305,6 @@ switch ($metric) {
         echo "<p class='text-danger'>No valid metric selected.</p>";
         break;
 }
-
 
 echo json_encode($responseData, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
 
