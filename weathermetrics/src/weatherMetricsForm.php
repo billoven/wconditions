@@ -1,7 +1,8 @@
 <?php
 // Class to handle weather data retrieval and processing
 class WeatherData {
-    private PDO $db; // Database connection
+    // private PDO $db; // Database connection
+    private mysqli $db; // Base de données avec mysqli
     private string $groupBy; // Grouping criteria (day, month, year, season)
     private string $startDate; // Start date for data retrieval
     private string $endDate; // End date for data retrieval
@@ -10,7 +11,16 @@ class WeatherData {
     private string $normalsTable; // Table containing normal weather values
 
     // Constructor initializes the class with database connection and parameters
-    public function __construct(PDO $db, string $groupBy, string $startDate, string $endDate, array $metrics, array $normalMetrics, string $normalsTable) {
+    //public function __construct(PDO $db, string $groupBy, string $startDate, string $endDate, array $metrics, array $normalMetrics, string $normalsTable) {
+    //    $this->db = $db;
+    //    $this->groupBy = $groupBy;
+    //    $this->startDate = $startDate;
+    //    $this->endDate = $endDate;
+    //    $this->metrics = $metrics;
+    //    $this->normalMetrics = $normalMetrics;
+    //    $this->normalsTable = $normalsTable;
+    //}
+    public function __construct(mysqli $db, string $groupBy, string $startDate, string $endDate, array $metrics, array $normalMetrics, string $normalsTable) {
         $this->db = $db;
         $this->groupBy = $groupBy;
         $this->startDate = $startDate;
@@ -19,29 +29,72 @@ class WeatherData {
         $this->normalMetrics = $normalMetrics;
         $this->normalsTable = $normalsTable;
     }
+    
 
     // Retrieves grouped weather data from the database
-    public function getGroupedData(): array {
-        $groupColumn = $this->getGroupColumn(); // Determine grouping column
-        $metricsColumns = implode(", ", $this->metrics); // Format selected metrics
-        $normalMetricsColumns = implode(", ", $this->normalMetrics); // Format normal metrics
+    //public function getGroupedData(): array {
+    //    $groupColumn = $this->getGroupColumn(); // Determine grouping column
+    //    $metricsColumns = implode(", ", $this->metrics); // Format selected metrics
+    //    $normalMetricsColumns = implode(", ", $this->normalMetrics); // Format normal metrics
     
         // SQL query to retrieve data with optional left join to normal values
+    //    $query = "SELECT $groupColumn AS label, $metricsColumns, $normalMetricsColumns
+    //              FROM DayWeatherConditions d
+    //              LEFT JOIN $this->normalsTable n 
+    //              ON DATE_FORMAT(d.WC_Date, '%m-%d') = n.DayOfYear
+    //              WHERE d.WC_Date BETWEEN :startDate AND :endDate 
+    //              GROUP BY label ORDER BY MIN(d.WC_Date)";
+    //
+    //    $stmt = $this->db->prepare($query);
+    //    $stmt->bindParam(':startDate', $this->startDate);
+    //    $stmt->bindParam(':endDate', $this->endDate);
+    //    //print_r($query);
+    //    $stmt->execute();
+    
+        // Fetch all results and round numerical values to 1 decimal place
+    //    $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    //    return array_map(function ($row) {
+    //        foreach ($row as $key => $value) {
+    //            if (is_numeric($value)) {
+    //                $row[$key] = round($value, 1);
+    //            }
+    //        }
+    //        return $row;
+    //    }, $results);
+    //}
+ 
+    public function getGroupedData(): array {
+        $groupColumn = $this->getGroupColumn(); // Déterminer la colonne de regroupement
+        $metricsColumns = implode(", ", $this->metrics); // Formater les métriques sélectionnées
+        $normalMetricsColumns = implode(", ", $this->normalMetrics); // Formater les métriques normales
+     
+        // Requête SQL pour récupérer les données avec une jointure gauche sur les valeurs normales
         $query = "SELECT $groupColumn AS label, $metricsColumns, $normalMetricsColumns
                   FROM DayWeatherConditions d
                   LEFT JOIN $this->normalsTable n 
                   ON DATE_FORMAT(d.WC_Date, '%m-%d') = n.DayOfYear
-                  WHERE d.WC_Date BETWEEN :startDate AND :endDate 
+                  WHERE d.WC_Date BETWEEN ? AND ? 
                   GROUP BY label ORDER BY MIN(d.WC_Date)";
-    
+     
+        // Préparation de la requête avec mysqli
         $stmt = $this->db->prepare($query);
-        $stmt->bindParam(':startDate', $this->startDate);
-        $stmt->bindParam(':endDate', $this->endDate);
-        //print_r($query);
-        $stmt->execute();
+        if ($stmt === false) {
+            die('Erreur de préparation de la requête : ' . $this->db->error);
+        }
     
-        // Fetch all results and round numerical values to 1 decimal place
-        $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        // Lier les paramètres
+        $stmt->bind_param('ss', $this->startDate, $this->endDate); // 'ss' pour deux chaînes de caractères
+        
+        // Exécuter la requête
+        $stmt->execute();
+     
+        // Récupérer les résultats
+        $results = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+    
+        // Fermer la déclaration préparée
+        $stmt->close();
+     
+        // Arrondir les valeurs numériques à 1 décimale
         return array_map(function ($row) {
             foreach ($row as $key => $value) {
                 if (is_numeric($value)) {
@@ -51,7 +104,8 @@ class WeatherData {
             return $row;
         }, $results);
     }
-    
+        
+
     // Returns the grouped data as a JSON string
     public function getGroupedDataAsJson(): string {
         return json_encode($this->getGroupedData(), JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
@@ -129,13 +183,27 @@ if (!isset($dbConfigs[$selectedDb])) {
 }
 
 // Establish database connection using configuration settings
+//$dbConfig = $dbConfigs[$selectedDb];
+//$pdo = new PDO(
+//    "mysql:host={$dbConfig['host']};dbname={$dbConfig['database']};charset=utf8",
+//    $dbConfig['username'],
+//    $dbConfig['password'],
+//    [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]
+//);
+// Establish database connection using mysqli
 $dbConfig = $dbConfigs[$selectedDb];
-$pdo = new PDO(
-    "mysql:host={$dbConfig['host']};dbname={$dbConfig['database']};charset=utf8",
+$db = new mysqli(
+    $dbConfig['host'],
     $dbConfig['username'],
     $dbConfig['password'],
-    [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]
+    $dbConfig['database']
 );
+
+// Check if the connection failed
+if ($db->connect_error) {
+    die("Connection failed: " . $db->connect_error);
+}
+
 
 // Fetch city and period for normal data from cookies or default values
 $selectedCity = $_COOKIE['selectedNormalsCity'] ?? $dbConfig['DefaultNormalsCity'];
@@ -185,7 +253,9 @@ $weatherDataObjects = [];
 $weatherDataArrays = [];
 
 foreach ($groupByOptions as $groupBy) {
-    $weatherData = new WeatherData($pdo, $groupBy, $start_date, $end_date, $metrics, $normalMetrics, $normalsTable);
+    //$weatherData = new WeatherData($pdo, $groupBy, $start_date, $end_date, $metrics, $normalMetrics, $normalsTable);
+    // Now pass the $db object to the WeatherData class
+    $weatherData = new WeatherData($db, $groupBy, $start_date, $end_date, $metrics, $normalMetrics, $normalsTable);
     $weatherDataObjects[$groupBy] = $weatherData;
     $weatherDataArrays[$groupBy] = $weatherData->getGroupedData();
 }
