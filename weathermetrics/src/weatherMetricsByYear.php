@@ -174,7 +174,7 @@
     <form method="GET" action="#statistics" id="year-form">
         <!-- Add a hidden input field to store the selectedDb value -->
         <input type="hidden" name="selectedDb" value="<?php echo isset($_GET['selectedDb']) ? htmlspecialchars($_GET['selectedDb']) : 'db1'; ?>">
-
+        <input type="hidden" name="metric" value="<?php echo htmlspecialchars($selectedMetric, ENT_QUOTES, 'UTF-8'); ?>">
         <div class="form-group">
             <label for="selected_years">Select Years:  </label>
             <button type="button" class="btn btn-sm btn-secondary" id="select-all-btn">Select All</button>

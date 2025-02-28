@@ -13,7 +13,9 @@
     <script src="scripts/weatherMetrics.js"></script>
     <link rel="stylesheet" href="styles/styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
-    
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5/dist/echarts.min.js"></script>
+</head>
+<body>
     <style>
         .table th:first-child,
         .table td:first-child {
@@ -237,8 +239,27 @@
 </head>
 <body class="p-3 m-0 border-0 bd-example">
  
-    <?php include 'alertBox.php'; ?>
+    <?php 
+        include 'alertBox.php';
+
+        // Retrieve the metric from the URL, default to 'Temperature' if not set
+        $selectedMetric = isset($_GET['metric']) ? $_GET['metric'] : 'Temperature';
+    ?>
     <script>
+    /**
+     * Function to get query parameters from the URL.
+     * @param {string} paramName - The name of the parameter to retrieve.
+     * @returns {string|null} - The parameter value or null if not found.
+     */
+    function getQueryParam(paramName) {
+        const urlParams = new URLSearchParams(window.location.search);
+        return urlParams.get(paramName);
+    }
+
+    // Retrieve the metric from the URL or fallback to PHP default
+    var selectedMetric = getQueryParam("metric") || "<?php echo $selectedMetric; ?>";
+
+
     // Function to change the selected normals
     function changeNormals(city, selectedPeriod) {
         // Check if the site is using HTTPS
@@ -341,19 +362,19 @@
                 <!-- Navigation links -->
                 <ul class="navbar-nav">
                     <li class="nav-item">
-                        <a href="weatherMetricsTemp.php" class="nav-link btn btn-light fs-6 text-dark <?= ($current_page == 'weatherMetricsTemp.php') ? 'active' : '' ?>" role="button">Temperatures</a>
+                        <a href="weatherMetricsData.php?metric=Temperature" class="nav-link btn btn-light fs-6 text-dark <?= ($selectedMetric === 'Temperature') ? 'active' : '' ?>" role="button">Temperature</a>
                     </li>
                     <li class="nav-item">
-                        <a href="weatherMetricsRain.php" class="nav-link btn btn-light fs-6 text-dark <?= ($current_page == 'weatherMetricsRain.php') ? 'active' : '' ?>" role="button">Rainfall</a>
+                        <a href="weatherMetricsData.php?metric=Rainfall" class="nav-link btn btn-light fs-6 text-dark <?= ($selectedMetric === 'Rainfall') ? 'active' : '' ?>" role="button">Rainfall</a>
                     </li>
                     <li class="nav-item">
-                        <a href="weatherMetricsPressure.php" class="nav-link btn btn-light fs-6 text-dark <?= ($current_page == 'weatherMetricsPressure.php') ? 'active' : '' ?>" role="button">Pressure</a>
+                        <a href="weatherMetricsData.php?metric=Pressure" class="nav-link btn btn-light fs-6 text-dark <?= ($selectedMetric === 'Pressure') ? 'active' : '' ?>" role="button">Pressure</a>
                     </li>
                     <li class="nav-item">
-                        <a href="weatherMetricsComp.php" class="nav-link btn btn-light fs-6 text-dark <?= ($current_page == 'weatherMetricsComp.php') ? 'active' : '' ?>" role="button">Comparison</a>
+                        <a href="weatherMetricsComp.php?metric=Comparison" class="nav-link btn btn-light fs-6 text-dark <?= ($selectedMetric === 'Comparison') ? 'active' : '' ?>" role="button">Comparison</a>
                     </li>
                     <li class="nav-item">
-                        <a href="weatherMetricsByYear.php" class="nav-link btn btn-light fs-6 text-dark <?= ($current_page == 'weatherMetricsByYear.php') ? 'active' : '' ?>" role="button">Climate-Stats</a>
+                        <a href="weatherMetricsByYear.php?metric=Climate" class="nav-link btn btn-light fs-6 text-dark <?= ($selectedMetric === 'Climate') ? 'active' : '' ?>" role="button">Climate-Stats</a>
                     </li>
                 </ul>
                 <!-- Dropdowns for Normals, Database, and Selections -->

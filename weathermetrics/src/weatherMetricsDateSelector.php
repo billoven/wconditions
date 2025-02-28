@@ -67,17 +67,17 @@
       </div>
       <div class="checkbox-item">
           <label>
-              <input type="checkbox" name="by_month" value="true" onclick="toggleGraphVisibility()"> By Month
+              <input type="checkbox" name="by_month" onclick="toggleGraphVisibility()"> By Month
           </label>
       </div>
       <div class="checkbox-item">
           <label>
-              <input type="checkbox" name="by_year" value="true" onclick="toggleGraphVisibility()"> By Year
+              <input type="checkbox" name="by_year" onclick="toggleGraphVisibility()"> By Year
           </label>
       </div>
       <div class="checkbox-item">
           <label>
-              <input type="checkbox" name="by_season" value="true" onclick="toggleGraphVisibility()"> By Season
+              <input type="checkbox" name="by_season" onclick="toggleGraphVisibility()"> By Season
           </label>
       </div>
   </div>
@@ -207,18 +207,27 @@
     document.getElementById("dateRangePicker").value = ""; // Clear date range
     document.getElementById("monthFrom").value = "";       // Clear "From Month"
     document.getElementById("monthTo").value = "";         // Clear "To Month"
-    document.getElementById("yearFrom").selectedIndex = 0; // Reset "From Year"
-    document.getElementById("yearTo").selectedIndex = 0;   // Reset "To Year"
-    document.getElementById("seasonSelect").selectedIndex = 0; // Reset season dropdown
-    document.getElementById("seasonYear").selectedIndex = 0;   // Reset season year dropdown
+
+    // Reset dropdowns properly
+    document.getElementById("yearFrom").selectedIndex = 0; 
+    document.getElementById("yearTo").selectedIndex = 0;   
+    document.getElementById("seasonSelect").selectedIndex = 0; 
+    document.getElementById("seasonYear").selectedIndex = 0;   
 
     // Clear hidden fields for start and end dates
     document.getElementById("start_date").value = "";
     document.getElementById("end_date").value = "";
 
+    // Reset checkboxes (default: only 'By Day' checked)
+    document.querySelector("input[name='by_day']").checked = true;
+    document.querySelector("input[name='by_month']").checked = false;
+    document.querySelector("input[name='by_year']").checked = false;
+    document.querySelector("input[name='by_season']").checked = false;
+
     // Update visible sections to match "dates" as the default
     updateVisibleFields("dates");
-  });
+});
+
 
     // Helper function to show/hide input fields based on the selected range type
     function updateVisibleFields(selectedType) {
