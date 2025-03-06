@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+import os
 import re
 import base64
 import pymysql
@@ -52,22 +53,20 @@ class WeatherAlert:
             cursorclass=DictCursor
         )
            
-    def cooldown(self, alert_name: str, station_key: str, cooldown_period: int, connection) -> bool:
+   
+    def is_cooldown_active(self, alert_name: str, station_key: str, cooldown_period: int, connection) -> bool:
         """
-        Checks if an alert can be reactivated after the cooldown period by querying the database.
+        Checks if an alert is still in the cooldown period.
 
         :param alert_name: Name of the alert.
         :param station_key: Weather station key.
-        :param cooldown_period: Time in seconds before the alert can be reactivated.
-        :param connection: Active database connection.
-        :return: True if the alert can be reactivated, False otherwise.
+        :param cooldown_period: Cooldown duration in minutes.
+        :return: True if the cooldown is active, False otherwise.
         """
-        now = datetime.now()  # Get the current timestamp
+        now = datetime.now()
 
         try:
             with connection.cursor() as cursor:
-
-                # Query the database to get the last trigger timestamp for the alert
                 query = """
                     SELECT last_sent 
                     FROM WeatherAlerts 
@@ -78,22 +77,37 @@ class WeatherAlert:
                 cursor.execute(query, (station_key, alert_name))
                 result = cursor.fetchone()
 
-                if result is None or (now - result['last_sent']) >= timedelta(minutes=cooldown_period):                   
-                   
-                    # Cooldown expired or first activation: update the database timestamp
-                    update_query = """
-                        INSERT INTO WeatherAlerts (alert_name, station_key, last_sent, cooldown_minutes)
-                        VALUES (%s, %s, NOW(), %s)
-                        ON DUPLICATE KEY UPDATE last_sent = VALUES(last_sent)
-                    """
-                    cursor.execute(update_query, (alert_name, station_key, cooldown_period))
-                    connection.commit()
-                    return True  # Alert reactivated
-                else:
-                    return False  # Cooldown still active
+                if result:
+                    last_sent_time = result["last_sent"]
+                    if now - last_sent_time < timedelta(minutes=cooldown_period):
+                        return True  # Cooldown is still active
+
+                return False  # Cooldown expired or no alert exists
         except pymysql.MySQLError as err:
             print(f"Database error: {err}")
-            return False  # Fail-safe: prevent reactivation on error
+            return False  # Default to cooldown expired in case of an error
+
+    def register_alert(self, alert_name: str, station_key: str, cooldown_period: int, connection):
+        """
+        Registers a new alert after verifying the cooldown status.
+
+        :param alert_name: Name of the alert.
+        :param station_key: Weather station key.
+        :param cooldown_period: Cooldown duration in minutes.
+        """
+        try:
+            with connection.cursor() as cursor:
+                update_query = """
+                    INSERT INTO WeatherAlerts (alert_name, station_key, last_sent, cooldown_minutes)
+                    VALUES (%s, %s, NOW(), %s)
+                    ON DUPLICATE KEY UPDATE last_sent = VALUES(last_sent)
+                """
+                cursor.execute(update_query, (alert_name, station_key, cooldown_period))
+                connection.commit()
+                print(f"✅ Alert '{alert_name}' registered for station {station_key}.")
+        except pymysql.MySQLError as err:
+            print(f"Database error: {err}")  
+   
 
     def parse_time_ago(self,time_ago):
         """Convert time_ago string (e.g., '1d', '2h', '30m') into (value, SQL unit)."""
@@ -123,6 +137,7 @@ class WeatherAlert:
         
         # Accéder aux valeurs du dictionnaire alert
         alert_name = alert["name"]
+        cooldown_period = alert["cooldown"]
         alert_cooldown = alert["cooldown"]
         weather_field = alert["weather_field"]
         weather_unit = alert["weather_unit"]
@@ -138,7 +153,7 @@ class WeatherAlert:
             with connection.cursor() as cursor:
                 
                 # Check if the alert can be reactivated
-                if self.cooldown(alert_name, station_key, alert_cooldown, connection):          
+                if not self.is_cooldown_active(alert_name, station_key, alert_cooldown, connection):          
                 
                     # Get latest value
                     query_last = f"""
@@ -163,6 +178,7 @@ class WeatherAlert:
                         time_since_last_update = datetime.now() - last_datetime
 
                         if time_since_last_update >= time_threshold:
+                            self.register_alert(alert_name, station_key, cooldown_period,connection)  # Register the alert
                             return {
                                 "last_datetime": last_datetime,
                                 "alert_reason": f"No data update in the last {threshold}{weather_unit}"
@@ -175,6 +191,7 @@ class WeatherAlert:
                     if time_ago_value == 0:  # Equivalent to "hours_ago == 0"
                         if (alert_type == "increase" and last_value >= threshold) or \
                         (alert_type == "decrease" and last_value <= threshold):
+                            self.register_alert(alert_name, station_key, cooldown_period,connection)  # Register the alert
                             return {
                                 "last_datetime": last_datetime,
                                 "last_value": last_value,
@@ -218,7 +235,7 @@ class WeatherAlert:
                     (alert_type == "decrease" and variation <= -threshold):
                         
                         alert_reason = f"Threshold crossed: {weather_field} {alert_type} {threshold}"
-
+                        self.register_alert(alert_name, station_key, cooldown_period,connection)  # Register the alert
                         return {
                             "last_datetime": last_datetime,
                             "last_value": last_value,
