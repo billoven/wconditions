@@ -155,6 +155,8 @@ class WeatherAlert:
                 # Check if the alert can be reactivated
                 if not self.is_cooldown_active(alert_name, station_key, alert_cooldown, connection):          
                 
+                    now = datetime.now()
+                    
                     # Get latest value
                     query_last = f"""
                     SELECT WC_Datetime AS last_datetime, {weather_field} AS last_value
@@ -175,11 +177,12 @@ class WeatherAlert:
                     if alert_type == "no_update":
                         # Convert threshold from minutes to a timedelta
                         time_threshold = timedelta(minutes=threshold)
-                        time_since_last_update = datetime.now() - last_datetime
+                        time_since_last_update = now - last_datetime
 
                         if time_since_last_update >= time_threshold:
                             self.register_alert(alert_name, station_key, cooldown_period,connection)  # Register the alert
                             return {
+                                "now": now,
                                 "last_datetime": last_datetime,
                                 "alert_reason": f"No data update in the last {threshold}{weather_unit}"
                             }
@@ -193,6 +196,7 @@ class WeatherAlert:
                         (alert_type == "decrease" and last_value <= threshold):
                             self.register_alert(alert_name, station_key, cooldown_period,connection)  # Register the alert
                             return {
+                                "now": now,
                                 "last_datetime": last_datetime,
                                 "last_value": last_value,
                                 "alert_reason": f"Threshold crossed: {weather_field} {alert_type} {threshold}{weather_unit}"
@@ -237,6 +241,7 @@ class WeatherAlert:
                         alert_reason = f"Threshold crossed: {weather_field} {alert_type} {threshold}"
                         self.register_alert(alert_name, station_key, cooldown_period,connection)  # Register the alert
                         return {
+                            "now": now,
                             "last_datetime": last_datetime,
                             "last_value": last_value,
                             "past_datetime": past_datetime,
@@ -281,14 +286,16 @@ class WeatherAlert:
                 )
 
                 if result:
-                    print(f"🚨 {alert['name']} Alert!")
-                    print(alert["message"])
-                    print(f"Details: {result}")
+                    timestamp = result.get("now") or datetime.now()
+                    print(f"🚨 {timestamp} ({db_config['weatherStation']}) - {alert['name']} Alert!")
+                    print(f"    alert['message'")
+                    print(f"    Details: {result}")
                     
                     # Send an email notification if the alert condition is met
                     self.send_email(alert, result, db_config, station_key)
                 else:
-                    print(f"✅ No {alert['name']} detected.")
+                    timestamp = datetime.now()
+                    print(f"✅ {timestamp} ({db_config['weatherStation']}) - {alert['name']} - No alert triggered.")
 
     def get_gmail_service(self):
         """
@@ -353,10 +360,11 @@ class WeatherAlert:
         message_template = alert['message']
         # Remplacer {threshold} par la valeur réelle
         alert_message = message_template.format(threshold=threshold)
-        
+        lastdatetime = data.get("last_datetime", "Unknown Time")
         recipients = alert["recipients"]  # List of recipient emails
         current_value = data.get("last_value", "N/A")
-        timestamp = data.get("last_datetime", "Unknown Time")
+        timestamp = data.get("now", "Unknown Time")
+
         alert_reason = data.get("alert_reason", "Unknown Reason")
 
         sender_email = "villebonweather@gmail.com"  # The sender email address (must match the OAuth2 account)
@@ -375,6 +383,7 @@ class WeatherAlert:
         🔹 Type: {type}
         🔹 Threshold: {threshold}{weather_unit}
         🔹 Current Value: {current_value}{weather_unit}
+        🔹 More recent value update time: {lastdatetime} 
         🔹 Triggered At: {timestamp}
         🔹 Reason: {alert_reason}
 
