@@ -1,4 +1,24 @@
 #!/usr/bin/env python3
+"""
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program. If not, see <https://www.gnu.org/licenses/>.
+
+    Copyright (c) 2025 [Pierre STRANART]
+"""
+
+
+import argparse
+import logging
 import os
 import re
 import base64
@@ -10,9 +30,10 @@ from datetime import datetime, timedelta
 from email.mime.text import MIMEText
 
 # Google OAuth2 libraries for Gmail API
+from google.auth.transport.requests import Request
+from google.auth.exceptions import RefreshError
 from google.oauth2.credentials import Credentials
 from google_auth_oauthlib.flow import InstalledAppFlow
-from google.auth.transport.requests import Request
 from googleapiclient.discovery import build
 
 # Define the scope required for sending emails via Gmail API.
@@ -164,6 +185,7 @@ class WeatherAlert:
                     ORDER BY WC_Datetime DESC
                     LIMIT 1;
                     """
+
                     cursor.execute(query_last)
                     last_record = cursor.fetchone()
 
@@ -172,6 +194,9 @@ class WeatherAlert:
                     
                     last_value = last_record["last_value"]
                     last_datetime = last_record["last_datetime"]
+
+                    logger.debug (f"   query={query_last} ")
+                    logger.debug (f"   LastRecord={last_record}")
 
                     # Handle "no_update" alert type
                     if alert_type == "no_update":
@@ -202,44 +227,77 @@ class WeatherAlert:
                                 "alert_reason": f"Threshold crossed: {weather_field} {alert_type} {threshold}{weather_unit}"
                             }
                         return None  # No alert triggered
-
+                    
                     query_past = f"""
-                    SELECT WC_Datetime AS past_datetime, {weather_field} AS past_value
-                    FROM WeatherConditions
-                    WHERE WC_Datetime <= NOW() - INTERVAL %s {time_ago_unit}
+                    ( SELECT WC_Datetime AS past_datetime, {weather_field} AS past_value
+                      FROM WeatherConditions
+                      WHERE 
+                        WC_Datetime BETWEEN NOW() - INTERVAL %s {time_ago_unit} AND NOW()
+                        AND WC_Datetime <= NOW() - INTERVAL %s {time_ago_unit}
                     """
+                    query_params = [time_ago_value, time_ago_value]  # Interval de recherche
 
-                    query_params = [time_ago_value]  # Use parsed time value
-
-                    # Handle excluded hours
+                    # Exclusion des heures
                     if exclude_hours[0] is not None and exclude_hours[1] is not None:
                         query_past += " AND HOUR(WC_Datetime) NOT BETWEEN %s AND %s"
                         query_params.extend(exclude_hours)
 
-                    # Handle excluded months
+                    query_past += f"""
+                        ORDER BY WC_Datetime DESC
+                        LIMIT 1
+                    )
+                    UNION ALL
+                    ( SELECT WC_Datetime AS past_datetime, {weather_field} AS past_value
+                      FROM WeatherConditions
+                      WHERE 
+                        WC_Datetime BETWEEN NOW() - INTERVAL %s {time_ago_unit} AND NOW()
+                        AND WC_Datetime > NOW() - INTERVAL %s {time_ago_unit}
+                    """
+                    query_params.extend([time_ago_value, time_ago_value])  # Interval de recherche
+
+                    # Exclusion des heures pour la deuxième sous-requête
+                    if exclude_hours[0] is not None and exclude_hours[1] is not None:
+                        query_past += " AND HOUR(WC_Datetime) NOT BETWEEN %s AND %s"
+                        query_params.extend(exclude_hours)
+
+                    # Exclusion des mois
                     if exclude_months:
                         placeholders = ",".join(["%s"] * len(exclude_months))
                         query_past += f" AND MONTH(WC_Datetime) NOT IN ({placeholders})"
                         query_params.extend(exclude_months)
 
-                    query_past += " ORDER BY WC_Datetime DESC LIMIT 1;"
-                    
-                    # Execute query with dynamic parameters
+                    query_past += f"""
+                        ORDER BY WC_Datetime ASC
+                        LIMIT 1
+                    )
+                    ORDER BY ABS(TIMESTAMPDIFF(SECOND, past_datetime, NOW() - INTERVAL %s {time_ago_unit}))
+                    LIMIT 1;
+                    """
+                    query_params.append(time_ago_value)  # Interval final pour TIMESTAMPDIFF
+
+                    # Exécution de la requête
                     cursor.execute(query_past, query_params)
                     past_record = cursor.fetchone()
 
+                    # Si aucun enregistrement trouvé, retour de None
                     if not past_record:
-                        return None  # No past data available
+                        return None  
 
                     past_value = past_record["past_value"]
                     past_datetime = past_record["past_datetime"]
                     variation = last_value - past_value
 
+                    # Affichage pour debug
+                    logger.debug(f"   Pastquery={query_past} query_params={query_params}")
+                    logger.debug(f"   PastRecord={past_record}")
+
+                    # Vérification des seuils et déclenchement d'alerte si nécessaire
                     if (alert_type == "increase" and variation >= threshold) or \
                     (alert_type == "decrease" and variation <= -threshold):
                         
-                        alert_reason = f"Threshold crossed: {weather_field} {alert_type} {threshold}"
-                        self.register_alert(alert_name, station_key, cooldown_period,connection)  # Register the alert
+                        alert_reason = f"Threshold crossed: {weather_field} {alert_type} {threshold}{weather_unit}"
+                        self.register_alert(alert_name, station_key, cooldown_period, connection)
+
                         return {
                             "now": now,
                             "last_datetime": last_datetime,
@@ -286,16 +344,15 @@ class WeatherAlert:
                 )
 
                 if result:
-                    timestamp = result.get("now") or datetime.now()
-                    print(f"🚨 {timestamp} ({db_config['weatherStation']}) - {alert['name']} Alert!")
-                    print(f"    alert['message'")
-                    print(f"    Details: {result}")
+                    logger.info(f"🚨  {db_config['weatherStation']} - {alert['name']} Alert!")
+                    logger.info(f"    alert['message'")
+                    logger.info(f"    Details: {result}")
                     
                     # Send an email notification if the alert condition is met
                     self.send_email(alert, result, db_config, station_key)
                 else:
-                    timestamp = datetime.now()
-                    print(f"✅ {timestamp} ({db_config['weatherStation']}) - {alert['name']} - No alert triggered.")
+                    logger.info(f"✅ {db_config['weatherStation']} - {alert['name']} - No alert triggered.")
+
 
     def get_gmail_service(self):
         """
@@ -307,17 +364,33 @@ class WeatherAlert:
         # token.json stores the user's access and refresh tokens.
         if os.path.exists('token.json'):
             creds = Credentials.from_authorized_user_file('token.json', SCOPES)
-        # If there are no valid credentials available, let the user log in.
+        
+        # If no valid credentials are available, the user needs to log in.
         if not creds or not creds.valid:
             if creds and creds.expired and creds.refresh_token:
-                creds.refresh(Request())
+                try:
+                    # Attempt to refresh the token using the refresh token.
+                    creds.refresh(Request())
+                except RefreshError as e:
+                    # Handle errors during the refresh process.
+                    print("Error refreshing token: ", e)
+                    creds = None  # Need to authenticate again
             else:
-                flow = InstalledAppFlow.from_client_secrets_file('/etc/wconditions/credentials.json', SCOPES)
-                creds = flow.run_local_server(port=0)
-            # Save the credentials for the next run.
-            with open('token.json', 'w') as token:
-                token.write(creds.to_json())
-        # Build and return the Gmail service.
+                try:
+                    # Start the OAuth flow to authenticate the user.
+                    flow = InstalledAppFlow.from_client_secrets_file('/etc/wconditions/credentials.json', SCOPES)
+                    creds = flow.run_local_server(port=0)
+                except Exception as e:
+                    # Handle errors during the authentication process.
+                    print(f"Error during authentication: {e}")
+                    return None  # Return None if there's an error
+        
+            # Save the credentials for the next run (access and refresh tokens).
+            if creds:
+                with open('token.json', 'w') as token:
+                    token.write(creds.to_json())
+        
+        # Build and return the Gmail service object.
         service = build('gmail', 'v1', credentials=creds)
         return service
 
@@ -421,8 +494,19 @@ class WeatherAlert:
 
 # Example usage
 if __name__ == "__main__":
+
     db_config_file = "/etc/wconditions/db_config.json"
     alert_config_file = "WeatherAlertConf.json"
+
+    parser = argparse.ArgumentParser()
+    parser.add_argument("-d", "--debug", action="store_true", help="Activer le mode debug")
+    args = parser.parse_args()
+
+    # Configuration du logger avec un niveau par défaut
+    log_level = logging.DEBUG if args.debug else logging.INFO
+    logging.basicConfig(level=log_level, format="%(asctime)s - %(levelname)s - %(message)s")
+    logger = logging.getLogger(__name__)
     
     weather_alert = WeatherAlert(db_config_file, alert_config_file)
     weather_alert.run_alert_checks()
+

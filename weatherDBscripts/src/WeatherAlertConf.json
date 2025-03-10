@@ -74,7 +74,7 @@
             "threshold": 30,
             "time_ago": "6h",
             "enabled": true,
-            "message": "Rainfall greater than 30mm in last 6hours: Heavy thunderstorms, low-pressure systems",
+            "message": "Rainfall greater than 30mm in last 6 hours: Heavy thunderstorms, low-pressure systems",
             "cooldown": 360,
             "stations": ["db1", "db2"],
             "recipients": ["stranpierre@gmail.com","nowak4job@yahoo.fr"]
