@@ -14,6 +14,32 @@
             "recipients": ["stranpierre@gmail.com","nowak4job@yahoo.fr"]
         },
         {
+            "name": "HeatIndex Extreme Caution",
+            "weather_field": "WC_heatIndex",
+            "weather_unit": "°C",
+            "alert_type": "increase",
+            "threshold": 32,
+            "time_ago": "0m",
+            "enabled": true,
+            "message": "HeatIndexd crossed 32°C : Heat cramps and heat exhaustion possible.",
+            "cooldown": 360,
+            "stations": ["db1", "db2"],
+            "recipients": ["stranpierre@gmail.com","nowak4job@yahoo.fr"]
+        },
+        {
+            "name": "HeatIndex Danger",
+            "weather_field": "WC_heatIndex",
+            "weather_unit": "°C",
+            "alert_type": "increase",
+            "threshold": 41,
+            "time_ago": "0m",
+            "enabled": true,
+            "message": "HeatIndexd crossed 41°C : Heat exhaustion likely; heatstroke possible with prolonged exposure.",
+            "cooldown": 60,
+            "stations": ["db1", "db2"],
+            "recipients": ["stranpierre@gmail.com","nowak4job@yahoo.fr"]
+        },
+        {
             "name": "Rapid Temperature Rise",
             "weather_field": "WC_temp",
             "weather_unit": "°C",
@@ -76,6 +102,32 @@
             "enabled": true,
             "message": "Rainfall greater than 30mm in last 6 hours: Heavy thunderstorms, low-pressure systems",
             "cooldown": 360,
+            "stations": ["db1", "db2"],
+            "recipients": ["stranpierre@gmail.com","nowak4job@yahoo.fr"]
+        },
+        {
+            "name": "Weak Pressure Drop Alert",
+            "weather_field": "WC_pressure",
+            "weather_unit": "hpa",
+            "alert_type": "decrease",
+            "threshold": 3,
+            "time_ago": "3h",
+            "enabled": true,
+            "message": "Pressure decreased of more than 3hpa in last 3 hours: Approaching weather front",
+            "cooldown": 180,
+            "stations": ["db1", "db2"],
+            "recipients": ["stranpierre@gmail.com","nowak4job@yahoo.fr"]
+        },
+        {
+            "name": "Pressure Strong Drop Alert",
+            "weather_field": "WC_pressure",
+            "weather_unit": "hpa",
+            "alert_type": "decrease",
+            "threshold": 10,
+            "time_ago": "3h",
+            "enabled": true,
+            "message": "Pressure decreased of more than 10hpa in last 3 hours: Rapidly intensifying storm",
+            "cooldown": 180,
             "stations": ["db1", "db2"],
             "recipients": ["stranpierre@gmail.com","nowak4job@yahoo.fr"]
         }
