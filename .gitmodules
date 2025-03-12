@@ -10,3 +10,6 @@
 [submodule "weathermetrics"]
 	path = weathermetrics
 	url = git@github.com:billoven/weathermetrics.git
+[submodule "wcExportDaysCondition"]
+	path = wcExportDaysCondition
+	url = git@github.com:billoven/wcExportDaysCondition.git
