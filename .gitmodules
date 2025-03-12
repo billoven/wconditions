@@ -1,0 +1,3 @@
+[submodule "dayswherecondition"]
+	path = dayswherecondition
+	url = git@github.com:billoven/dayswherecondition.git
