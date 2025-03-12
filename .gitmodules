@@ -1,3 +1,6 @@
 [submodule "dayswherecondition"]
 	path = dayswherecondition
 	url = git@github.com:billoven/dayswherecondition.git
+[submodule "WeatherAlerts"]
+	path = WeatherAlerts
+	url = git@github.com:billoven/WeatherAlerts.git
