@@ -4,3 +4,6 @@
 [submodule "WeatherAlerts"]
 	path = WeatherAlerts
 	url = git@github.com:billoven/WeatherAlerts.git
+[submodule "weatherDBscripts"]
+	path = weatherDBscripts
+	url = git@github.com:billoven/weatherDBscripts.git
