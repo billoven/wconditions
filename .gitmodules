@@ -7,3 +7,6 @@
 [submodule "weatherDBscripts"]
 	path = weatherDBscripts
 	url = git@github.com:billoven/weatherDBscripts.git
+[submodule "weathermetrics"]
+	path = weathermetrics
+	url = git@github.com:billoven/weathermetrics.git
