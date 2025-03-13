@@ -13,3 +13,6 @@
 [submodule "wcExportDaysCondition"]
 	path = wcExportDaysCondition
 	url = git@github.com:billoven/wcExportDaysCondition.git
+[submodule "common"]
+	path = common
+	url = git@github.com:billoven/WeatherCommon.git
