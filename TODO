@@ -1,9 +1,0 @@
-0001 : DONE : Creating a Makefile in order to generate a "binary" in "bin" directory
-0002 : DONE : Start the testing of the MV_DailyStat.py program
-0003 : DONE : MV_UpdateDB.py update, the goal is to get daily ( by default ) meteovillebon
-        weather data and update the mysql Database installed on 192.168.17.10 server
-        Some options will provide the ability to get a more extended range of DayStat
-        and be able to update the mysql DB.
-0004 : 2021/10/31 : PLANNING : Uniformization of the log messages.
-0005 : 2021/10/31 : PLANNING : Centralize the log messages comming from all the scripts
-0006 : 2021/10/31 : PLANNING : Email notification for critical issue
