@@ -72,7 +72,7 @@ Templates for configuration files are provided as:
 
 Each contains placeholders in the form of `%%VAR_NAME%%`, which are dynamically replaced with values from `secrets.env` during installation.
 
-Example (`db_config.json` template):
+Example of parts that will be changed by secrets.env content (`db_config.json` template):
 
 ```json
 {
@@ -93,23 +93,6 @@ During installation, these placeholders are replaced, and resulting local config
 /etc/wconditions/db_config.local.json
 /etc/wconditions/db_config.local.php
 ```
-
----
-Excellent point — yes, it **is** important to include that in the documentation.
-Here’s why and how to do it properly 👇
-
----
-
-### 🧭 Why it matters
-
-1. **New contributors or users** won’t always have the repository locally — the first logical step is to clone it.
-2. Your `Makefile.md` will likely be used both by:
-
-   * **Developers**, who may clone specific tags or branches (for bug fixing or testing), and
-   * **Deployers**, who may just want the **latest stable version**.
-3. Adding a short note about **cloning the repository** ensures the Makefile workflow makes sense from the start.
-
----
 
 ````markdown
 ## Getting Started
