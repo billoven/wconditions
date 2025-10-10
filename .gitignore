@@ -1,12 +1,52 @@
+# -------------------------
+# Ignore secrets and sensitive files
+# -------------------------
+/etc/secrets.env
+/etc/credentials.json
+/etc/token.json
+
+# Ignore generated local configuration files
+/etc/db_config.local.json
+/etc/db_config.local.php
+
+# -------------------------
+# Ignore virtual environments
+# -------------------------
+/venv/
+*/venv/
+
+# -------------------------
+# Ignore binaries and scripts directories (if not versioned)
+# -------------------------
 bin/
-/etc
+*/bin/
+
+# -------------------------
+# Ignore POC / demo code
+# -------------------------
 /poc
-.pytest_cache/
+
+# -------------------------
+# Python caches and compiled files
+# -------------------------
 __pycache__/
-*/.pytest_cache/
 */__pycache__/
-*/__init__.py
+*.pyc
+*.pyo
+*.pyd
+.pytest_cache/
+*/.pytest_cache/
+
+# -------------------------
+# Ignore init files if needed
+# -------------------------
 */__init__.pyc
-*/bin
-*/.gitignore
-/.gitignore
+*/__init__.py
+
+# -------------------------
+# Optional: logs or temporary files
+# -------------------------
+*.log
+*.tmp
+*.swp
+
