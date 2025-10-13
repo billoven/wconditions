@@ -51,6 +51,24 @@ help:
 	@echo "------------------------------------------------------------"
 
 # ------------------------------------------------------------
+# Pre-installation: ensure group and directories exist
+# ------------------------------------------------------------
+prepare-system:
+	@echo "🧰 Preparing system environment for $(PROJECT_NAME)..."
+	@if ! getent group wconditions >/dev/null; then \
+	    echo "⚙️  Creating system group 'wconditions'..."; \
+	    sudo groupadd -r wconditions; \
+	fi
+	@sudo mkdir -p $(ETC_DIR) $(PREFIX) $(WWW_DIR)
+	@sudo chown -R root:wconditions $(ETC_DIR)
+	@sudo chmod 750 $(ETC_DIR)
+	@sudo chown -R $(USER):wconditions $(PREFIX)
+	@sudo chmod 775 $(PREFIX)
+	@sudo chown -R www-data:wconditions $(WWW_DIR) || true
+	@sudo chmod 755 $(WWW_DIR)
+	@echo "✅ System directories prepared with correct ownership and permissions."
+
+# ------------------------------------------------------------
 # Update git submodules
 # ------------------------------------------------------------
 update:
@@ -95,13 +113,11 @@ check-env:
 	fi
 	@which sed >/dev/null 2>&1 || (echo "❌ 'sed' command not found in PATH" && exit 1)
 
-# ------------------------------------------------------------
+ ------------------------------------------------------------
 # Install for production (minimal setup)
 # ------------------------------------------------------------
-install: update install-config
+install: prepare-system update install-config
 	@echo "🚀 Installing $(PROJECT_NAME) for production..."
-	@mkdir -p $(PREFIX)
-	@mkdir -p $(WWW_DIR)
 	@for dir in $(SUBMODULES); do \
 	    echo "📦 Installing module: $$dir ..."; \
 	    if [ -f $$dir/Makefile ]; then \
@@ -110,8 +126,10 @@ install: update install-config
 	        echo "⚠️  No Makefile found in $$dir, skipping..."; \
 	    fi \
 	done
-	@cp -r web/* $(WWW_DIR)/
-	@echo "$(BUILD_TAG)" > $(PREFIX)/VERSION
+	@sudo cp -r web/* $(WWW_DIR)/
+	@echo "$(BUILD_TAG)" | sudo tee $(PREFIX)/VERSION >/dev/null
+	@sudo chown -R $(USER):wconditions $(PREFIX)
+	@sudo chmod -R g+w $(PREFIX)
 	@echo "✅ Production installation complete for $(PROJECT_NAME) [$(BUILD_TAG)]"
 
 # ------------------------------------------------------------

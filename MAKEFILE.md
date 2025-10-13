@@ -37,7 +37,71 @@ wconditions/
 ```
 
 ---
+## 🧱 System prerequisites.
+It’s fully formatted and consistent with your existing documentation style.
 
+---
+
+
+Before running any installation (`make install` or `make install-dev`), your system must be properly configured to handle secure installation and access control for **wconditions**.
+
+### 1️⃣ Create the system group
+
+A dedicated system group named `wconditions` is required to manage shared permissions between system users and services.
+
+```bash
+sudo groupadd -r wconditions 2>/dev/null || true
+````
+
+If the group already exists, this command will do nothing.
+
+---
+
+### 2️⃣ Add your user to the group
+
+Your installation user (for example, `pierre`) must belong to this group:
+
+```bash
+sudo usermod -aG wconditions pierre
+```
+
+> ⚠️ **Important:** Log out and back in for the new group membership to take effect.
+
+You can verify your group membership using:
+
+```bash
+groups pierre
+```
+
+---
+
+### 3️⃣ Directory permissions and ownership
+
+The installation process will automatically create and configure the following directories (if not already present):
+
+| Directory              | Owner                         | Group         | Mode  | Description                                         |
+| ---------------------- | ----------------------------- | ------------- | ----- | --------------------------------------------------- |
+| `/etc/wconditions`     | `root`                        | `wconditions` | `750` | Contains sensitive configuration files (non-public) |
+| `/opt/wconditions`     | `pierre`                      | `wconditions` | `775` | Main installation and shared executables            |
+| `/var/www/wconditions` | `www-data` (or `wconditions`) | `wconditions` | `755` | Public web application directory                    |
+
+These settings ensure:
+
+* only authorized users can modify configurations,
+* system daemons (like Apache) can read web content,
+* installation scripts can safely update binaries.
+
+---
+### 4️⃣ Verify setup before installation
+
+Run the following command to check if directories and permissions are properly set:
+
+```bash
+ls -ld /etc/wconditions /opt/wconditions /var/www/wconditions
+```
+If they do not exist, the `prepare-system` target in the main Makefile will automatically create them with correct ownership and access rights.
+
+---
 ### 🧠 Environment Variables and Configuration
 
 The Makefile relies on a secrets file:
