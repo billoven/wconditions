@@ -155,4 +155,3 @@ clean:
 	@find . -type d -name '__pycache__' -exec rm -rf {} +
 	@rm -f $(CONFIG_JSON_FINAL) $(CONFIG_PHP_FINAL)
 	@echo "✅ Cleanup complete."
-mv M
