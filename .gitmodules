@@ -1,5 +1,6 @@
 [submodule "dayswherecondition"]
 	path = dayswherecondition
+	branch = master
 	url = git@github.com:billoven/dayswherecondition.git
 [submodule "WeatherAlerts"]
 	path = WeatherAlerts

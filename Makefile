@@ -113,7 +113,7 @@ check-env:
 	fi
 	@which sed >/dev/null 2>&1 || (echo "❌ 'sed' command not found in PATH" && exit 1)
 
- ------------------------------------------------------------
+# ------------------------------------------------------------
 # Install for production (minimal setup)
 # ------------------------------------------------------------
 install: prepare-system update install-config
